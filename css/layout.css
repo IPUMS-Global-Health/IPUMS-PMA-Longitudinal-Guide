@@ -24,19 +24,27 @@
   page: chapter;
 }
 
+/* Pagebreak for each H2 */
  .level2 {
   break-before: page;
 }
 
-/* Paragraph text should be 80% page-width (leaving 20% space for Asides) */
+/* Paragraph text should be 100% with floating asides */
 .main {
   width: 100%;
 }
 
-/* Code Chunks should be 80% page-width (leaving 20% space for Asides) */
-/* Note: this should not impact Code Output, which is 100% */
+/* Code Chunks should be have no background, as text is auto-colored */
 .r {
   background-color: white !important;
+}
+
+/* Code Output should be PMA pink, alpha 80%*/
+pre {
+  background-color: #98579B20;
+  border-radius: 1em;
+  padding: 1em;
+  margin: 0em;
 }
 
 /* Asides should be 20% page-width, floated right*/
@@ -74,3 +82,4 @@ table {
 thead, tfoot, tr:nth-child(even) {
   background: none; 
 }
+
