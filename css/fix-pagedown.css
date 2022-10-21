@@ -1,0 +1,52 @@
+/* Pagedown overrides */
+:root {
+  --pagedjs-width: 8.5in;
+  --pagedjs-height: 11in;
+}
+
+@page chapter:left {
+  @top-left {content: none !important;}
+  @top-right {content: none !important;}
+  @bottom-left {content: none !important;}
+}
+
+@page chapter:right {
+  @top-left {content: none !important;}
+  @top-right {content: none !important;}
+  @bottom-left {content: none !important;}
+}
+
+@page frontmatter:first {
+  @top-left {content: none;}
+  @top-right {content: none;}
+  @top-left {content: none;}
+  @top-right {content: none;}
+  @bottom-right {content: none;}
+  @bottom-left {content: none;}
+  @bottom-right-corner {content: none;}
+}
+
+@media screen {
+  body {
+    background-color: var(--background);
+    margin: var(--screen-pages-spacing) auto 0 auto;
+  }
+  .pagedjs_pages {
+    display: flex;
+    max-width: calc(var(--pagedjs-width));
+    flex: 0;
+    flex-wrap: wrap;
+    margin: 0 auto;
+  }
+  .pagedjs_page {
+    background-color: var(--color-paper);
+    box-shadow: 0 0 0 1px var(--color-mbox);
+    flex-shrink: 0;
+    flex-grow: 0;
+    margin: auto auto var(--screen-pages-spacing) auto;
+  }
+}
+
+a[href^="http"]:not([class="uri"])::after {
+  content: none;
+}
