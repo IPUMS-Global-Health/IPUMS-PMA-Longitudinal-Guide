@@ -371,7 +371,7 @@ There are two reasons why a woman's calendar might be unavailable.
 First, these women might be **NIU (not in universe)**, as described on the IPUMS PMA [universe tab](https://pma.ipums.org/pma-action/variables/CALENDARKE#universe_section) for each country's contraceptive calendar. Generally, NIU cases are women who reported no qualifying event during the calendar period: a blank string could indicate that she was never pregnant and never adopted or discontinued a family planning method in any month during that period. 
 
 ```{r, echo = FALSE}
-knitr::include_graphics("images/universe.png")
+knitr::include_graphics("images/universe2.png")
 ```
 
 <aside>

@@ -1,0 +1,59 @@
+@import url('https://assets.ipums.org/_css/font-faces.css');
+
+/* Main text body */
+body {
+  font-family: cabrito_sans_norm_regular;
+  font-weight: 300;
+  font-size: 12pt;
+  line-height: 1.25;
+  color: #444;
+}
+
+/* We use a separate bold font */
+b, strong {
+  font-family: "cabrito_sans_cond_demi";
+  font-weight: 100;
+}
+
+/* Links */
+a {color: #98579B !important;}
+
+/* Code (inline and chunked) */
+code {
+  font-family: Menlo !important;
+  font-size: 0.9em;
+}
+
+/* Headings */
+h1 {
+  font-family: cabrito_sans_norm_regular;
+  font-size: 1.5em;
+  text-transform: uppercase;
+  color: #00263A !important;
+}
+
+h2, h3 {
+  font-family: cabrito_sans_cond_demi;
+  color: #00263A !important;
+}
+
+h2 {
+  text-transform: uppercase;
+  font-size: 1.2em;
+}
+
+h3 {
+  font-size: 1em;
+}
+
+/* Asides */
+aside {
+  color: rgba(0, 0, 0, 0.6) !important;
+  font-size: 0.75em !important;
+  line-height: 1.2em;
+}
+
+.footnote {
+  font-size: 0.75em !important;
+  color: rgba(0, 0, 0, 0.6) !important;
+}

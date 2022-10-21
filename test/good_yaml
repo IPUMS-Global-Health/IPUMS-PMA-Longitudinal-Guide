@@ -1,0 +1,11 @@
+cap-location: margin
+css:  [css/layout.css, css/fix-pagedown.css, css/fonts.css]
+output:
+  pagedown::html_paged: 
+    toc: true
+    self_contained: false
+toc-title: Contents
+paged-footnotes: true
+lot: false
+lof: false
+toc: true 

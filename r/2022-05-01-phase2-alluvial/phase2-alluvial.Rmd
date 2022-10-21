@@ -21,7 +21,7 @@ output:
     toc: true
     toc_depth: 3
     toc_float: true
-preview: images/long.png
+preview: images/long2.png
 ---
 
 ```{r setup, echo=FALSE}

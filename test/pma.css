@@ -1,0 +1,183 @@
+/* Customize some of the sizing variables */
+:root {
+  --pagedjs-width: 8.5in;
+  --pagedjs-height: 11in;
+}
+
+.footnote {
+  font-size: 10pt !important;
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.frontmatter {
+  break-after: never;
+}
+
+.toc {
+  break-before: never;
+  break-after: never;
+}
+
+.level1 {
+  break-before: page;
+  page: chapter;
+}
+
+
+p {
+  width: 80%;
+}
+
+aside {
+  float: right;
+  display: block;
+  width: 20%;
+  left: 6.75in;
+  color: rgba(0, 0, 0, 0.6) !important;
+  font-size: 8pt !important;
+  padding-left: 0.1in;
+  line-height: 1.2em;
+}
+
+@page chapter {
+  @bottom-right {
+    content: counter(page); 
+    text-align: right; 
+    align-items: flex-start;
+    color: rgba(0, 0, 0, 0.6) !important;
+    font-size: 10pt;
+  }
+}
+
+/* Page Layout for PDF */
+@page {
+  margin-top: 0.5in;
+  margin-bottom: 0.5in;
+  margin-left: 0.5in;
+  margin-right: 0.5in;
+  size: letter;
+}
+
+@page chapter:left {
+  @top-left {content: none !important;}
+  @top-right {content: none !important;}
+  @bottom-left {content: none !important;}
+}
+
+@page chapter:right {
+  @top-left {content: none !important;}
+  @top-right {content: none !important;}
+  @bottom-left {content: none !important;}
+}
+
+@page frontmatter:first {
+  @top-left {content: none;}
+  @top-right {content: none;}
+  @top-left {content: none;}
+  @top-right {content: none;}
+  @bottom-right {content: none;}
+  @bottom-left {content: none;}
+  @bottom-right-corner {content: none;}
+}
+
+
+/* two pages in a row if possible on screen */
+@media screen {
+  body {
+    background-color: var(--background);
+    margin: var(--screen-pages-spacing) auto 0 auto;
+  }
+  .pagedjs_pages {
+    display: flex;
+    max-width: calc(var(--pagedjs-width));
+    flex: 0;
+    flex-wrap: wrap;
+    margin: 0 auto;
+  }
+  .pagedjs_page {
+    background-color: var(--color-paper);
+    box-shadow: 0 0 0 1px var(--color-mbox);
+    flex-shrink: 0;
+    flex-grow: 0;
+    margin: auto auto var(--screen-pages-spacing) auto;
+  }
+}
+
+
+
+
+/* Fonts */
+
+@import url('https://assets.ipums.org/_css/font-faces.css');
+
+/* Main text body */
+
+body {
+  font-family: cabrito_sans_norm_regular;
+  font-weight: 300;
+  font-size: 12pt;
+  line-height: 1.2;
+  color: #444;
+}
+
+/* Bold font */
+
+b, strong {
+  font-family: "cabrito_sans_cond_demi";
+  font-weight: 100;
+}
+
+/* Headings */
+
+h1 {
+  font-family: cabrito_sans_norm_regular;
+  font-size: 24pt;
+  text-transform: uppercase;
+  color: #00263A !important;
+}
+
+h2, h3 {
+  font-family: cabrito_sans_cond_demi;
+  color: #00263A !important;
+}
+
+h2 {
+  text-transform: uppercase;
+  font-size: 18pt;
+}
+
+h3 {
+  font-size: 14pt;
+}
+
+
+/* Links */
+
+a {
+  color: #98579B !important;
+}
+
+a[href^="http"]:not([class="uri"])::after {
+  content: none;
+}
+
+/* Code (inline and chunked) */
+code {
+  font-family: Menlo !important;
+  font-size: 0.9em;
+}
+
+/* Code (inline and chunked) */
+
+pre {
+  border: 0px;
+  break-inside: avoid;
+  break-after: never;
+}
+
+.r {
+  background-color: white !important;
+  width: 80%;
+}
+
+

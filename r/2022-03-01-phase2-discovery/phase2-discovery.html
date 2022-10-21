@@ -1515,7 +1515,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Family Planning Panel Data Now Available from IPUMS PMA","description":"This month's data release includes Phase 2 panel data from 6 samples, plus Phase 1 panel data from 3 new countries.","authors":[{"author":"Matt Gunther","authorURL":"#","affiliation":"IPUMS PMA Senior Data Analyst","affiliationURL":"#","orcidID":""},{"author":"Devon Kristiansen","authorURL":"https://www.linkedin.com/in/devonkristiansen","affiliation":"IPUMS PMA Project Manager","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-03-01T00:00:00.000-06:00","citationText":"Gunther & Kristiansen, 2022"}
+{"title":"Family Planning Panel Data Now Available from IPUMS PMA","description":"This month's data release includes Phase 2 panel data from 6 samples, plus Phase 1 panel data from 3 new countries.","authors":[{"author":"Matt Gunther","authorURL":"#","affiliation":"IPUMS PMA Senior Data Analyst","affiliationURL":"#","orcidID":""},{"author":"Devon Kristiansen","authorURL":"https://www.linkedin.com/in/devonkristiansen","affiliation":"IPUMS PMA Project Manager","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-03-01T00:00:00.000-05:00","citationText":"Gunther & Kristiansen, 2022"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -1993,17 +1993,17 @@ while <code>CP_2</code> comes from Phase 2.
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>dat</span> <span class='op'>%&gt;%</span> <span class='fu'>count</span><span class='op'>(</span><span class='va'>CP_1</span>, <span class='va'>CP_2</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>dat</span> <span class='op'><a href='http://gdfe.co/srvyr/reference/pipe.html'>%&gt;%</a></span> <span class='fu'>count</span><span class='op'>(</span><span class='va'>CP_1</span>, <span class='va'>CP_2</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code># A tibble: 5 × 3
-                                   CP_1      CP_2     n
-                              &lt;int+lbl&gt; &lt;int+lbl&gt; &lt;int&gt;
-1  0 [No]                                 0 [No]   2589
-2  0 [No]                                 1 [Yes]   821
-3  1 [Yes]                                0 [No]    556
-4  1 [Yes]                                1 [Yes]  1241
-5 99 [NIU (not in universe) or missing]   0 [No]      5</code></pre>
+  CP_1                                  CP_2          n
+  &lt;int+lbl&gt;                             &lt;int+lbl&gt; &lt;int&gt;
+1  0 [No]                               0 [No]     2589
+2  0 [No]                               1 [Yes]     821
+3  1 [Yes]                              0 [No]      556
+4  1 [Yes]                              1 [Yes]    1241
+5 99 [NIU (not in universe) or missing] 0 [No]        5</code></pre>
 </div>
 <p>The <code>srvyr</code> package provides two functions we’ll need to
 obtain our population estimate. The first, <a
@@ -2152,8 +2152,8 @@ href="https://pma.ipums.org/pma-action/variables/COUNTRY#codes_section">COUNTRY<
 </code></pre>
 </div>
 <pre><code># A tibble: 27 × 3
-                          COUNTRY                          STRATA_1     n
-                        &lt;int+lbl&gt;                         &lt;int+lbl&gt; &lt;int&gt;
+   COUNTRY                        STRATA_1                              n
+   &lt;int+lbl&gt;                      &lt;int+lbl&gt;                         &lt;int&gt;
  1 1 [Burkina Faso]               85401 [Urban, Burkina Faso]        3058
  2 1 [Burkina Faso]               85402 [Rural, Burkina Faso]        2154
  3 2 [Congo, Democratic Republic]    NA                              3487
@@ -2214,8 +2214,8 @@ href="https://pma.ipums.org/pma-action/variables/GEOCD#codes_section">GEOCD</a>:
 </code></pre>
 </div>
 <pre><code># A tibble: 3 × 2
-               GEOCD     n
-           &lt;int+lbl&gt; &lt;int&gt;
+  GEOCD                  n
+  &lt;int+lbl&gt;          &lt;int&gt;
 1  1 [Kinshasa]       1973
 2  2 [Kongo Central]  1514
 3 NA                 14238</code></pre>
@@ -2242,8 +2242,8 @@ our new variable <code>STRATA_RECODE</code>.</p>
 </code></pre>
 </div>
 <pre><code># A tibble: 28 × 4
-                GEOCD                          STRATA_1 STRATA_RECODE     n
-            &lt;int+lbl&gt;                         &lt;int+lbl&gt;         &lt;dbl&gt; &lt;int&gt;
+   GEOCD              STRATA_1                          STRATA_RECODE     n
+   &lt;int+lbl&gt;          &lt;int+lbl&gt;                                 &lt;dbl&gt; &lt;int&gt;
  1  1 [Kinshasa]         NA                                         1  1973
  2  2 [Kongo Central]    NA                                         2  1514
  3 NA                 40410 [Bungoma - urban, Kenya]            40410   153
@@ -2296,8 +2296,8 @@ sub-nationally representative sample.</p>
 </div>
 <pre><code># A tibble: 6 × 6
 # Groups:   COUNTRY, GEOCD [5]
-                         COUNTRY              GEOCD      GEONG   coef `_low` `_upp`
-                       &lt;int+lbl&gt;          &lt;int+lbl&gt;  &lt;int+lbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+  COUNTRY                        GEOCD              GEONG        coef `_low` `_upp`
+  &lt;int+lbl&gt;                      &lt;int+lbl&gt;          &lt;int+lbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
 1 1 [Burkina Faso]               NA                 NA         0.188  0.164  0.214 
 2 2 [Congo, Democratic Republic]  1 [Kinshasa]      NA         0.320  0.288  0.353 
 3 2 [Congo, Democratic Republic]  2 [Kongo Central] NA         0.268  0.215  0.329 
@@ -2355,8 +2355,8 @@ Household Questionnaire for each phase reported in
 </code></pre>
 </div>
 <pre><code># A tibble: 3 × 2
-                                         RESIDENT_1     n
-                                          &lt;int+lbl&gt; &lt;int&gt;
+  RESIDENT_1                                            n
+  &lt;int+lbl&gt;                                         &lt;int&gt;
 1 11 [Visitor, slept in hh last night]                106
 2 21 [Usual member, did not sleep in hh last night]   174
 3 22 [Usual member, slept in hh last night]          6510</code></pre>
@@ -2365,8 +2365,8 @@ Household Questionnaire for each phase reported in
 </code></pre>
 </div>
 <pre><code># A tibble: 5 × 2
-                                                       RESIDENT_2     n
-                                                        &lt;int+lbl&gt; &lt;int&gt;
+  RESIDENT_2                                                          n
+  &lt;int+lbl&gt;                                                       &lt;int&gt;
 1 11 [Visitor, slept in hh last night]                               74
 2 21 [Usual member, did not sleep in hh last night]                 230
 3 22 [Usual member, slept in hh last night]                        5993
@@ -2392,8 +2392,8 @@ We’ll use <code>filter</code> to include only those cases.</p>
 </code></pre>
 </div>
 <pre><code># A tibble: 4 × 3
-                                 RESIDENT_1                                RESIDENT_2     n
-                                  &lt;int+lbl&gt;                                 &lt;int+lbl&gt; &lt;int&gt;
+  RESIDENT_1                                RESIDENT_2                                    n
+  &lt;int+lbl&gt;                                 &lt;int+lbl&gt;                                 &lt;int&gt;
 1 11 [Visitor, slept in hh last night]      11 [Visitor, slept in hh last night]         56
 2 11 [Visitor, slept in hh last night]      22 [Usual member, slept in hh last night]    39
 3 22 [Usual member, slept in hh last night] 11 [Visitor, slept in hh last night]         17
@@ -2426,8 +2426,8 @@ which represents a 4-digit year for the Female Interview).</p>
 </code></pre>
 </div>
 <pre><code># A tibble: 11 × 2
-                                       RESULTFQ_2     n
-                                        &lt;int+lbl&gt; &lt;int&gt;
+   RESULTFQ_2                                         n
+   &lt;int+lbl&gt;                                      &lt;int&gt;
  1  1 [Completed]                                  5491
  2  2 [Not at home]                                  78
  3  3 [Postponed]                                    22
@@ -2463,8 +2463,8 @@ that a Female Respondent from Phase 1 was not found in Phase 2.</p>
 </code></pre>
 </div>
 <pre><code># A tibble: 2 × 3
-            RESULTFQ_1    RESULTFQ_2     n
-             &lt;int+lbl&gt;     &lt;int+lbl&gt; &lt;int&gt;
+  RESULTFQ_1           RESULTFQ_2        n
+  &lt;int+lbl&gt;            &lt;int+lbl&gt;     &lt;int&gt;
 1 1 [Completed]        1 [Completed]  5487
 2 5 [Partly completed] 1 [Completed]     4</code></pre>
 </div>

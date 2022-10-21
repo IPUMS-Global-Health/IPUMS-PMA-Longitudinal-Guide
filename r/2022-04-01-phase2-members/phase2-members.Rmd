@@ -327,7 +327,7 @@ consort(hh_plot)
 To get started, we'll need to request a **wide** longitudinal extract from the [IPUMS PMA data website](https://pma.ipums.org/pma/). As shown above, we'll select all 6 of the available samples, and choose "All Cases (Respondents and Non-respondents to Household and Female Questionnaires)". Notice that *both phases* are included with each sample when you request a longitudinal extract.
 
 ```{r, echo=FALSE, layout="l-body"}
-knitr::include_graphics("images/select-samples.png")
+knitr::include_graphics("images/select-samples2.png")
 ```
 
 Variables describing sample composition are located under the "Technical" topics heading. Our extract will contain all of the variables in the "Technical Variables" and "Longitudinal Panel" subheadings shown:

@@ -28,7 +28,7 @@ preview: ../../images/new_data.png
 
 ```{r setup, echo=FALSE, results='hide'}
 source(here::here("r/utilities.r"))
-set_postpath("2022-03-01-phase2-discovery")
+# set_postpath("2022-03-01-phase2-discovery")
 
 widef <- read_ipums_micro(
   ddi = "data/pma_00079.xml",
@@ -396,7 +396,7 @@ dat_2 %>% count(RESIDENT_1, RESIDENT_2)
 Additionally, these reports only include women who completed (or partially completed) both Female Questionnaires. This information is reported in `r varlink(RESULTFQ)`. In our "wide" extract, this information appears in `RESULTFQ_1` and `RESULTFQ_2`: if you select the "Female Respondents" option at checkout, only women who completed (or partially completed) the Phase 1 Female Questionnaire will be included in your extract. 
 
 ```{r, echo = FALSE}
-knitr::include_graphics("images/cases.png")
+knitr::include_graphics("images/cases1.png")
 ```
 
 We'll further restrict our sample by selecting only cases where `RESULTFQ_2` shows that the woman also completed the Phase 2 questionnaire. Notice that, in addition to each of the value 1 through 10, there are several **non-response codes** numbered 90 through 99. You'll see similar values repeated across all IPUMS PMA variables, except that they will be left-padded to match the maximum width of a particular variable (e.g. `9999` is used for `r varlink(INTFQYEAR)`, which represents a 4-digit year for the Female Interview). 

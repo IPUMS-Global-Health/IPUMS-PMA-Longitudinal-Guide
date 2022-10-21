@@ -1,0 +1,60 @@
+/* 8.5x11 page with 1 margins */
+@page {
+  margin-top: 1in;
+  margin-bottom: 1in;
+  margin-left: 1in;
+  margin-right: 1in;
+  size: letter;
+}
+
+/* Page numbers at bottom-right */
+@page chapter {
+  @bottom-right {
+    content: counter(page); 
+    text-align: right; 
+    align-items: flex-start;
+    color: rgba(0, 0, 0, 0.6) !important;
+    font-size: 0.8em;
+  }
+}
+
+/* Pagebreak for each H1 */
+.level1 {
+  break-before: page;
+  page: chapter;
+}
+
+.level2 {
+  break-before: page;
+}
+
+/* Paragraph text should be 80% page-width (leaving 20% space for Asides) */
+.main {
+  width: 100%;
+}
+
+/* Code Chunks should be 80% page-width (leaving 20% space for Asides) */
+/* Note: this should not impact Code Output, which is 100% */
+.r {
+  background-color: white !important;
+}
+
+/* Asides should be 20% page-width, floated right*/
+aside {
+  float: right;
+  display: block;
+  width: 20%;
+  left: 6.75in;
+  padding-left: 0.1in;
+}
+
+/* No page breaks within Code Chunks or Code Output */
+pre {
+  border: 0px;
+  break-inside: avoid;
+  break-after: never;
+}
+
+
+
+

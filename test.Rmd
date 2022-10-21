@@ -1,0 +1,72 @@
+---
+cap-location: margin
+css:  [css/layout.css, css/fix-pagedown.css, css/fonts.css]
+output:
+  pagedown::html_paged: 
+    toc: true
+    self_contained: false
+toc-title: Contents
+paged-footnotes: true
+lot: false
+lof: false
+toc: true 
+---
+
+# H1 Section
+
+This month, IPUMS is excited to announce the release of **harmonized panel data** focused on the reproductive and sexual health of women surveyed by our partners at [Performance Monitoring for Action](https://www.pmadata.org/) (PMA). Participating women will be interviewed up to three times over three years, so we've made big changes to our [data extract system](https://pma.ipums.org/) making it easy to compare an individual's responses across multiple rounds of data collection. Cross-sectional samples of women, households, and service delivery points remain available as before, but we've also streamlined navigation for users interested in longitudinal analysis with these new panel surveys. 
+
+<aside>
+Here's an aside that probably runs on for multiple lines because I want to test the text wrapping capability of my `div` conttainer.
+</aside>
+
+```{r}
+library(palmerpenguins)
+library(tidyverse)
+knitr::opts_chunk$set(R.options = list(width = 60))
+```
+
+```{r}
+penguins
+```
+
+## H2 section 
+
+Here on the IPUMS PMA blog, today marks the beginning of a [new series](../../index.html#category:Panel_Data) in which we'll be using R to: 
+
+  * import and explore the structure of IPUMS PMA panel data
+  * understand key sample design and follow-up issues 
+  * build indicators measuring change in contraceptive use status and family planning outcomes
+  * analyze monthly recall data from the included [contraceptive calendar](../../index.html#category:Contraceptive_Calendar) 
+  
+### H3 section 
+
+Additionally, we're also developing a second **online course** for newcomers to longitudinal analysis that will complement our existing [Introduction to IPUMS PMA Data Analysis](../../introduction.html). Later this year, we also plan to release a PDF **longitudinal handbook** adapted from this blog that will include examples in **both R and Stata**. Stay tuned for further announcements here and [on Twitter](https://twitter.com/ipumsGH) in the coming weeks.
+
+<aside>
+PMA has also published a **cross-sectional handbook** in both [English](https://www.pmadata.org/media/1243/download?attachment) and [French](https://www.pmadata.org/media/1244/download?attachment).
+</aside>
+
+# H1 Again 
+
+Dating back to 2013, the original PMA survey design included high-frequency, **cross-sectional** samples of women and service delivery points collected from eleven countries participating in [Family Planning 2020](http://progress.familyplanning2020.org/) (FP2020) - a global partnership that supports the rights of women and girls to decide for themselves whether, when, and how many children they want to have. These surveys were designed to monitor annual progress towards [FP2020 goals](http://progress.familyplanning2020.org/measurement) via population-level estimates for several [core indicators](http://www.track20.org/pages/data_analysis/core_indicators/overview.php). 
+
+Beginning in 2019, PMA surveys were redesigned under a renewed partnership called [Family Planning 2030](https://fp2030.org/) (FP2030). These new surveys have been refocused on reproductive and sexual health indicators, and they feature a **longitudinal panel** of women of childbearing age. This design will allow researchers to measure contraceptive dynamics and changes in women’s fertility intentions over a **three year period** via annual in-person interviews.^[In addition to these three in-person surveys, PMA also conducted telephone interviews with panel members focused on emerging issues related to the COVID-19 pandemic in 2020. These telephone surveys are already available for several countries - see our series on [PMA COVID-19 surveys](../../index.html#category:COVID-19) for details.] 
+
+## H2 Again 
+
+Questions on the redesigned survey cover topics like:
+
+  * awareness, perception, knowledge, and use of contraceptive methods
+  * perceived quality and side effects of contraceptive methods among current users
+  * birth history and fertility intentions 
+  * aspects of health service provision 
+  * domains of empowerment 
+  
+  --- 
+  
+Does this Quarto-style page break do anything? No.
+  
+\newpage
+
+What about this? Yes!
