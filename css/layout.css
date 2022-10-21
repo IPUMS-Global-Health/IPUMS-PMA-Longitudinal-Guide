@@ -24,7 +24,7 @@
   page: chapter;
 }
 
-.level2 {
+ .level2 {
   break-before: page;
 }
 
@@ -49,6 +49,7 @@ aside {
     padding: 1em;
     margin-left: 1em;
     background-color: cornsilk;
+    border-radius: 1em;
 }
 
 /* Do NOT start paragraphs with top-margin within asides*/
