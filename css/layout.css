@@ -40,12 +40,20 @@
 }
 
 /* Asides should be 20% page-width, floated right*/
+/* Background color: cornsilk*/
 aside {
-  float: right;
-  display: block;
-  width: 20%;
-  left: 6.75in;
-  padding-left: 0.1in;
+    float: right;
+    display: block;
+    width: 20%;
+    left: 6.75in;
+    padding: 1em;
+    margin-left: 1em;
+    background-color: cornsilk;
+}
+
+/* Do NOT start paragraphs with top-margin within asides*/
+aside p {
+  margin-block-start: 0em;
 }
 
 /* No page breaks within Code Chunks or Code Output */
@@ -55,6 +63,13 @@ pre {
   break-after: never;
 }
 
+/* No border lines around tables */
+table {
+  border-top:none;
+  border-bottom: none;
+}
 
-
-
+/* No shade for alternating table rows */
+thead, tfoot, tr:nth-child(even) {
+  background: none; 
+}
