@@ -14,6 +14,14 @@ if(!suppressWarnings(suppressMessages(require(ipumsr)))){
   ))
 }
 
+# try srvyr ----
+if(!suppressWarnings(suppressMessages(require(srvyr)))){
+  rlang::abort(c(
+    "srvyr is not installed",
+    "i" = "Install ipumsr with `install.packages('srvyr')`"
+  ))
+}
+
 # try htmltools ----
 if(!suppressWarnings(suppressMessages(require(htmltools)))){
   rlang::abort(c(

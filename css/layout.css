@@ -29,6 +29,11 @@
   break-before: page;
 }
 
+/* Pagebreak for each H3 */
+ .level3 {
+  break-before: page;
+}
+
 /* Paragraph text should be 100% with floating asides */
 .main {
   width: 100%;
@@ -45,6 +50,10 @@ pre {
   border-radius: 1em;
   padding: 1em;
   margin: 0em;
+}
+
+pre.sourceCode {
+  padding-top: 0em !important;
 }
 
 /* No margin between Source and Console Output */
