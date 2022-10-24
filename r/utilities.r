@@ -68,11 +68,11 @@ if(!suppressWarnings(suppressMessages(require(showtext)))){
 varlink <- function(varname, tab = codes){
   tab_section <- paste0(substitute(varname), "#", substitute(tab), "_section")
   url <- file.path("https://pma.ipums.org/pma-action/variables", tab_section)
-  if(exists("url.exists")){
-    if(!url.exists(url)){
-      rlang::abort(c("x" = paste(url, "does not exist")))
-    }
-  }
+  # if(exists("url.exists")){
+  #   if(!url.exists(url)){
+  #     rlang::abort(c("x" = paste(url, "does not exist")))
+  #   }
+  # }
   paste0("[", substitute(varname), "]", "(", url, ")")
 }
 
@@ -153,10 +153,16 @@ hex <- function(pkg){
     inventory <- inventory %>% filter(package == pkg)
     htmltools::div(
       htmltools::a(
+        style = "text-decoration: none;",
         href = inventory$url,
-        htmltools::img(src = file.path("../../images/hex", paste0(pkg, ".png")))
+        htmltools::img(
+          src = here::here("images/hex", paste0(pkg, ".png"))
+        )
       ),
-      paste("©", inventory$owner, paste0("(", inventory$license, ")"))
+      htmltools::br(),
+      paste("©", inventory$owner),
+      htmltools::br(), 
+      paste0("(", inventory$license, ")")
     )
   } else {
     rlang::abort(c(
