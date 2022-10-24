@@ -25,549 +25,408 @@ knitr::opts_chunk$set(
 source(here::here("r/utilities.r"))
 ```
 
-# Introduction
+# Longitudinal Data Extracts
 
 ```{r, echo=FALSE, results='hide'}
-knitr::opts_chunk$set(echo = FALSE)
-source(here::here("r/utilities.r"))
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, out.width = "85%")
+```
 
+This chapter provides a guided tour of the [IPUMS PMA data extract system](https://pma.ipums.org/pma/). While you may also access the original data directly from our partners at [PMA](https://www.pmadata.org/), harmonized data from IPUMS have a few additional features. For instance, you can request an extract that: 
 
-widef <- read_ipums_micro(
-  ddi = "data/pma_00079.xml",
-  data = "data/pma_00079.dat.gz"
+<aside>
+[Register here](https://pma.ipums.org/pma/register.shtml) to access IPUMS PMA data **at no cost.** See our [user guide](https://pma.ipums.org/pma/userguide.shtml) for details.
+</aside>
+
+  - includes samples from multiple countries  
+  - includes samples from multiple rounds of data collection 
+  - are formatted in either **long** or **wide** format 
+
+IPUMS PMA also makes it easy to switch between multiple [units of analysis](https://pma.ipums.org/pma-action/variables/group) covered in PMA surveys. In addition to the data featured in this guide, you'll find surveys representing: 
+
+<aside>
+A video tour of the longitudinal extract system is available [here](https://www.youtube.com/embed/VwjYHDvpHk0) on the IPUMS PMA Youtube channel. 
+</aside> 
+
+  - [Service Delivery Points (SDPs)](https://tech.popdata.org/pma-data-hub/#category:Service_Delivery_Points)
+  - [Client Exit Interviews conducted at SDPs](https://tech.popdata.org/pma-data-hub/#category:Client_Exit_Interviews)
+  - Participants in special surveys covering topics like [COVID-19](https://tech.popdata.org/pma-data-hub/#category:COVID-19), [nutrition](https://tech.popdata.org/pma-data-hub/#category:Nutrition), and maternal & newborn health 
+  
+To get started with a longitudinal data extract, you'll need to select the **Family Planning** topic under the **Person** unit of analysis. 
+
+```{r, out.width="85%"}
+knitr::include_graphics("images/unit.png")
+```
+
+## Sample Selection
+
+Once you've selected the **Family Planning** option, you'll next need to choose between cross-sectional or longitudinal samples. Cross-sectional samples are selected by default; these are nationally or sub-nationally representative samples collected each year dating backward as far as 2013.
+
+```{r}
+knitr::include_graphics("images/cross-sectional.png")
+```
+
+<aside>
+Annual cross-sectional samples are also available for each of the countries participating in the new PMA panel study. See our [last post](../2022-03-01-phase2-discovery/) for details.
+</aside>
+
+Longitudinal samples are only available from 2019 onward, and they include all of the available phases for each sampled country (sub-nationally representative samples for DRC and Nigeria are listed separately). You'll only find longitudinal samples for countries where Phase 2 data has been made available; Phase 1 data for Cote d'Ivoire, India, and Uganda can currently be found under the Cross-sectional sample menu (Phase 2 data will be released soon!). 
+
+\newpage 
+
+Clicking the Longitudinal button reveals options for either **long** or **wide** format. You'll find the same samples available in either case.
+
+**Important:** if you decide to change formats after selecting variables, your Data Cart will be emptied and you'll need to begin again from scratch.
+
+```{r}
+knitr::include_graphics("images/wide.png")
+```
+
+\newpage 
+
+After you've selected one of the available longitudinal formats, choose one or more samples listed below. There are also several Sample Members options listed.
+
+```{r}
+knitr::include_graphics("images/cases.png")
+```
+
+<aside>
+`r varlink(PANELWOMAN)` indicates whether an individual is a member of the panel study. 
+
+`r varlink(RESULTFQ)` indicates whether an individual completed the Female Questionnaire. 
+</aside>
+
+**Female Respondents** only includes women who completed *all or part* of a Female Questionnaire. **This option selects all members of the panel study.** In addition, it includes women who only participated in only one phase - we will demonstrate how to identify and drop these cases below.^[Women who completed all or part of the Female Questionnaire in *more than one phase* of the study are considered **panel members**. Women who completed it only at Phase 1 are included in a longitudinal extract, but they are not **panel members**. Likewise, women who completed it for the first time at Phase 2 are included, but are not **panel members** if they 1) will reach age 50 before Phase 3, or 2) declined the invitation to participate again in Phase 3.]  
+
+**Female Respondents and Female Non-respondents** includes all women who were eligible to participate in a Female Questionnaire. Eligible women are those age 15-49 who were listed on the roster collected in a Household Questionnaire. If an eligible woman declined the Female Questionnaire or was not available, variables associated with that questionnaire will be coded "Not interviewed (female questionnaire)".
+
+\newpage 
+
+<aside>
+`r varlink(ELIGIBLE)` indicates whether an individual was eligible for the female questionnaire.
+
+`r varlink(RESULTHQ)` indicates whether a member of the individual's household completed the Household Questionnaire. 
+</aside>
+
+**Female Respondents and Household Members** adds records for all other members of a Female Respondent's household. These household members did not complete the Female Questionnaire, but were listed on the household roster provided by the respondent to a Household Questionnaire. Basic [demographic](https://internal.pma.ipums.org/pma-action/variables/group?id=hh_roster) variables are available for each household member, as are common [wealth](https://internal.pma.ipums.org/pma-action/variables/group?id=hh_wealth), [water](https://internal.pma.ipums.org/pma-action/variables/group?id=water_watersource), [sanitation](https://internal.pma.ipums.org/pma-action/variables/group?id=water_wash), and other variables shared for all members of the same household.  
+
+**All Cases** includes all members listed on the household roster from a Household Questionnaire. If the Household Questionnaire was declined or if no respondent was available, any panel member appearing in other phases of the study will be coded "Not interviewed (household questionnaire)" for variables associated with the missing Household Questionnaire. 
+
+After you've selected samples and sample members for your extract, click the "Submit Sample Selections" button to return to the main data browsing menu.
+
+## Variable Selection
+
+You can browse IPUMS PMA variables by topic or alphabetically by name, or you can [search](https://pma.ipums.org/pma-action/variables/search) for a particular term in a variable name, label, value labels, or description. 
+
+```{r}
+knitr::include_graphics("images/topics.png")
+```
+
+\newpage 
+
+In this example, we'll select the [Discontinuation of Family Planning](https://pma.ipums.org/pma-action/variables/group?id=fem_fpst) topic. The availability of each associated variable is shown in a table containing all of the samples we've selected. 
+
+  * `X` indicates that the variable is available for *all phases*
+  * `/` indicates that the variable is available for *one phase*
+  * `-` indicates that the variable is not available for *any phase*
+  
+You can click the `+` button to add a variable to your cart, or click a variable name to learn more.
+  
+```{r}
+knitr::include_graphics("images/table.png")
+```
+
+### Codes 
+
+<aside>
+"Case-count view" is not available for longitudinal samples, where each sample includes data from multiple phases. For cross-sectional samples, this option shows the frequency of each response.
+</aside>
+
+Let's take a look at the variable `r varlink(PREGNANT)`. You'll find the variable name and label shown at the top of the page. Below, you'll see several tabs beginning with the [CODES](https://pma.ipums.org/pma-action/variables/PREGNANT#codes_section) tab. For discrete variables, this tab shows all of the available codes and value labels associated with each response. You'll also see the same `X`, `/`, and `-` symbols in a table indicating the availability of each response in each sample.
+
+```{r}
+knitr::include_graphics("images/codes-fr.png")
+```
+
+\newpage
+
+Above, there are no responses for "Not interviewed (female questionnaire)" and "Not interviewed (household questionnaire)"; this is because only samples members included in a "Female Respondents" extract are displayed by default. If we instead choose "All Cases", this variable will include those response options because we'll include every person listed on the household roster (even if the Household or Female Questionnaire was not completed). 
+
+```{r}
+knitr::include_graphics("images/codes-all.png")
+```
+
+\newpage
+
+The symbol `/` again indicates that a particular response is available for some - but not all - phases of the study. For `PREGNANCY` it indicates that one of the options was either unavailable or was not selected by any sample respondents in a particular phase. If a variable was not included in all phases of the study, all response options will be marked with this symbol. For example, consider the variable `r varlink(COVIDCONCERN)`, indicating the respondent's level of concern about becoming infected with COVID-19.  
+
+```{r}
+knitr::include_graphics("images/covidconcern.png")
+```
+
+Because Phase 1 questionnaires were administered prior to the emergence of COVID-19, this variable only appeared on Phase 2 questionnaires. The symbol `/` indicates limited availability across phases. 
+
+### Variable Description
+
+You'll find a detailed description for each variable on the [DESCRIPTION](https://pma.ipums.org/pma-action/variables/PREGNANT#description_section) tab. This tab also indicates whether a particular question appeared on the Household or Female Questionnaire.
+
+```{r}
+knitr::include_graphics("images/desc.png")
+```
+
+### Comparability Notes
+
+The [COMPARABILITY](https://pma.ipums.org/pma-action/variables/PREGNANT#comparability_section) tab describes important differences between samples. Additionally, it may contain information about similar variables appearing in [DHS](https://dhsprogram.com/) samples provided by [IPUMS DHS](https://www.idhsdata.org/idhs/). 
+
+```{r}
+knitr::include_graphics("images/comp.png")
+```
+
+### Sample Universe
+
+The [UNIVERSE](https://pma.ipums.org/pma-action/variables/PREGNANT#universe_section) tab describes selection criteria for this question. In this case, there are some differences between samples: 
+
+  * In DRC samples, all women aged 15-49 received this question.
+  * For all other samples, the question was skipped if any such woman previously indicated that she was menopausal or had a hysterectomy.
+  
+```{r}
+knitr::include_graphics("images/universe.png")
+```
+
+### Availability Across Samples
+
+The [AVAILABILITY](https://pma.ipums.org/pma-action/variables/PREGNANT#availability_section) tab shows all other samples (including cross-sectional samples) where this variable is available. 
+
+```{r}
+knitr::include_graphics("images/avail.png")
+```
+
+### Questionnaire Text 
+
+Finally, you'll find the full text of each question on the [QUESTIONNAIRE TEXT](https://pma.ipums.org/pma-action/variables/PREGNANT#questionnaire_text_section) tab. Each phase of the survey is shown separately, and you may click the "view entire document: text" link to view the complete questionnaire for a particular sample in any given phase. 
+
+```{r}
+knitr::include_graphics("images/question.png")
+```
+
+### Checkout 
+
+Use the buttons at the top of this page to add the variable to your Data Cart, or to "VIEW CART" and begin checkout. 
+
+```{r, fig.align='center'}
+# knitr::include_graphics("images/buttons.png")
+htmltools::img(
+  src = "images/buttons.png",
+  style = 
+    "margin-top: 20px; margin-bottom: 25px; max-width: 100%; width: 1033px;"
 )
 ```
 
-[Performance Monitoring for Action (PMA)](https://www.pmadata.org/) uses innovative mobile technology to support low-cost, rapid-turnaround surveys that monitor key health and development indicators.
+## Data for R Users
 
-PMA surveys collect longitudinal data throughout a country at the household and health facility levels by female data collectors, known as resident enumerators, using mobile phones. The survey collects information from the same women and households over time for regular tracking of progress and for understanding the drivers of contraceptive use dynamics. The data are rapidly validated, aggregated, and prepared into tables and graphs, making results quickly available to stakeholders. PMA surveys can be integrated into national monitoring and evaluation systems using a low-cost, rapid-turnaround survey platform that can be adapted and used for various health data needs.
+Your Data Cart shows all of the variables you've selected, plus several "preselected" variables that will be automatically included in your extract. Click the "CREATE DATA EXTRACT" button to prepare your download. 
 
-The PMA project is implemented by local partner universities and research organizations who train and deploy the cadres of female resident enumerators.
-
-<aside>
-PMA has also published a guide to **cross-sectional** analysis in both [English](https://www.pmadata.org/media/1243/download?attachment) and [French](https://www.pmadata.org/media/1244/download?attachment).
-</aside>
-
-The purpose of this manual is to provide guidance on the analysis of **harmonized longitudinal data** for a panel of women age 15-49 surveyed by PMA and published in partnership with [IPUMS PMA](https://pma.ipums.org/pma/). IPUMS provides census and survey products from around the world in an integrated format, making it easy to compare data from multiple countries. IPUMS PMA data are available free of charge, subject to terms and conditions: please [register here](https://pma.ipums.org/pma/register.shtml) to request access to the data featured in this guide. 
-
-This manual provides reproducible coding examples in the statistical programming language [R](https://www.r-project.org/). Each chapter also appears as a post on the IPUMS PMA [data analysis blog](https://tech.popdata.org/pma-data-hub/index.html), where you'll find new content posted every two weeks. 
-
-**Stata users:** a companion manual for IPUMS PMA longitudinal analysis is also available with coding examples written in Stata. 
-
-## IPUMS PMA data in R
-
-The first two chapters of this manual introduce new users to [PMA longitudinal data](https://www.pmadata.org/data/survey-methodology) and the [IPUMS PMA website](https://pma.ipums.org/pma/), respectively. After demonstrating how to obtain an IPUMS PMA data extract, the remaining chapters feature extensive data analysis examples written in R. 
-
-<aside class="hex">
 ```{r}
-hex("Rlogo")
-```
-</aside>
-
-To follow along, you'll need to download the appropriate version of R for your computer's operating system at [https://www.r-project.org/](https://www.r-project.org/). **R is available at no cost** and it runs on a wide variety of UNIX platforms, Windows, and MacOS. We also recommend downloading a free copy of [RStudio](https://www.rstudio.com/), an integrated development environment (IDE) designed to make your experience with R much easier. 
-
-Individual chapters may introduce one or two **R packages** that provide helpful functions for longitudinal survey analysis, in particular. Two packages we feature in *every* chapter are [ipumsr](https://tech.popdata.org/ipumsr/) and [tidyverse](https://tidyverse.tidyverse.org/). You can install these and other packages featured in this guide like so: 
-
-<aside class="hex">
-```{r} 
-hex("ipumsr")
-```
-</aside>
-
-```{r, echo=TRUE, eval= FALSE}
-install.packages("ipumsr")
-install.packages("tidyverse")
+knitr::include_graphics("images/cart.png")
 ```
 
-The `ipumsr` package is designed to help R users import and explore data extracts downloaded from IPUMS. As we'll see, categorical variables from IPUMS appear as **labelled integers** represented in R by a number and a label: 
+### Select a Fixed-width File
 
-```{r, echo = FALSE}
-widef %>% count(COUNTRY)
+Before you submit an extract request, you'll have the opportunity to choose a "Data Format". **R users should selected Fixed-width text (.dat)** - you'll notice that data formatted for Stata, SPSS, and SAS are also available. CSV files are provided, but not recommended. (If you wish to change Sample Members, you may do so again here.) 
+
+```{r}
+knitr::include_graphics("images/checkout1.png")
 ```
 
-The `tidyverse` is actually a collection of packages developed in-part by contributors at RStudio. These include: 
+Once the Fixed-width option is selected, you may add a description and then proceed to the download page.
 
-<aside class="hex">
-```{r} 
-hex("tidyverse")
-```
-</aside>
+### Download 
 
-  - [ggplot2](https://ggplot2.tidyverse.org/) for data visualisation
-  - [dplyr](https://dplyr.tidyverse.org/) for data manipulation
-  - [tidyr](https://tidyr.tidyverse.org/) for data tidying
-  - [readr](https://readr.tidyverse.org/) for data import
-  - [purrr](https://purrr.tidyverse.org/) for functional programming
-  - [tibble](https://tibble.tidyverse.org/) for tibbles, a modern re-imagining of data frames
-  - [stringr](https://github.com/tidyverse/stringr) for strings
-  - [forcats](https://github.com/tidyverse/forcats) for factors
+After a few moments, you'll receive an email indicating that your extract has been created. You'll need to obtain two files from the download page: 
 
-## Resources for R Users
-
-This manual focuses exclusively on longitudinal family planning data from IPUMS PMA, but the companion [data analysis blog](https://tech.popdata.org/pma-data-hub/) covers a wide range of topics like: 
-
-  - A free [online course](https://tech.popdata.org/pma-data-hub/introduction.html) for beginners 
-  - New data announcements 
-  - Data cleaning and reformatting 
-  - Data analysis and visualization
-  - Spatial analysis 
-  - Guides to PMA Service Delivery Point & Client Exit Interview data 
-  
-Beyond the blog, it's important to know where to find **instructions and examples** for the R packages featured in this guide. Nearly all of these packages have a dedicated website with a homepage, reference page (documentation for individual functions), collection of articles (for general instructions), and changelog (for news about updates). The [ipumsr](https://tech.popdata.org/ipumsr/) page is a great place to start: 
-
-```{r, out.width='75%'}
-knitr::include_graphics(here("images/ipumsr_home.png"))
-```
-
-Finally, if you're looking for a more general introduction to R, we strongly recommend the following **free resources**: 
+  * Click the green "Download DAT" button to download the data file. You'll receive a file with a number like `pma_00001.dat.gz`.  
+  * Right click on "DDI" and click "Save link as". You'll receive a corresponding XML file like `pma_00001.xml`. 
 
 
-  - [R for Data Science](https://r4ds.had.co.nz/index.html) for beginners
-  - [Advanced R](https://adv-r.hadley.nz/) for a deeper dive
-  - [RSpatial](https://rspatial.org/) for analysis with spatial data
-  - [ggplot2](https://ggplot2-book.org/) for data visualization
-  - [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/) for producing annotated code, word documents, presentations, web pages, and more
-  - [R-bloggers](https://www.r-bloggers.com/) for regular news and tutorials 
-  
-## PMA Background
-
-Dating back to 2013, the original PMA survey design included high-frequency, **cross-sectional** samples of women and service delivery points collected from eleven countries participating in [Family Planning 2020](http://progress.familyplanning2020.org/) (FP2020) - a global partnership that supports the rights of women and girls to decide for themselves whether, when, and how many children they want to have. These surveys were designed to monitor annual progress towards [FP2020 goals](http://progress.familyplanning2020.org/measurement) via population-level estimates for several [core indicators](http://www.track20.org/pages/data_analysis/core_indicators/overview.php). 
-
-Beginning in 2019, PMA surveys were redesigned under a renewed partnership called [Family Planning 2030](https://fp2030.org/) (FP2030). These new surveys have been refocused on reproductive and sexual health indicators, and they feature a **longitudinal panel** of women of childbearing age. This design will allow researchers to measure contraceptive dynamics and changes in women’s fertility intentions over a **three year period** via annual in-person interviews.^[In addition to these three in-person surveys, PMA also conducted telephone interviews with panel members focused on emerging issues related to the COVID-19 pandemic in 2020. These telephone surveys are already available for several countries - see our series on [PMA COVID-19 surveys](../../index.html#category:COVID-19) for details.] 
-
-Questions on the redesigned survey cover topics like:
-
-  * awareness, perception, knowledge, and use of contraceptive methods
-  * perceived quality and side effects of contraceptive methods among current users
-  * birth history and fertility intentions 
-  * aspects of health service provision 
-  * domains of empowerment 
-  
-## Sampling 
-
-PMA panel data includes a mixture of **nationally representative** and **sub-nationally representative** samples. The panel study consists of three data collection phases, each spaced one year apart. 
-
-As of this writing, IPUMS PMA has released data from the first *two* phases for four countries where Phase 1 data collection began in 2019; IPUMS PMA has released data from only the *first* phase for three countries where Phase 1 data collection began in August or September 2020. Phase 3 data collection and processing is currently underway. 
-
-```{r, results='hide', message=FALSE}
-library(kableExtra)
-options(knitr.kable.NA = '')
-
-avail <- read_csv("data/sample_avail.csv", show_col_types = F) 
-names(avail)[2] <- paste0(
-  names(avail)[2], 
-  footnote_marker_symbol(1)
+```{r, fig.align='center'}
+# knitr::include_graphics("images/download.png")
+htmltools::img(
+  src = "images/download.png", 
+  style = "margin-top: 20px; margin-bottom: 25px;"
 )
-
-```
-```{r}
-avail %>%   
-  arrange(Sample) %>% 
-  kable(escape = FALSE, format = "html", table.attr = "style='width:100%;'") %>% 
-  kable_styling() %>% 
-  add_header_above(c(" " = 2, "Now Available from IPUMS PMA" = 3)) %>% 
-  scroll_box(
-    width = "100%", 
-    box_css = paste(
-      sep = "; ",
-      "margin-bottom: 1em",
-      "margin-top: 0em",
-      "border: 0px solid #ddd",
-      "padding: 5px"
-    )
-  ) %>%
-  footnote(
-    symbol = "<em>Each data collection phase is spaced one year apart</em>", 
-    escape = FALSE
-  )
-
 ```
 
-<aside>
-**Resident enumerators** are women over age 21 living in (or near) each EA who hold at least a high school diploma.
-</aside>
+Place both files in a folder that R can use as its [working directory](https://r4ds.had.co.nz/workflow-projects.html?q=working%20directory#where-does-your-analysis-live). We **strongly recommend** using [RStudio projects](https://r4ds.had.co.nz/workflow-projects.html?q=working%20directory#rstudio-projects) to manage all of the files and analysis scripts used for a particular research project. We'll place our files in a subfolder called "data" within our own RStudio project folder. 
 
-PMA uses a multi-stage clustered sample design, with stratification at the urban-rural level or by sub-region. Sample clusters - called [enumeration areas](https://pma.ipums.org/pma-action/variables/EAID#description_section) (EAs) -- are provided by the national statistics agency in each country.^[[Displaced GPS coordinates](https://tech.popdata.org/pma-data-hub/posts/2021-10-15-nutrition-climate/PMA_displacement.pdf) for the centroid of each EA are available for most samples [by request](https://www.pmadata.org/data/request-access-datasets) from PMA. IPUMS PMA provides shapefiles for PMA countries [here](https://pma.ipums.org/pma/gis_boundary_files.shtml).] These EAs are sampled using a *probability proportional to size* (PPS) method relative to the population distribution in each stratum.
-
-\newpage 
-
-At Phase 1, 35 household dwellings were selected at random within each EA. Resident enumerators visited each dwelling and invited one household member to complete a [Household Questionnaire](https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Household-Questionnaire-English-2019.10.09.pdf)^[Questionnaires administered in each country may vary from this **Core Household Questionnaire** - [click here](https://pma.ipums.org/pma/enum_materials.shtml) for details.] that includes a census of all household members and visitors who stayed there during the night before the interview. Female household members and visitors aged 15-49 were then invited to complete a subsequent Phase 1 [Female Questionnaire](https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Female-Questionnaire-English-2019.10.09.pdf).^[Questionnaires administered in each country may vary from this **Core Female Questionnaire** - [click here](https://pma.ipums.org/pma/enum_materials.shtml) for details.]
-
-<aside>
-`r varlink(SAMEDWELLING)` indicates whether a Phase 2 female respondent resided in her Phase 1 dwelling or a new one. 
-
-`r varlink(PANELWOMAN)` indicates whether a Phase 2 household member completed the Phase 1 Female Questionnaire.  
-</aside>
-
-One year later, resident enumerators visited the same dwellings and administered a Phase 2 Household Questionnaire. A panel member in Phase 2 is any woman still age 15-49 who could be reached for a second Female Questionnaire, either because:
-
-  * she still lived there, or
-  * she had moved elsewhere within the study area,^[The "study area" is area within which resident enumerators should attempt to find panel women that have moved out of their Phase 1 dwelling. This may extend beyond the woman's original EA as determined by in-country administrators - see [PMA Phase 2 and Phase 3 Survey Protocol](https://www.pmadata.org/data/survey-methodology) for details.] but at least one member of the Phase 1 household remained and could help resident enumerators locate her new dwelling.^[In cases where no Phase 1 household members remained in the dwelling at Phase 2, women from the household are considered lost to follow-up (LTFU). A panel member is also considered LTFU if a Phase 2 Household Questionnaire was not completed, if she declined to participate, or if she was deceased or otherwise unavailable.]
-  
-Additionally, resident enumerators administered the Phase 2 Female Questionnaire to *new* women in sampled households who:
-
-  * reached age 15 after Phase 1
-  * joined the household after Phase 1
-  * declined the Female Questionnaire at Phase 1, but agreed to complete it at Phase 2
-  
-\newpage 
-
-When you select the new **Longitudinal** sample option at checkout, you'll be able to include responses from every available phase of the study. These samples are available in either "long" format (responses from each phase will be organized in separate rows) or "wide" format (responses from each phase will be organized in columns). 
-
-```{r}
-knitr::include_graphics("images/long_radio.png")
-```
-
-\newpage 
-
-<aside>
-`r varlink(CROSS_SECTION)` indicates whether a household member in a longitudinal sample is also included in the cross-sectional sample for a given year (every person in a cross-sectional sample is included in the longitudinal sample). 
-</aside>
-
-In addition to following up with women in the panel over time, PMA also adjusted sampling so that a cross-sectional sample could be produced concurrently with each data collection phase. These samples mainly overlap with the data you'll obtain for a particular phase in the longitudinal sample, except that replacement households were drawn from each EA where more than 10% of households from the previous phase were no longer there. Conversely, panel members who were located in a new dwelling at Phase 2 will not be represented in the cross-sectional sample drawn from that EA. These adjustments ensure that population-level indicators may be derived from cross-sectional samples in a given year, even if panel members move or are lost to follow-up. 
-
-You'll find PMA cross-sectional samples dating back to 2013 if you select the **Cross-sectional** sample option at checkout. 
-
-```{r}
-knitr::include_graphics("images/cross_radio.png")
-```
-
-## Survey Design Elements
-
-Throughout this guide, we'll demonstrate how to incorporate PMA sampling weights and information about its stratified cluster sampling procedure into your analysis. To do so, we'll rely on tools from the [srvyr](http://gdfe.co/srvyr/index.html) package.^[The `srvyr` package is a [tidy](https://tidyverse.tidyverse.org/) implementation of the popular [survey](http://r-survey.r-forge.r-project.org/survey/) package for R, authored by Dr. Thomas Lumley. For thorough discussion of the types of weights available in both R and Stata, we recommend [this blog post](https://notstatschat.rbind.io/2020/08/04/weights-in-statistics/) by Dr. Lumley.]  
-
-You can install or update `srvyr` like so: 
-
-```{r, eval = FALSE, echo = TRUE}
-install.packages("srvyr")
-```
-
-To use `srvyr` and other `tidyverse` packages in an R session, load them with the `r funlink(base::library)` function:
-
-```{r, echo=TRUE, eval=FALSE}
-library(srvyr)
-library(ipumsr)
-library(tidyverse)
-```
-
-We'll demonstrate how to obtain an IPUMS PMA data extract in the next chapter. For now, let's assume that we've got a wide-format^[As we will see in Chapter 2, IPUMS PMA publishes longitudinal data in both "wide" (one row per woman) and "long" (one row per phase) format.] data extract loaded into R as an object named `dat`. In this example, we'll feature data collected from the first two phases of the Burkina Faso panel. These data will be organized in a tidy table - a `r funlink(tibble)` - that looks like this:
+Open RStudio (or R) and load the packages `r funlink(ipumsr)` and `r funlink(tidyverse)`. If you are not using an RStudio project, you will need to change your working directory to match the location of your downloaded files. 
 
 ```{r, eval=FALSE, echo=TRUE}
-dat
+library(ipumsr)
+library(tidyverse)
+setwd("~/Downloads") # ONLY if not using an RStudio project (change as needed)
 ```
 
-```{r, echo = FALSE}
-# n = 5491 (checked with flowchart)
-dat <- widef %>% 
-  filter(SAMPLE_1 == 85409) %>% 
-  filter(RESULTFQ_1 %in% c(1,5)) %>%
-  filter(AGEHQ_1 < 49) %>% 
-  filter(SURVEYWILLING_1 == 1) %>%  # 6532 women aged and agreed
-  filter(RESULTHQ_2 %in% 1) %>%  # completed HQ
-  filter(RESULTFQ_2 %in% 1) # completed FQ
-
-# Target: n=5207 (final report)  
-# drop du jure (usual member, slept away last night), n = 5212
-dat <- dat %>% 
-  filter(RESIDENT_1 != 21) %>% 
-  filter(RESIDENT_2 != 21 & RESIDENT_2 != 31)
-
-# dropping NIU in CP, we get n = 5207
-knitr::opts_chunk$set(echo = TRUE)
-
-dat %>% print(n = 3)
-```
-
-
-### Survey Weights 
-
-Whether you intend to work with a new **Longitudinal** or **Cross-sectional** data extract, you'll find the same set of sampling weights available for all PMA Family Planning surveys dating back to 2013: 
-
-<aside>
-A fourth Family Planning survey weight, `r varlink(POPWT, description)`, is currently available only for **Cross-sectional** data extracts.^[`POPWT` can be used to estimate population-level *counts* - [click here](https://pma.ipums.org/pma/population_weights.shtml) or view [this video](https://www.youtube.com/watch?v=GnCq26t4zgM) for details.] 
-</aside>
-
-  * `r varlink(HQWEIGHT, description)` can be used to generate cross-sectional population estimates from questions on the Household Questionnaire.^[`HQWEIGHT` reflects the [calculated selection probability](https://pma.ipums.org/pma/resources/documentation/weighting_memo.pdf) for a household in an EA, normalized at the population-level. Users intending to estimate population-level indicators for *households* should restrict their sample to one person per household via `r varlink(LINENO, description)` - see [household weighting guide](https://pma.ipums.org/pma/weightguide.shtml#hh) for details.]
-  * `r varlink(FQWEIGHT, description)` can be used to to generate cross-sectional population estimates from questions on the Female Questionnaire.^[`FQWEIGHT` adjusts `HQWEIGHT` for female non-response within the EA, normalized at the population-level - see [female weighting guide](https://pma.ipums.org/pma/weightguide.shtml#female) for details.]
-  * `r varlink(EAWEIGHT, description)` can be used to compare the selection probability of a particular household with that of its EA. 
-  
-Additionally, PMA created a new weight, `r varlink(PANELWEIGHT, description)`, 
-which should be used in longitudinal analyses spanning multiple phases, as it adjusts for loss to follow-up. `PANELWEIGHT` is available only for **Longitudinal** data extracts. 
-
-<aside>
-Variable names in a "wide" extract have a numeric suffix for their data collection phase. `CP_1` is the Phase 1 version of `r varlink(CP)`, while `CP_2` comes from Phase 2. 
-</aside>
-
-For example, suppose we wanted to estimate the proportion of reproductive age women in Burkina Faso who were using contraception at the time of data collection for both Phase 1 and Phase 2. In a cross-sectional or "long" longitudinal extract, you'll find this information in the variable `r varlink(CP)`. In the "wide" extract featured here, you'll find it in `CP_1` for Phase 1, and in `CP_2` for Phase 2.
+We’ll now demonstrate loading both a long and a wide extract, and we’ll take a brief look at the structure of each.
 
 ```{r}
-dat %>% count(CP_1, CP_2)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
 
-\newpage 
+## Long Data Structure
 
-The `srvyr` package provides two functions we'll need to obtain our population estimate. The first, [as_survey_design](http://gdfe.co/srvyr/reference/as_survey_design.html), allows us to specify `PANELWEIGHT` as a sampling weight. The second, [survey_mean](http://gdfe.co/srvyr/reference/survey_mean.html), uses that weight in an estimating function; in this case, we'll get the estimated proportion where `CP_1` and `CP_2` both have the value `1 [Yes]` after removing missing / NIU responses with `CP_1 < 90 & CP_2 < 90`. 
+We've downloaded a **long** data extract (Female Respondents only) and saved it in a folder called "data" in our working directory. We'll now load it into R as an object called `long`. 
 
-In subsequent chapters, we'll use `vartype = "ci"` to include a 95% confidence interval set by `level = 0.95` any time we calculate a population estimate. For discrete variables, we'll also include `proportion = TRUE` and `prop_method = "logit"`. In practice, there are large number of ways to calculate a confidence interval for a proportion.^[See Dean & Pagano [-@Dean-Pagano] for discussion.] The [srvyr](http://gdfe.co/srvyr/index.html) package includes several options for `prop_method`,^[See [svyciprop](https://rdrr.io/pkg/survey/man/svyciprop.html) for a complete list of methods.] but we'll use these settings because: 
+To load an IPUMS PMA extract into R, you'll need to reference *both* the DDI file *and* the fixed-width data file in the function `r funlink(ipumsr::read_ipums_micro)` from `ipumsr`.
 
-  1) they ensure that each proportion's confidence interval only includes values between 0% and 100%,
-  2) they will include the real-world population proportion close to 95% of the time,
-  3) the `logit` method yields a relatively narrow interval compared with other options, and 
-  4) these intervals will match the default intervals reported by Stata and SPSS survey proportion functions.
-
-<aside>
-`coef` shows the estimated population proportion
-
-`_low` and `_upp` show the lower and upper bounds of a 95% confidence interval
-</aside>
-
-```{r}
-dat %>% 
-  as_survey_design(weight = PANELWEIGHT) %>% 
-  filter(CP_1 < 90 & CP_2 < 90) %>% 
-  summarise(
-    survey_mean(
-      CP_1 * CP_2,
-      vartype = "ci",
-      level = 0.95,
-      proportion = TRUE,
-      prop_method = "logit"
-    )
-  )
-```
-
-### Sample Clusters
-
-You can also provide information about sample clusters via [as_survey_design](http://gdfe.co/srvyr/reference/as_survey_design.html). In general, we expect households selected from the same EA to share certain characteristics, such that some degree of variation seen in a variable of interest may be non-random at the EA-level. To compensate, you may wish the expand the standard errors produced by `survey_mean` by providing EA identifiers in `r varlink(EAID)`.
-
-Here, we include `id = EAID_1`.^[As we'll see in an upcoming post, women are considered "lost to follow-up" if they moved outside the study area after Phase 1. Therefore, `EAID_1` and `EAID_2` are identical for all panel members: you can use either one to identify sample clusters.] Compared with our original estimate, notice that the 95% confidence interval for our contraceptive use estimate is wider when we provide information about the clustered sample design - these are "cluster-robust" standard errors.
-
-```{r}
-dat %>% 
-  as_survey_design(weight = PANELWEIGHT, id = EAID_1) %>% 
-  filter(CP_1 < 90 & CP_2 < 90) %>% 
-  summarise(
-    survey_mean(
-      CP_1 * CP_2,
-      vartype = "ci",
-      level = 0.95,
-      proportion = TRUE,
-      prop_method = "logit"
-    )
-  )
-```
-
-### Sample Strata 
-
-Finally, we'll also use [as_survey_design](http://gdfe.co/srvyr/reference/as_survey_design.html) to specify sample strata. For most samples, including Burkina Faso, this information is included in the variable `r varlink(STRATA)`. We'll include it here with `strata = STRATA_1`.^[As with `r varlink(EAID)`, you may use either `STRATA_1` or `STRATA_2` if your analysis is restricted to panel members.] 
-
-```{r}
-dat %>% 
-  as_survey_design(weight = PANELWEIGHT, id = EAID_1, strata = STRATA_1) %>% 
-  filter(CP_1 < 90 & CP_2 < 90) %>% 
-  summarise(
-    survey_mean(
-      CP_1 * CP_2,
-      vartype = "ci",
-      level = 0.95,
-      proportion = TRUE,
-      prop_method = "logit"
-    )
-  )
-```
-
-\newpage 
-
-The variable `r varlink(STRATA)` is *not available* for samples collected from DRC - Kinshasa or DRC - Kongo Central. If your extract includes any DRC sample, you'll need to amend this variable to include one unique numeric code for each of those regions.    
-
-For example, let's look at a different "wide" extract, `dat2`, containing all of the samples included in this data release. Notice that `STRATA_1` lists the sample strata for every `r varlink(COUNTRY)` *except* for DRC, where you see the value `NA`. 
-
-```{r, echo = FALSE, results='hide'}
-# I created a new version of the data extract we were using that includes 
-# `GEOCD`. In case any revisions have been made since the original publication # of this post, I only load it here (rather than at the beginning).
-dat2 <- read_ipums_micro(
-  ddi = "data/pma_00144.xml",
-  data = "data/pma_00144.dat.gz"
+```{r, results='hide'}
+long <- read_ipums_micro(
+  ddi = "data/pma_00095.xml",
+  data = "data/pma_00095.dat.gz"
 )
-
-dat2 <- dat2 %>% 
-  filter(RESIDENT_1 %in% c(11, 22) & RESIDENT_2 %in% c(11, 22)) %>%
-  filter(RESULTFQ_2 == 1)
-
-# Bigger tibbles 
-options(tibble.print_min = 30)
 ```
 
+In a **long** extract, data from each phase will be organized in *separate rows*. Here, responses from three panel members are shown: 
+
 ```{r}
-dat2 %>% count(COUNTRY, STRATA_1)
+long %>% 
+  filter(FQINSTID %>% str_starts("011") | FQINSTID %>% str_starts("015")) %>% 
+  arrange(FQINSTID) %>% 
+  select(FQINSTID, PHASE, AGE, PANELWOMAN)
+```
+
+Each panel member receives a unique ID shown in `r varlink(FQINSTID)`. The variable `r varlink(PHASE)` shows that each woman's responses to the Phase 1 Female Questionnaire appears in the first row, while her Phase 2 responses appear in the second. `r varlink(AGE)` shows each woman's age when she completed the Female Questionnaire for each phase.
+
+`r varlink(PANELWOMAN)` indicates whether the woman completed all or part of the Female Questionnaire in a *prior* phase, and that she'd agreed to continue participating in the panel study at that time. The value `NA` appears in the rows for Phase 1, as `PANELWOMAN` was not included in Phase 1 surveys. 
+
+\newpage 
+
+We mentioned above that you'll also include responses from some non-panel members when you request an extract with Female Respondents. These include women who did not complete all or part the Female Questionnaire in a prior phase, as indicated by `r varlink(PANELWOMAN)`. These women are not assigned a value for `r varlink(FQINSTID)` - instead, you'll find an empty string:
+
+```{r}
+long %>% count(PHASE, PANELWOMAN, FQINSTID == "")
+```
+
+For most longitudinal analysis applications, you'll need to drop non-panel members together with any women who did not fully complete the Phase 2 Female Questionnaire. We'll demonstrate using [group_by](https://dplyr.tidyverse.org/reference/group_by.html) to ensure that there is one row for every `r varlink(FQINSTID)` where `PHASE == 1` and another row where `PHASE == 2 & RESULTFQ == 1`. 
+
+```{r}
+long <- long %>% 
+  group_by(FQINSTID) %>% 
+  filter(any(PHASE == 1) & any(PHASE == 2 & RESULTFQ == 1)) %>% 
+  ungroup() 
+```
+
+The [PMA Longitudinal Briefs](../2022-03-01-phase2-discovery/index.html#inclusion-criteria-for-analysis) published for each sample also include only members of the *de facto* population. These are women who slept in the household during the night prior to the interview for each Household Questionnaire, such that `r varlink(RESIDENT)` takes the value `11` or `22`. We'll use [group_by](https://dplyr.tidyverse.org/reference/group_by.html) again to include only *de facto* women from both phases. 
+
+```{r}
+long <- long %>% 
+  group_by(FQINSTID) %>% 
+  filter(all(RESIDENT %in% c(11, 22))) %>% 
+  ungroup() 
 ```
 
 \newpage 
 
-Now let's see what happens when we try to produce population-level estimates with `STRATA_1`: 
-
-```{r, error=TRUE}
-dat2 %>% 
-  as_survey_design(weight = PANELWEIGHT, id = EAID_1, strata = STRATA_1) %>% 
-  filter(CP_1 < 90 & CP_2 < 90) %>% 
-  group_by(COUNTRY, GEOCD, GEONG) %>% 
-  summarise(
-    survey_mean(
-      CP_1 * CP_2,
-      vartype = "ci",
-      level = 0.95,
-      proportion = TRUE,
-      prop_method = "logit"
-    )
-  )
-```
-
-This fails because [as_survey_design](http://gdfe.co/srvyr/reference/as_survey_design.html) encounters `NA` values in `STRATA_1`. Fortunately, we can replace those values with numeric codes from the variable `r varlink(GEOCD)`: 
+Following these steps, you can check the size of each analytic sample like so. (Reminder: samples for DRC and Nigeria are sub-nationally representative, so we'll show separate frequencies for each `r varlink(GEOCD)` and `r varlink(GEONG)`). 
 
 ```{r}
-dat2 %>% count(GEOCD)
+long %>% count(COUNTRY, GEOCD, GEONG, PHASE)
 ```
 
-If `GEOCD` is not `NA`, we'll use its numeric code in place of `STRATA_1`. Otherwise, we'd like to leave `STRATA_1` unchanged. However, because both variables include *value labels*, we'll first need remove them with [as.numeric](https://rdrr.io/r/base/numeric.html). To avoid confusion with the original variable `STRATA_1`, we'll call our new variable `STRATA_RECODE`.
+## Wide Data Structure
+
+We've also downloaded a **wide** data extract (Female Respondents only) and saved it in the "data" folder in our working directory. We'll also load this extract into R as an object named `wide`. 
+
+```{r, results='hide', eval = TRUE}
+wide <- read_ipums_micro(
+  ddi = "data/pma_00084.xml",
+  data = "data/pma_00084.dat.gz"
+)
+```
+
+In a **wide** extract, all of the responses from one woman appear in the *same row*. The IPUMS extract system appends a numeric suffix to each variable name corresponding with the phase from which it was drawn. Consider our three example panel members again: 
 
 ```{r}
-dat2 <- dat2 %>% 
-  mutate(
-    STRATA_RECODE = if_else(
-      is.na(GEOCD), 
-      as.numeric(STRATA_1), 
-      as.numeric(GEOCD)
-    )
-  ) 
+wide %>% 
+  filter(FQINSTID %>% str_starts("011") | FQINSTID %>% str_starts("015")) %>% 
+  select(FQINSTID, AGE_1, AGE_2, PANELWOMAN_1, PANELWOMAN_2)
+```
+
+Each panel member has one unique ID shown in `r varlink(FQINSTID)`. However, `r varlink(AGE)` is parsed into two columns: `AGE_1` shows each woman's age at Phase 1, and `AGE_2` shows her age at Phase 2. 
+
+As we've discussed, `r varlink(PANELWOMAN)` is not available for Phase 1, as it indicates whether the woman completed all or part of the Female Questionnaire in a *prior* phase. For this reason, all values in `PANELWOMAN_1` are `NA`. Most variables are copied once for each phase, even if they - like `PANELWOMAN_1` - are not available for all phases. 
+
+\newpage 
+
+You might expect the total length of a **wide** extract to be half the length of a corresponding **long** extract. This is not the case! A **wide** extract includes one row for each woman who completed all or part of the Female Questionnaire *for any phase* - you'll find placeholder columns for phases where the interview was not conducted. 
+
+```{r}
+wide %>% 
+  filter(FQINSTID == "0C8VQU6B03BXLAVVZ8SB90EKQ") %>% 
+  select(RESULTFQ_1, AGE_1, RESULTFQ_2, AGE_2)
+```
+
+In a **long** extract, rows for the missing phase are dropped. In this example, the woman was "not at home" for the Phase 2 Female Questionnaire. When we select a **long** extract containing only Female Respondents, her Phase 2 row is excluded automatically (it will be included if you request an extract containing Female Respondents and Female Non-respondents). 
+
+```{r, results='hide', echo = FALSE}
+long <- read_ipums_micro(
+  ddi = "data/pma_00095.xml",
+  data = "data/pma_00095.dat.gz"
+)
+```
+
+```{r}
+long %>% 
+  filter(FQINSTID == "0C8VQU6B03BXLAVVZ8SB90EKQ") %>% 
+  select(PHASE, RESULTFQ, AGE)
+```
+
+Again: for most longitudinal analysis applications, you'll need to remove cases where women were not interviewed for Phase 1 or where the Phase 2 Female Questionnaire was not completed: 
+
+```{r}
+wide <- wide %>% filter(RESULTFQ_2 == 1 & !is.na(RESULTFQ_1)) 
+```
+
+The *de facto* population appearing in [PMA Longitudinal Briefs](../2022-03-01-phase2-discovery/index.html#inclusion-criteria-for-analysis) is defined in **wide** extracts by cases where the values `11` or `12` appear in *both* `RESIDENT_1` and `RESIDENT_2`:
+
+```{r}
+wide <- wide %>% filter(RESIDENT_1 %in% c(11, 22) & RESIDENT_2 %in% c(11, 22))
 ```
 
 \newpage 
 
-Notice that `STRATA_RECODE` replaces the `NA` values in `STRATA_1`, leaving its numeric values unchanged. 
+Following these steps, each analytic sample contains the same number of cases shown in the final **long** format extract above. 
 
 ```{r}
-dat2 %>% count(GEOCD, STRATA_1, STRATA_RECODE)
-```
-
-\newpage 
-
-Now, we can use `STRATA_RECODE` with [as_survey_design](http://gdfe.co/srvyr/reference/as_survey_design.html) to obtain population estimates for each nationally representative or sub-nationally representative sample.
-
-```{r, error=TRUE}
-dat2 %>% 
-  as_survey_design(weight = PANELWEIGHT, id = EAID_1, strata = STRATA_RECODE) %>% 
-  filter(CP_1 < 90 & CP_2 < 90) %>% 
+wide %>%
   group_by(COUNTRY, GEOCD, GEONG) %>%
-  summarise(
-    survey_mean(
-      CP_1 * CP_2,
-      vartype = "ci",
-      level = 0.95,
-      proportion = TRUE,
-      prop_method = "logit"
-    )
+  count()
+```
+
+## Which format is best for me? 
+
+The choice between **long** and **wide** formats ultimately depends on your research objectives. 
+
+Many data manipulation tasks, for example, are faster and easier to perform in the **wide** format. In the example above, we needed to identify women who completed a Female Questionnaire and were members of the *de facto* population in both phases. In the **long** format, we first had to group the data by `FQINSTID` with [group_by](https://dplyr.tidyverse.org/reference/group_by.html), thereby ensuring that a Phase 1 and Phase 2 check could be performed for each woman. In preparing for this post, this approach took about 36.5 seconds. By comparison, the same task was achieved without [group_by](https://dplyr.tidyverse.org/reference/group_by.html) in **wide** format in just 0.16 seconds. If your workflow requires multiple comparisons between phases, the **wide** format may be the best choice! 
+
+On the other hand, many of the longitudinal modeling packages available for R require data to be in a **long** format - this includes both the [survival](https://cran.r-project.org/web/packages/survival/index.html) package for Cox regression and the [lme4](https://github.com/lme4/lme4) package for multilevel models. Users who prefer the **wide** format for data cleaning and exploration can manually switch to **long** format with help from [pivot_longer](https://tidyr.tidyverse.org/reference/pivot_longer.html), for example:
+
+```{r}
+wide %>% select(FQINSTID, AGE_1, PREGNANT_1, AGE_2, PREGNANT_2)
+```
+
+\newpage 
+
+With [pivot_longer](https://tidyr.tidyverse.org/reference/pivot_longer.html), you can strip the suffix `1` or `2` from each variable, placing the result in a new column called `PHASE`. Then, we'll pivot each woman's age and pregnancy status from 2 **wide** columns into a single **long** one. 
+
+```{r}
+wide %>% 
+  select(FQINSTID, AGE_1, PREGNANT_1, AGE_2, PREGNANT_2) %>% 
+  pivot_longer(
+    !FQINSTID, 
+    names_pattern = "(.*)_([1-2])",
+    names_to = c(".value", "PHASE")
   )
 ```
 
+Manipulating patterns in variable names with  [pivot_longer](https://tidyr.tidyverse.org/reference/pivot_longer.html) takes practice, and we imagine many users will find it easier to simply work with data in the **long** format from the beginning.
 
-## Inclusion Criteria for Analysis 
-
-The remainder of this guide will feature code you can use to reproduce key indicators included in the **PMA Longitudinal Brief** for each sample. In many cases, you'll find separate reports available in English and French, and for both national and sub-national summaries. For reference, here are the highest-level population summaries available in English for each sample where Phase 2 IPUMS PMA data is currently available:
-
-  * [Burkina Faso](https://www.pmadata.org/sites/default/files/data_product_results/Burkina%20National_Phase%202_Panel_Results%20Brief_English_Final.pdf)
-  * [DRC - Kinshasa](https://www.pmadata.org/sites/default/files/data_product_results/DRC%20Kinshasa_%20Phase%202%20Panel%20Results%20Brief_English_Final.pdf)
-  * [DRC - Kongo Central](https://www.pmadata.org/sites/default/files/data_product_results/DRC%20Kongo%20Central_%20Phase%202%20Panel%20Results%20Brief_English_Final.pdf)
-  * [Kenya](https://www.pmadata.org/sites/default/files/data_product_results/Kenya%20National_Phase%202_Panel%20Results%20Brief_Final.pdf)
-  * [Nigeria - Kano](https://www.pmadata.org/sites/default/files/data_product_results/Nigeria%20KANO_Phase%202_Panel_Results%20Brief_Final.pdf)
-  * [Nigeria - Lagos](https://www.pmadata.org/sites/default/files/data_product_results/Nigeria%20LAGOS_Phase%202_Panel_Results%20Brief_Final.pdf) 
-
-Panel data in these reports is limited to the *de facto* population of women who completed the Female Questionnaire in both Phase 1 and Phase 2. This includes women who slept in the household during the night before the interview for the Household Questionnaire. The *de jure* population includes women who are usual household members, but who slept elsewhere that night. We'll remove *de jure* cases recorded in the variable `r varlink(RESIDENT)`. 
-
-<aside>
-`NA` cases in `RESIDENT_2` represent women who were lost to follow-up in Phase 2. 
-</aside>
-
-For example, returning to our "wide" data extract for Burkina Faso, you can see the number of women who slept in the household before the Household Questionnaire for each phase reported in `RESIDENT_1` and `RESIDENT_2`: 
-
-```{r, echo = FALSE}
-# n = 5491 (checked with flowchart)
-dat <- widef %>% 
-  filter(SAMPLE_1 == 85409)
-```  
-
-```{r}
-dat %>% count(RESIDENT_1)
-dat %>% count(RESIDENT_2)
-```
-
-\newpage 
-
-The *de facto* population is represented in codes 11 and 22. We'll use `filter` to include only those cases. 
-
-```{r}
-dat_2 <- dat %>% 
-  filter(
-    RESIDENT_1 == 11 | RESIDENT_1 == 22, 
-    RESIDENT_2 == 11 | RESIDENT_2 == 22
-  ) 
-
-dat_2 %>% count(RESIDENT_1, RESIDENT_2)
-```
-
-\newpage 
-
-Additionally, these reports only include women who completed (or partially completed) both Female Questionnaires. This information is reported in `r varlink(RESULTFQ)`. In our "wide" extract, this information appears in `RESULTFQ_1` and `RESULTFQ_2`: if you select the "Female Respondents" option at checkout, only women who completed (or partially completed) the Phase 1 Female Questionnaire will be included in your extract. 
-
-```{r, echo = FALSE}
-knitr::include_graphics("images/cases1.png")
-```
-
-\newpage 
-
-We'll further restrict our sample by selecting only cases where `RESULTFQ_2` shows that the woman also completed the Phase 2 questionnaire. Notice that, in addition to each of the value 1 through 10, there are several **non-response codes** numbered 90 through 99. You'll see similar values repeated across all IPUMS PMA variables, except that they will be left-padded to match the maximum width of a particular variable (e.g. `9999` is used for `r varlink(INTFQYEAR)`, which represents a 4-digit year for the Female Interview). 
-
-```{r}
-dat %>% count(RESULTFQ_2)
-```
-
-Possible **non-response codes** include: 
-
-  * `95` Not interviewed (female questionnaire)
-  * `96` Not interviewed (household questionnaire)
-  * `97` Don't know
-  * `98` No response or missing 
-  * `99` NIU (not in universe)
-
-The value `NA` in an IPUMS extract indicates that a particular variable is not provided for a selected sample. In a "wide" **Longitudinal** extract, it may also signify that a particular person was not included in the data from a particular phase. Here, an `NA` appearing in `RESULTFQ_2` indicates that a Female Respondent from Phase 1 was not found in Phase 2.
-
-\newpage 
-
-You can drop incomplete Phase 2 female responses as follows: 
-
-```{r}
-dat_3 <- dat %>% filter(RESULTFQ_2 == 1) 
-
-dat_3 %>% count(RESULTFQ_1, RESULTFQ_2)
-```
-
-Generally, we will combine both filtering steps together in a single function like so:
-
-```{r}
-dat <- dat %>% 
-  filter(
-    RESIDENT_1 == 11 | RESIDENT_1 == 22, 
-    RESIDENT_2 == 11 | RESIDENT_2 == 22,
-    RESULTFQ_2 == 1
-  ) 
-```
-
-In subsequent analyses, we'll use the remaining cases to show how PMA generates key indicators for **contraceptive use status** and **family planning intentions and outcomes**. The summary report for each country includes measures disaggregated by demographic variables like:
-
-  * `r varlink(MARSTAT)` - marital status 
-  * `r varlink(EDUCATT)` and `r varlink(EDUCATTGEN)` - highest attended level of education^[Levels in `EDUCATT` may vary by country; `EDUCATTGEN` recodes country-specific levels in four general categories.] 
-  * `r varlink(AGE)` - age
-  * `r varlink(WEALTHQ)` and `r varlink(WEALTHT)` - household wealth quintile or tertile^[Households are divided into quintiles/tertiles relative to the distribution of an asset `r varlink(SCORE, description)` weighted for all sampled households. For subnationally-representative samples (DRC and Nigeria), separate wealth distributions are calculated for each sampled region.]
-  * `r varlink(URBAN)` and `r varlink(SUBNATIONAL)` - geographic location^[`SUBNATIONAL` includes subnational regions for all sampled countries; country-specific variables are also available on the [household - geography](https://pma.ipums.org/pma-action/variables/group?id=hh_geo) page.]
-
-
-
+Fortunately, the IPUMS PMA extract system makes it easy to select the samples, sample members, and variables that matter to your particular research question. Choices for **long** and **wide** data formats save an additional data cleaning step, allowing you to jump into longitudinal analysis as quickly as possible. 
