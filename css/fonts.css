@@ -53,8 +53,13 @@ aside {
   line-height: 1.2em;
 }
 
+/* Footnotes */
 .footnote {
-  font-size: 0.75em !important;
+  margin-top: 0.5em !important;
   color: rgba(0, 0, 0, 0.6) !important;
 }
 
+/* Match superscript to footnotes */
+sup {
+  font-size: x-small !important;
+}
