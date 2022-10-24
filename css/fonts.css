@@ -4,7 +4,7 @@
 body {
   font-family: cabrito_sans_norm_regular;
   font-weight: 300;
-  font-size: 12pt;
+  font-size: 11pt;
   line-height: 1.25;
   color: #444;
 }
@@ -21,7 +21,7 @@ a {color: #98579B !important;}
 /* Code (inline and chunked) */
 code {
   font-family: Menlo !important;
-  font-size: 0.7em;
+  font-size: 0.8em;
 }
 
 /* Headings */

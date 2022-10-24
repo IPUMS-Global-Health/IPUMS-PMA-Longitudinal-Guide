@@ -13,7 +13,13 @@ toc: true
 ---
 
 ```{r, setup, echo=FALSE}
-knitr::opts_chunk$set(R.options = list(width = 80))
+knitr::opts_chunk$set(
+  echo = FALSE, 
+  comment = NA, 
+  message = FALSE,
+  R.options = list(width = 88)
+)
+
 source(here::here("r/utilities.r"))
 ```
 
