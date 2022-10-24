@@ -39,12 +39,18 @@
   background-color: white !important;
 }
 
-/* Code Output should be PMA pink, alpha 80%*/
+/* Console Output should be PMA pink, alpha 80%*/
 pre {
   background-color: #98579B20;
   border-radius: 1em;
   padding: 1em;
   margin: 0em;
+}
+
+/* No margin between Source and Console Output */
+/* No background color: make room for asides */
+div.sourceCode {
+    margin: 0em !important;;
 }
 
 /* Asides should be 20% page-width, floated right*/
