@@ -17,7 +17,8 @@ knitr::opts_chunk$set(
   echo = FALSE, 
   comment = NA, 
   message = FALSE,
-  R.options = list(width = 88)
+  R.options = list(width = 88),
+  fig.align = 'center'
 )
 
 source(here::here("r/utilities.r"))
@@ -62,7 +63,7 @@ hex("Rlogo")
 ```
 </aside>
 
-To follow along, you'll need to download the appropriate version of R for your computer's operating system at [https://www.r-project.org/](https://www.r-project.org/). **R is available at no cost** and it runs on a wide variety of UNIX platforms, Windows, and MacOS. We also recommend downloading a free copy of [RStudio](https://www.rstudio.com/), an integrated development environment (IDE) designed to make your experience with R much easier. 
+To follow along, you'll need to download the appropriate version of R for your computer's operating system at [r-project.org](https://www.r-project.org/). **R is available at no cost** and it runs on a wide variety of UNIX platforms, Windows, and MacOS. We also recommend downloading a free copy of [RStudio](https://www.rstudio.com/), an integrated development environment (IDE) designed to make your experience with R much easier. 
 
 Individual chapters may introduce one or two **R packages** that provide helpful functions for longitudinal survey analysis, in particular. Two packages we feature in *every* chapter are [ipumsr](https://tech.popdata.org/ipumsr/) and [tidyverse](https://tidyverse.tidyverse.org/). You can install these and other packages featured in this guide like so: 
 
@@ -77,7 +78,7 @@ install.packages("ipumsr")
 install.packages("tidyverse")
 ```
 
-The `ipumsr` package is designed to help R users import and explore data extracts downloaded from IPUMS. As we'll see, categorical variables from IPUMS appear as **labelled integers** represented in R by a number and a label like this: 
+The `ipumsr` package is designed to help R users import and explore data extracts downloaded from IPUMS. As we'll see, categorical variables from IPUMS require additional tools because they appear as **labelled integers** represented in R by a number and a label like this: 
 
 ```{r, echo = FALSE}
 widef %>% count(COUNTRY)
@@ -131,7 +132,7 @@ Finally, if you're looking for a more general introduction to R, we strongly rec
 
 Dating back to 2013, the original PMA survey design included high-frequency, **cross-sectional** samples of women and service delivery points collected from eleven countries participating in [Family Planning 2020](http://progress.familyplanning2020.org/) (FP2020) - a global partnership that supports the rights of women and girls to decide for themselves whether, when, and how many children they want to have. These surveys were designed to monitor annual progress towards [FP2020 goals](http://progress.familyplanning2020.org/measurement) via population-level estimates for several [core indicators](http://www.track20.org/pages/data_analysis/core_indicators/overview.php). 
 
-Beginning in 2019, PMA surveys were redesigned under a renewed partnership called [Family Planning 2030](https://fp2030.org/) (FP2030). These new surveys have been refocused on reproductive and sexual health indicators, and they feature a **longitudinal panel** of women of childbearing age. This design will allow researchers to measure contraceptive dynamics and changes in women’s fertility intentions over a **three year period** via annual in-person interviews.^[In addition to these three in-person surveys, PMA also conducted telephone interviews with panel members focused on emerging issues related to the COVID-19 pandemic in 2020. These telephone surveys are already available for several countries - see our series on [PMA COVID-19 surveys](../../index.html#category:COVID-19) for details.] 
+Beginning in 2019, PMA surveys were redesigned under a renewed partnership called [Family Planning 2030](https://fp2030.org/) (FP2030). These new surveys have been refocused on reproductive and sexual health indicators, and they feature a **longitudinal panel** of women of childbearing age. This design will allow researchers to measure contraceptive dynamics and changes in women’s fertility intentions over a **three year period** via annual in-person interviews.^[In addition to these three in-person surveys, PMA also conducted telephone interviews with panel members focused on emerging issues related to the COVID-19 pandemic in 2020. These telephone surveys are already available for several countries - the IPUMS PMA blog series on [PMA COVID-19 surveys](../../index.html#category:COVID-19) covers this topic in detail.] 
 
 Questions on the redesigned survey cover topics like:
 
@@ -638,7 +639,7 @@ knitr::include_graphics("images/cases.png")
 <aside>
 `r varlink(PANELWOMAN)` indicates whether an individual is a member of the panel study. 
 
-`r varlink(RESULTFQ)` indicates whether an individual completed the Female Questionnaire. 
+`r varlink(ELIGIBLE)` indicates whether an individual was eligible for the female questionnaire.
 </aside>
 
 **Female Respondents** only includes women who completed *all or part* of a Female Questionnaire. **This option selects all members of the panel study.** In addition, it includes women who only participated in only one phase - we will demonstrate how to identify and drop these cases below.^[Women who completed all or part of the Female Questionnaire in *more than one phase* of the study are considered **panel members**. Women who completed it only at Phase 1 are included in a longitudinal extract, but they are not **panel members**. Likewise, women who completed it for the first time at Phase 2 are included, but are not **panel members** if they 1) will reach age 50 before Phase 3, or 2) declined the invitation to participate again in Phase 3.]  
@@ -648,7 +649,7 @@ knitr::include_graphics("images/cases.png")
 \newpage 
 
 <aside>
-`r varlink(ELIGIBLE)` indicates whether an individual was eligible for the female questionnaire.
+`r varlink(RESULTFQ)` indicates whether an individual completed the Female Questionnaire. 
 
 `r varlink(RESULTHQ)` indicates whether a member of the individual's household completed the Household Questionnaire. 
 </aside>

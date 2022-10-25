@@ -11,4 +11,11 @@ pagedown::chrome_print(
   here("test.pdf")
 )
 
+pagedown::chrome_print(
+  here("stata_users.Rmd"),
+  here("stata_users.pdf"),
+  timeout = 600
+)
+
+
 

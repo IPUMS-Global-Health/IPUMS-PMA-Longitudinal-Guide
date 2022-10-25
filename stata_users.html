@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width">
+<meta property="og:title" content="stata_users.knit" />
+
+
+
+
+
+
+<meta name="description" content="stata_users.knit">
+
+<script id="pandoc-meta" type="application/json">
+{"newpage_html_class":"page-break-after","cap-location":"margin","toc-title":"Contents","lof":false,"toc":true,"paged-footnotes":true,"css":["css/layout.css","css/fix-pagedown.css","css/fonts.css"],"lot":false,"output":{"pagedown::html_paged":{"self_contained":false,"toc":true}}}
+</script>
+
+<title>stata_users.knit</title>
+
+
+<link href="stata_users_files/paged-0.19/css/default-fonts.css" rel="stylesheet" />
+<link href="stata_users_files/paged-0.19/css/default-page.css" rel="stylesheet" />
+<link href="stata_users_files/paged-0.19/css/default.css" rel="stylesheet" />
+<script src="stata_users_files/paged-0.19/js/config.js"></script>
+<script src="stata_users_files/paged-0.19/js/paged.js"></script>
+<script src="stata_users_files/paged-0.19/js/hooks.js"></script>
+<script src="stata_users_files/kePrint-0.0.1/kePrint.js"></script>
+<link href="stata_users_files/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="css/layout.css" type="text/css" />
+<link rel="stylesheet" href="css/fix-pagedown.css" type="text/css" />
+<link rel="stylesheet" href="css/fonts.css" type="text/css" />
+
+</head>
+
+<body>
+
+<div class="running-h1-title"></div>
+
+<div class="running-h2-title"></div>
+
+
+
+<div class="front-page">
+</div>
+
+<div class="front-matter-container">
+<div id="TOC" class="level1 toc front-matter">
+<h1 class="toc-title">Contents</h1>
+<ul>
+<li><a href="#introduction"><span class="toc-section-number">1</span> Introduction</a>
+<ul>
+<li><a href="#ipums-pma-data-in-stata"><span class="toc-section-number">1.1</span> IPUMS PMA data in Stata</a></li>
+<li><a href="#pma-background"><span class="toc-section-number">1.2</span> PMA Background</a></li>
+<li><a href="#sampling"><span class="toc-section-number">1.3</span> Sampling</a></li>
+<li><a href="#inclusion-criteria-for-analysis"><span class="toc-section-number">1.4</span> Inclusion Criteria for Analysis</a></li>
+<li><a href="#survey-design-elements"><span class="toc-section-number">1.5</span> Survey Design Elements</a>
+<ul>
+<li><a href="#set-survey-design"><span class="toc-section-number">1.5.1</span> Set survey design</a></li>
+<li><a href="#design-effect"><span class="toc-section-number">1.5.2</span> Design Effect</a></li>
+<li><a href="#sample-strata-for-drc"><span class="toc-section-number">1.5.3</span> Sample strata for DRC</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div class="main">
+<div id="introduction" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p><a href="https://www.pmadata.org/">Performance Monitoring for Action (PMA)</a> uses innovative mobile technology to support low-cost, rapid-turnaround surveys that monitor key health and development indicators.</p>
+<p>PMA surveys collect longitudinal data throughout a country at the household and health facility levels by female data collectors, known as resident enumerators, using mobile phones. The survey collects information from the same women and households over time for regular tracking of progress and for understanding the drivers of contraceptive use dynamics. The data are rapidly validated, aggregated, and prepared into tables and graphs, making results quickly available to stakeholders. PMA surveys can be integrated into national monitoring and evaluation systems using a low-cost, rapid-turnaround survey platform that can be adapted and used for various health data needs.</p>
+<p>The PMA project is implemented by local partner universities and research organizations who train and deploy the cadres of female resident enumerators.</p>
+<aside>
+PMA has also published a guide to <strong>cross-sectional</strong> analysis in both <a href="https://www.pmadata.org/media/1243/download?attachment">English</a> and <a href="https://www.pmadata.org/media/1244/download?attachment">French</a>.
+</aside>
+<p>The purpose of this manual is to provide guidance on the analysis of <strong>harmonized longitudinal data</strong> for a panel of women age 15-49 surveyed by PMA and published in partnership with <a href="https://pma.ipums.org/pma/">IPUMS PMA</a>. IPUMS provides census and survey products from around the world in an integrated format, making it easy to compare data from multiple countries. IPUMS PMA data are available free of charge, subject to terms and conditions: please <a href="https://pma.ipums.org/pma/register.shtml">register here</a> to request access to the data featured in this guide.</p>
+<p>This manual provides reproducible coding examples in the statistical software program <a href="https://www.stata.com/">Stata</a>. You can download <code>.do</code> files containing all of the code needed to reproduce these examples on our <a href="">GitHub page</a>.</p>
+<p><strong>R users:</strong> a companion manual for IPUMS PMA longitudinal analysis is also available with coding examples written in R. Additionally, the <a href="https://tech.popdata.org/pma-data-hub/">IPUMS PMA data analysis blog</a> includes an online version of each chapter and posts on a range of other topics updated every two weeks.</p>
+<div id="ipums-pma-data-in-stata" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> IPUMS PMA data in Stata</h2>
+<p>The first two chapters of this manual introduce new users to <a href="https://www.pmadata.org/data/survey-methodology">PMA longitudinal data</a> and the <a href="https://pma.ipums.org/pma/">IPUMS PMA website</a>, respectively. After demonstrating how to obtain an IPUMS PMA data extract, the remaining chapters feature extensive data analysis examples written in Stata.</p>
+<aside class="hex">
+<div>
+<a style="text-decoration: none;" href="https://www.stata.com/">
+<img src="images/hex/stata.png"/>
+</a>
+<br/>
+© StataCorp LLC
+<br/>
+(1996-2022)
+</div>
+</aside>
+<p>To follow along, you’ll need to purchase and download the appropriate version of Stata for your computer’s operating system at <a href="https://www.r-project.org/">stata.com</a>. Discounted licences are available for students and for faculty and staff at participating institutions: learn more <a href="https://www.stata.com/order/">here</a>.</p>
+<p>For a general introduction to analysis of IPUMS PMA data in Stata, visit the <a href="https://pma.ipums.org/pma/support.shtml">IPUMS PMA Support</a> page, where you’ll find links to video tutorials and data exercises written for Stata users. Similar resources are available for users of R, SPSS, and SAS.</p>
+<div style="color: red;">
+<p>Questions for Dale:</p>
+<ul>
+<li>Did you find that you needed a particular <em>version</em> to complete all of our exercises</li>
+<li>Are any supplementary packages needed?</li>
+<li>In the R version, I list some ways to get help with R. Do you have any favorite resources for getting help with Stata?</li>
+</ul>
+</div>
+</div>
+<div id="pma-background" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> PMA Background</h2>
+<p>Dating back to 2013, the original PMA survey design included high-frequency, <strong>cross-sectional</strong> samples of women and service delivery points collected from eleven countries participating in <a href="http://progress.familyplanning2020.org/">Family Planning 2020</a> (FP2020) - a global partnership that supports the rights of women and girls to decide for themselves whether, when, and how many children they want to have. These surveys were designed to monitor annual progress towards <a href="http://progress.familyplanning2020.org/measurement">FP2020 goals</a> via population-level estimates for several <a href="http://www.track20.org/pages/data_analysis/core_indicators/overview.php">core indicators</a>.</p>
+<p>Beginning in 2019, PMA surveys were redesigned under a renewed partnership called <a href="https://fp2030.org/">Family Planning 2030</a> (FP2030). These new surveys have been refocused on reproductive and sexual health indicators, and they feature a <strong>longitudinal panel</strong> of women of childbearing age. This design will allow researchers to measure contraceptive dynamics and changes in women’s fertility intentions over a <strong>three year period</strong> via annual in-person interviews.<span id="fn1" class="footnote" data-pagedown-footnote-number="1" style="white-space: pre-line;">In addition to these three in-person surveys, PMA also conducted telephone interviews with panel members focused on emerging issues related to the COVID-19 pandemic in 2020. These telephone surveys are already available for several countries - the IPUMS PMA blog series on <a href="../../index.html#category:COVID-19">PMA COVID-19 surveys</a> covers this topic in detail.</span></p>
+<p>Questions on the redesigned survey cover topics like:</p>
+<ul>
+<li>awareness, perception, knowledge, and use of contraceptive methods</li>
+<li>perceived quality and side effects of contraceptive methods among current users</li>
+<li>birth history and fertility intentions</li>
+<li>aspects of health service provision</li>
+<li>domains of empowerment</li>
+</ul>
+</div>
+<div id="sampling" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Sampling</h2>
+<p>PMA panel data includes a mixture of <strong>nationally representative</strong> and <strong>sub-nationally representative</strong> samples. The panel study consists of three data collection phases, each spaced one year apart.</p>
+<p>As of this writing, IPUMS PMA has released data from the first <em>two</em> phases for four countries where Phase 1 data collection began in 2019; IPUMS PMA has released data from only the <em>first</em> phase for three countries where Phase 1 data collection began in August or September 2020. Phase 3 data collection and processing is currently underway.</p>
+<div style="margin-bottom: 1em; margin-top: 0em; border: 0px solid #ddd; padding: 5pxoverflow-x: scroll; width:100%; border-bottom: 0;">
+<table style="width:100%; margin-left: auto; margin-right: auto;" class="table">
+<thead>
+<tr>
+<th style="empty-cells: hide;border-bottom:hidden;" colspan="2">
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Now Available from IPUMS PMA
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+Sample
+</th>
+<th style="text-align:left;">
+Phase 1 Data Collection<sup>*</sup>
+</th>
+<th style="text-align:left;">
+Phase 1
+</th>
+<th style="text-align:left;">
+Phase 2
+</th>
+<th style="text-align:left;">
+Phase 3
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Burkina Faso
+</td>
+<td style="text-align:left;">
+Dec 2019 - Mar 2020
+</td>
+<td style="text-align:left;">
+x
+</td>
+<td style="text-align:left;">
+x
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cote d’Ivoire
+</td>
+<td style="text-align:left;">
+Sep 2020 - Dec 2020
+</td>
+<td style="text-align:left;">
+x
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DRC - Kinshasa
+</td>
+<td style="text-align:left;">
+Dec 2019 - Feb 2020
+</td>
+<td style="text-align:left;">
+x
+</td>
+<td style="text-align:left;">
+x
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DRC - Kongo Central
+</td>
+<td style="text-align:left;">
+Dec 2019 - Feb 2020
+</td>
+<td style="text-align:left;">
+x
+</td>
+<td style="text-align:left;">
+x
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India - Rajasthan
+</td>
+<td style="text-align:left;">
+Aug 2020 - Oct 2020
+</td>
+<td style="text-align:left;">
+x
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Kenya
+</td>
+<td style="text-align:left;">
+Nov 2019 - Dec 2019
+</td>
+<td style="text-align:left;">
+x
+</td>
+<td style="text-align:left;">
+x
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nigeria - Kano
+</td>
+<td style="text-align:left;">
+Dec 2019 - Jan 2020
+</td>
+<td style="text-align:left;">
+x
+</td>
+<td style="text-align:left;">
+x
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nigeria - Lagos
+</td>
+<td style="text-align:left;">
+Dec 2019 - Jan 2020
+</td>
+<td style="text-align:left;">
+x
+</td>
+<td style="text-align:left;">
+x
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Uganda
+</td>
+<td style="text-align:left;">
+Sep 2020 - Oct 2020
+</td>
+<td style="text-align:left;">
+x
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+</tbody>
+</table>
+<tfoot>
+<tr>
+<td style="padding: 0; " colspan="100%">
+<sup>*</sup> <em>Each data collection phase is spaced one year apart</em>
+</td>
+</tr>
+</tfoot>
+</div>
+<aside>
+<strong>Resident enumerators</strong> are women over age 21 living in (or near) each EA who hold at least a high school diploma.
+</aside>
+<p>PMA uses a multi-stage clustered sample design, with stratification at the urban-rural level or by sub-region. Sample clusters - called <a href="https://pma.ipums.org/pma-action/variables/EAID#description_section">enumeration areas</a> (EAs) – are provided by the national statistics agency in each country.<span id="fn2" class="footnote" data-pagedown-footnote-number="2" style="white-space: pre-line;"><a href="https://tech.popdata.org/pma-data-hub/posts/2021-10-15-nutrition-climate/PMA_displacement.pdf">Displaced GPS coordinates</a> for the centroid of each EA are available for most samples <a href="https://www.pmadata.org/data/request-access-datasets">by request</a> from PMA. IPUMS PMA provides shapefiles for PMA countries <a href="https://pma.ipums.org/pma/gis_boundary_files.shtml">here</a>.</span> These EAs are sampled using a <em>probability proportional to size</em> (PPS) method relative to the population distribution in each stratum.</p>
+<div class="page-break-after"></div>
+<p>At Phase 1, 35 household dwellings were selected at random within each EA. Resident enumerators visited each dwelling and invited one household member to complete a <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Household-Questionnaire-English-2019.10.09.pdf">Household Questionnaire</a><span id="fn3" class="footnote" data-pagedown-footnote-number="3" style="white-space: pre-line;">Questionnaires administered in each country may vary from this <strong>Core Household Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span> that includes a census of all household members and visitors who stayed there during the night before the interview. Female household members and visitors aged 15-49 were then invited to complete a subsequent Phase 1 <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Female-Questionnaire-English-2019.10.09.pdf">Female Questionnaire</a>.<span id="fn4" class="footnote" data-pagedown-footnote-number="4" style="white-space: pre-line;">Questionnaires administered in each country may vary from this <strong>Core Female Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span></p>
+<aside>
+<p><a href="https://pma.ipums.org/pma-action/variables/SAMEDWELLING#codes_section">samedwelling</a> indicates whether a Phase 2 female respondent resided in her Phase 1 dwelling or a new one.</p>
+<a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN#codes_section">panelwoman</a> indicates whether a Phase 2 household member completed the Phase 1 Female Questionnaire.
+</aside>
+<p>One year later, resident enumerators visited the same dwellings and administered a Phase 2 Household Questionnaire. A panel member in Phase 2 is any woman still age 15-49 who could be reached for a second Female Questionnaire, either because:</p>
+<ul>
+<li>she still lived there, or</li>
+<li>she had moved elsewhere within the study area,<span id="fn5" class="footnote" data-pagedown-footnote-number="5" style="white-space: pre-line;">The “study area” is area within which resident enumerators should attempt to find panel women that have moved out of their Phase 1 dwelling. This may extend beyond the woman’s original EA as determined by in-country administrators - see <a href="https://www.pmadata.org/data/survey-methodology">PMA Phase 2 and Phase 3 Survey Protocol</a> for details.</span> but at least one member of the Phase 1 household remained and could help resident enumerators locate her new dwelling.<span id="fn6" class="footnote" data-pagedown-footnote-number="6" style="white-space: pre-line;">In cases where no Phase 1 household members remained in the dwelling at Phase 2, women from the household are considered lost to follow-up (LTFU). A panel member is also considered LTFU if a Phase 2 Household Questionnaire was not completed, if she declined to participate, or if she was deceased or otherwise unavailable.</span></li>
+</ul>
+<p>Additionally, resident enumerators administered the Phase 2 Female Questionnaire to <em>new</em> women in sampled households who:</p>
+<ul>
+<li>reached age 15 after Phase 1</li>
+<li>joined the household after Phase 1</li>
+<li>declined the Female Questionnaire at Phase 1, but agreed to complete it at Phase 2</li>
+</ul>
+<div class="page-break-after"></div>
+<p>When you select the new <strong>Longitudinal</strong> sample option at checkout, you’ll be able to include responses from every available phase of the study. These samples are available in either “long” format (responses from each phase will be organized in separate rows) or “wide” format (responses from each phase will be organized in columns).</p>
+<p><img src="images/long_radio.png" width="1011" style="display: block; margin: auto;" /></p>
+<div class="page-break-after"></div>
+<aside>
+<a href="https://pma.ipums.org/pma-action/variables/CROSS_SECTION#codes_section">cross_section</a> indicates whether a household member in a longitudinal sample is also included in the cross-sectional sample for a given year (every person in a cross-sectional sample is included in the longitudinal sample).
+</aside>
+<p>In addition to following up with women in the panel over time, PMA also adjusted sampling so that a cross-sectional sample could be produced concurrently with each data collection phase. These samples mainly overlap with the data you’ll obtain for a particular phase in the longitudinal sample, except that replacement households were drawn from each EA where more than 10% of households from the previous phase were no longer there. Conversely, panel members who were located in a new dwelling at Phase 2 will not be represented in the cross-sectional sample drawn from that EA. These adjustments ensure that population-level indicators may be derived from cross-sectional samples in a given year, even if panel members move or are lost to follow-up.</p>
+<p>You’ll find PMA cross-sectional samples dating back to 2013 if you select the <strong>Cross-sectional</strong> sample option at checkout.</p>
+<p><img src="images/cross_radio.png" width="1012" style="display: block; margin: auto;" /></p>
+</div>
+<div id="inclusion-criteria-for-analysis" class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> Inclusion Criteria for Analysis</h2>
+<p>Several chapters in this manual feature code you can use to reproduce key indicators included in the <strong>PMA Longitudinal Brief</strong> for each sample. In many cases, you’ll find separate reports available in English and French, and for both national and sub-national summaries. For reference, here are the highest-level population summaries available in English for each sample where Phase 2 IPUMS PMA data is currently available:</p>
+<ul>
+<li><a href="https://www.pmadata.org/sites/default/files/data_product_results/Burkina%20National_Phase%202_Panel_Results%20Brief_English_Final.pdf">Burkina Faso</a></li>
+<li><a href="https://www.pmadata.org/sites/default/files/data_product_results/DRC%20Kinshasa_%20Phase%202%20Panel%20Results%20Brief_English_Final.pdf">DRC - Kinshasa</a></li>
+<li><a href="https://www.pmadata.org/sites/default/files/data_product_results/DRC%20Kongo%20Central_%20Phase%202%20Panel%20Results%20Brief_English_Final.pdf">DRC - Kongo Central</a></li>
+<li><a href="https://www.pmadata.org/sites/default/files/data_product_results/Kenya%20National_Phase%202_Panel%20Results%20Brief_Final.pdf">Kenya</a></li>
+<li><a href="https://www.pmadata.org/sites/default/files/data_product_results/Nigeria%20KANO_Phase%202_Panel_Results%20Brief_Final.pdf">Nigeria - Kano</a></li>
+<li><a href="https://www.pmadata.org/sites/default/files/data_product_results/Nigeria%20LAGOS_Phase%202_Panel_Results%20Brief_Final.pdf">Nigeria - Lagos</a></li>
+</ul>
+<p>Panel data in these reports is limited to the <em>de facto</em> population of women who completed the Female Questionnaire in both Phase 1 and Phase 2. This includes women who slept in the household during the night before the interview for the Household Questionnaire. The <em>de jure</em> population includes women who are usual household members, but who slept elsewhere that night. We’ll remove <em>de jure</em> cases recorded in the variable <a href="https://pma.ipums.org/pma-action/variables/RESIDENT#codes_section">resident</a>.</p>
+<aside>
+We will demonstrate how to request and download an IPUMS PMA data extract in Chapter 2.
+</aside>
+<p>For example, let’s consider a “wide” format data extract containing Phase 1 and Phase 2 respondents to the Female Questionnaire from Burkina Faso. You’ll find the number of women who slept in the household before the Household Questionnaire for each phase reported in <a href="https://pma.ipums.org/pma-action/variables/resident#codes_section">resident_1</a> and <a href="https://pma.ipums.org/pma-action/variables/resident#codes_section">resident_2</a>:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">&quot;pma_00126.dta&quot;</span>, <span class="kw">clear</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">table</span> ( resident_1 ) () (), nototals <span class="fu">missing</span> zerocounts</span></code></pre></div>
+<pre><code>
+-----------------------------------------------------------
+                                               |  Frequency
+-----------------------------------------------+-----------
+usual member of household                      |           
+  visitor, slept in hh last night              |        106
+  usual member, did not sleep in hh last night |        174
+  usual member, slept in hh last night         |      6,510
+-----------------------------------------------------------</code></pre>
+<p>This extract includes 174 women who are not members of the <em>de facto</em> population because they did not sleep in the sampled household during the night before the Phase 1 interview.</p>
+<p>Let’s turn to Phase 2:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">table</span> ( resident_2 ) () (), nototals <span class="fu">missing</span> zerocounts</span></code></pre></div>
+<pre><code>-------------------------------------------------------------------------
+                                                             |  Frequency
+-------------------------------------------------------------+-----------
+usual member of household                                    |           
+  visitor, slept in hh last night                            |         74
+  usual member, did not sleep in hh last night               |        230
+  usual member, slept in hh last night                       |      5,993
+  slept in hh last night, no response if usually lives in hh |          1
+  .                                                          |        492
+-------------------------------------------------------------------------</code></pre>
+<p>Addtionally, the extract includes 230 women who are not members of the <em>de facto</em> population because they did not sleep in the sampled household during the night before the Phase 2 interview. Moreover, there are 492 blank values in <code>resident_2</code> representing women who were lost to follow-up after Phase 1.</p>
+<p>The <em>de facto</em> population is represented in both variables by codes 11 and 22. We will use an <code>if</code> statement or <code>keep</code> statement to include only those cases.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> <span class="fu">inlist</span>(resident_1,11,22) &amp; <span class="fu">inlist</span>(resident_2,11,22)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">variable</span> resident_1 <span class="st">&quot;Resident type - Phase 1&quot;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">variable</span> resident_2 <span class="st">&quot;Resident type - Phase 2&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">define</span> RESIDENT_1 11 <span class="st">&quot;Visitor&quot;</span> 22 <span class="st">&quot;Usual&quot;</span>, modify</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">define</span> RESIDENT_2 11 <span class="st">&quot;Visitor&quot;</span> 22 <span class="st">&quot;Usual&quot;</span>, modify</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">table</span> ( resident_1 ) ( resident_2 ) (), nototals <span class="fu">missing</span> zerocounts</span></code></pre></div>
+<pre><code>----------------------------------------------------
+                        |   Resident type - Phase 2 
+                        |       Visitor        Usual
+------------------------+---------------------------
+Resident type - Phase 1 |                           
+  Visitor               |            56           39
+  Usual                 |            17        5,855
+----------------------------------------------------</code></pre>
+<p>Additionally, PMA reports only include women who completed (or partially completed) both Female Questionnaires. This information is reported in <a href="https://pma.ipums.org/pma-action/variables/resultfq#codes_section">resultfq</a>. In our “wide” extract, this information appears in <a href="https://pma.ipums.org/pma-action/variables/resultfq#codes_section">resultfq_1</a> and <a href="https://pma.ipums.org/pma-action/variables/resultfq#codes_section">resultfq_2</a>: if you select the “Female Respondents” option at checkout, only women who completed (or partially completed) the Phase 1 Female Questionnaire will be included in your extract.</p>
+<p>We’ll further restrict our sample by selecting only cases where <code>resultfq_2</code> shows that the woman also completed the Phase 2 questionnaire. Notice that, in addition to each of the value 1 through 10, there are several <strong>non-response codes</strong> numbered 90 through 99. You’ll see similar values repeated across all IPUMS PMA variables, except that they will be left-padded to match the maximum width of a particular variable (e.g. <code>9999</code> is used for <a href="https://pma.ipums.org/pma-action/variables/INTFQYEAR#codes_section">intfqyear</a>, which represents a 4-digit year for the Female Interview).</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">&quot;pma_00126.dta&quot;</span>, <span class="kw">clear</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">tab</span> resultfq_2, <span class="fu">m</span></span></code></pre></div>
+<pre><code>         result of female questionnaire |      Freq.     Percent        Cum.
+----------------------------------------+-----------------------------------
+                              completed |      5,491       80.87       80.87
+                            not at home |         78        1.15       82.02
+                              postponed |         22        0.32       82.34
+                                refused |         66        0.97       83.31
+                       partly completed |         12        0.18       83.49
+                       respondent moved |         15        0.22       83.71
+                          incapacitated |         19        0.28       83.99
+ not interviewed (female questionnaire) |          4        0.06       84.05
+not interviewed (household questionnair |        192        2.83       86.88
+                  niu (not in universe) |        399        5.88       92.75
+                                      . |        492        7.25      100.00
+----------------------------------------+-----------------------------------
+                                  Total |      6,790      100.00</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="ot">list</span> RESULTFQ_2</span></code></pre></div>
+<pre><code>RESULTFQ_2:
+           1 completed
+           2 not at home
+           3 postponed
+           4 refused
+           5 partly completed
+           6 respondent death
+           7 respondent moved
+           8 household moved
+          10 incapacitated
+          90 other
+          95 not interviewed (female questionnaire)
+          96 not interviewed (household questionnaire)
+          99 niu (not in universe)
+</code></pre>
+<p>Possible <strong>non-response codes</strong> include:</p>
+<ul>
+<li><code>95</code> Not interviewed (female questionnaire)</li>
+<li><code>96</code> Not interviewed (household questionnaire)</li>
+<li><code>97</code> Don’t know</li>
+<li><code>98</code> No response or missing</li>
+<li><code>99</code> NIU (not in universe)</li>
+</ul>
+<p>A blank value in an IPUMS extract indicates that a particular variable is not provided for a selected sample. In a “wide” <strong>Longitudinal</strong> extract, it may also signify that a particular person was not included in the data from a particular phase. Here, a blank value appearing in <code>resultfq_2</code> indicates that a Female Respondent from Phase 1 was not found in Phase 2.</p>
+<p>You can drop incomplete Phase 2 female responses as follows:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">&quot;pma_00126.dta&quot;</span>, <span class="kw">clear</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> resultfq_2 == 1</span></code></pre></div>
+<pre><code>(1,299 observations deleted)</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">tab</span> resultfq_1 resultfq_2,<span class="fu">m</span></span></code></pre></div>
+<pre><code>                      | result of
+                      |   female
+                      | questionna
+     result of female |    ire
+        questionnaire | completed |     Total
+----------------------+-----------+----------
+            completed |     5,487 |     5,487 
+     partly completed |         4 |         4 
+----------------------+-----------+----------
+                Total |     5,491 |     5,491 </code></pre>
+<p>Generally, we will combine both filtering steps together in a single function like so:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">&quot;pma_00126.dta&quot;</span>, <span class="kw">clear</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> <span class="fu">inlist</span>(resident_1,11,22) &amp; <span class="fu">inlist</span>(resident_2,11,22) &amp; resultfq_2  == 1</span></code></pre></div>
+<pre><code>(1,578 observations deleted)</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">tab</span> resultfq_1 resultfq_2,<span class="fu">m</span></span></code></pre></div>
+<pre><code>                      | result of
+                      |   female
+                      | questionna
+     result of female |    ire
+        questionnaire | completed |     Total
+----------------------+-----------+----------
+            completed |     5,208 |     5,208 
+     partly completed |         4 |         4 
+----------------------+-----------+----------
+                Total |     5,212 |     5,212 
+</code></pre>
+<p>In subsequent analyses, we’ll use the remaining cases to show how PMA generates key indicators for <strong>contraceptive use status</strong> and <strong>family planning intentions and outcomes</strong>. The summary report for each country includes measures disaggregated by demographic variables like:</p>
+<ul>
+<li><a href="https://pma.ipums.org/pma-action/variables/MARSTAT#codes_section">marstat</a> - marital status</li>
+<li><a href="https://pma.ipums.org/pma-action/variables/EDUCATT#codes_section">educatt</a> and <a href="https://pma.ipums.org/pma-action/variables/EDUCATTGEN#codes_section">educattgen</a> - highest attended level of education<span id="fn7" class="footnote" data-pagedown-footnote-number="7" style="white-space: pre-line;">Levels in <a href="https://pma.ipums.org/pma-action/variables/EDUCATT#codes_section">educatt</a> may vary by country; <a href="https://pma.ipums.org/pma-action/variables/EDUCATTGEN#codes_section">educattgen</a> recodes country-specific levels in four general categories.</span></li>
+<li><a href="https://pma.ipums.org/pma-action/variables/AGE#codes_section">age</a> - age</li>
+<li><a href="https://pma.ipums.org/pma-action/variables/WEALTHQ#codes_section">wealthq</a> and <a href="https://pma.ipums.org/pma-action/variables/WEALTHT#codes_section">wealtht</a> - household wealth quintile or tertile<span id="fn8" class="footnote" data-pagedown-footnote-number="8" style="white-space: pre-line;">Households are divided into quintiles/tertiles relative to the distribution of an asset <a href="https://pma.ipums.org/pma-action/variables/SCORE#description_section">score</a> weighted for all sampled households. For subnationally-representative samples (DRC and Nigeria), separate wealth distributions are calculated for each sampled region.</span></li>
+<li><a href="https://pma.ipums.org/pma-action/variables/URBAN#codes_section">urban</a> and <a href="https://pma.ipums.org/pma-action/variables/SUBNATIONAL#codes_section">subnational</a> - geographic location<span id="fn9" class="footnote" data-pagedown-footnote-number="9" style="white-space: pre-line;"><a href="https://pma.ipums.org/pma-action/variables/SUBNATIONAL#codes_section">subnational</a> includes subnational regions for all sampled countries; country-specific variables are also available on the <a href="https://pma.ipums.org/pma-action/variables/group?id=hh_geo">household - geography</a> page.</span></li>
+</ul>
+</div>
+<div id="survey-design-elements" class="section level2" number="1.5">
+<h2><span class="header-section-number">1.5</span> Survey Design Elements</h2>
+<p>Throughout this guide, we’ll demonstrate how to incorporate PMA sampling weights and information about its stratified cluster sampling procedure into your analysis. This section describes how to use survey weights, cluster IDs, and sample strata in Stata.</p>
+<aside>
+We will demonstrate how to request and download an IPUMS PMA data extract in Chapter 2.
+</aside>
+<p>Let’s return to the data extract described in the previous section, which includes Phase 1 and Phase 2 respondents to the Female Questionnaire from Burkina Faso. As a reminder: we’ll drop women who are non members of the <em>de facto</em> population and those who did not complete all or part the Female Questionnaire in both phases.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">&quot;pma_00126.dta&quot;</span>, <span class="kw">clear</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> <span class="fu">inlist</span>(resident_1,11,22) &amp; <span class="fu">inlist</span>(resident_2,11,22) &amp; resultfq_2  == 1</span></code></pre></div>
+<pre><code>(1,578 observations deleted)</code></pre>
+<p>Whether you intend to work with a new <strong>Longitudinal</strong> or <strong>Cross-sectional</strong> data extract, you’ll find the same set of sampling weights available for all PMA Family Planning surveys dating back to 2013:</p>
+<aside>
+A fourth Family Planning survey weight, <a href="https://pma.ipums.org/pma-action/variables/POPWT#description_section">popwt</a>, is currently available only for <strong>Cross-sectional</strong> data extracts.<span id="fn10" class="footnote" data-pagedown-footnote-number="10" style="white-space: pre-line;"><code>POPWT</code> can be used to estimate population-level <em>counts</em> - <a href="https://pma.ipums.org/pma/population_weights.shtml">click here</a> or view <a href="https://www.youtube.com/watch?v=GnCq26t4zgM">this video</a> for details.</span>
+</aside>
+<ul>
+<li><a href="https://pma.ipums.org/pma-action/variables/HQWEIGHT#description_section">hqweight</a> can be used to generate cross-sectional population estimates from questions on the Household Questionnaire.<span id="fn11" class="footnote" data-pagedown-footnote-number="11" style="white-space: pre-line;"><code>HQWEIGHT</code> reflects the <a href="https://pma.ipums.org/pma/resources/documentation/weighting_memo.pdf">calculated selection probability</a> for a household in an EA, normalized at the population-level. Users intending to estimate population-level indicators for <em>households</em> should restrict their sample to one person per household via <a href="https://pma.ipums.org/pma-action/variables/LINENO#description_section">lineno</a> - see <a href="https://pma.ipums.org/pma/weightguide.shtml#hh">household weighting guide</a> for details.</span></li>
+<li><a href="https://pma.ipums.org/pma-action/variables/FQWEIGHT#description_section">fqweight</a> can be used to to generate cross-sectional population estimates from questions on the Female Questionnaire.<span id="fn12" class="footnote" data-pagedown-footnote-number="12" style="white-space: pre-line;"><code>FQWEIGHT</code> adjusts <code>HQWEIGHT</code> for female non-response within the EA, normalized at the population-level - see <a href="https://pma.ipums.org/pma/weightguide.shtml#female">female weighting guide</a> for details.</span></li>
+<li><a href="https://pma.ipums.org/pma-action/variables/EAWEIGHT#description_section">eaweight</a> can be used to compare the selection probability of a particular household with that of its EA.</li>
+</ul>
+<p>Additionally, PMA created a new weight, <a href="https://pma.ipums.org/pma-action/variables/PANELWEIGHT#description_section">panelweight</a>,
+which should be used in longitudinal analyses spanning multiple phases, as it adjusts for loss to follow-up.</p>
+<div id="set-survey-design" class="section level3" number="1.5.1">
+<h3><span class="header-section-number">1.5.1</span> Set survey design</h3>
+<aside>
+Variable names in a “wide” extract have a numeric suffix for their data collection phase. <code>cp_1</code> is the Phase 1 version of <a href="https://pma.ipums.org/pma-action/variables/CP#codes_section">cp</a>, while <code>cp_2</code> comes from Phase 2.
+</aside>
+<p>In the following example, we’ll show how to use <code>panelweight</code> to estimate the proportion of reproductive age women in Burkina Faso who were using contraception at the time of data collection for both Phase 1 and Phase 2. In a cross-sectional or “long” longitudinal extract, you’ll find this information in the variable <a href="https://pma.ipums.org/pma-action/variables/CP#codes_section">cp</a>. In the “wide” extract featured here, you’ll find it in <code>cp_1</code> for Phase 1, and in <code>cp_2</code> for Phase 2.</p>
+<p>Here is how to create an <em>unweighted</em> crosstab for <code>cp_1</code> and <code>cp_2</code>:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">table</span> ( cp_1 ) ( cp_2 ) (), nototals <span class="fu">missing</span> zerocounts</span></code></pre></div>
+<pre><code>--------------------------------------------------------------
+                             |   Contraceptive user (Phase 2) 
+                             |              no             yes
+-----------------------------+--------------------------------
+Contraceptive user (Phase 1) |                                
+  no                         |           2,589             821
+  yes                        |             556           1,241
+  no response or missing     |               5               0
+--------------------------------------------------------------</code></pre>
+<p>To estimate a population percentage, we’ll need to tell Stata that we are working with a sample survey dataset and stipulate the sample design (specify which variables identify survey weights, strata, and clusters). This is accomplished with the <a href="https://www.stata.com/manuals/svysvyset.pdf">svyset</a> command.</p>
+<aside>
+This is a lean <code>svyset</code> call. We recall that the default <code>vce</code> option is <code>vce(linearized)</code> and the default singleunit option is <code>(missing)</code>. Read the <code>svyset</code> documentation if you want to consider using other settings.
+</aside>
+<p>We use <a href="https://pma.ipums.org/pma-action/variables/eaid#codes_section">eaid_1</a> as the cluster ID<span id="fn13" class="footnote" data-pagedown-footnote-number="13" style="white-space: pre-line;">Because women are considered “lost to follow-up” if they moved outside the study area, <a href="https://pma.ipums.org/pma-action/variables/eaid#codes_section">eaid_1</a> and <a href="https://pma.ipums.org/pma-action/variables/eaid#codes_section">eaid_2</a> are identical for all panel members: you can use either one to identify sample clusters.</span> and <a href="https://pma.ipums.org/pma-action/variables/strata#codes_section">strata_1</a> as the stratum ID<span id="fn14" class="footnote" data-pagedown-footnote-number="14" style="white-space: pre-line;">As with <a href="https://pma.ipums.org/pma-action/variables/EAID#codes_section">eaid</a>, you may use either <a href="https://pma.ipums.org/pma-action/variables/STRATA#codes_section">strata_1</a> or <a href="https://pma.ipums.org/pma-action/variables/STRATA#codes_section">strata_2</a> if your analysis is restricted to panel members</span> and <a href="https://pma.ipums.org/pma-action/variables/panelweight#codes_section">panelweight</a> holds the survey weight. We also make a binary variable indicating which women were using contraception in both phases.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> cp_both = cp_1 == 1 &amp; cp_2 == 1 <span class="kw">if</span> cp_1 &lt; 90</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">variable</span> cp_both <span class="st">&quot;Contraceptive user (Phases 1 &amp; 2)&quot;</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">define</span> cp_both 1 <span class="st">&quot;Yes&quot;</span> 0 <span class="st">&quot;No&quot;</span>, <span class="kw">replace</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">values</span> cp_both cp_both</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="kw">svyset</span> eaid_1, <span class="kw">strata</span>(strata_1) <span class="kw">weight</span>(panelweight) </span></code></pre></div>
+<pre><code>Sampling weights: &lt;none&gt;
+             VCE: linearized
+     Single unit: missing
+        Strata 1: strata_1
+ Sampling unit 1: eaid_1
+           FPC 1: &lt;zero&gt;
+        Weight 1: panelweight</code></pre>
+<p>Now, we can use this survey design information to obtain a population estimate for the proportion of women who used family planning in both phases.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">svy</span>: <span class="kw">proportion</span> cp_both</span></code></pre></div>
+<pre><code>(running proportion on estimation sample)
+
+Survey: Proportion estimation
+
+Number of strata =   2            Number of obs   =      5,207
+Number of PSUs   = 167            Population size = 5,215.6413
+                                  Design df       =        165
+
+--------------------------------------------------------------
+             |             Linearized            Logit
+             | Proportion   std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+     cp_both |
+         No  |   .8122041    .012815      .7855839    .8362084
+        Yes  |   .1877959    .012815      .1637916    .2144161
+--------------------------------------------------------------</code></pre>
+<p>This is our first look at Stata’s output for estimating proportions. The top of the output table lists the number of strata and PSUs in the dataset, along with the number of respondents in the sample and the sum of their weights (under the heading: Population size). The number of design degrees of freedom (df) is the number of PSUs minus the number of strata.<span id="fn15" class="footnote" data-pagedown-footnote-number="15" style="white-space: pre-line;">Some survey materials guide analysts to only report results for estimates or tests where the relative standard error (100 x standard error of the estimate / the estimate itself) is no greater than 30% or where there are at least twelve degrees of freedom. See the Centers for Disease Control and Prevention’s <a href="https://www.cdc.gov/nchs/tutorials/nhanes-cms/variance/variance.htm">NHANES CMS tutorial</a>.︎</span></p>
+<p>The lower portion of the table lists the values of the outcome variable, or in this case their value labels: No and Yes. It lists the proportion of the population that are estimated to have each outcome, that proportion’s standard error, and a two-sided survey-adjusted confidence interval for the proportion.</p>
+<p>Stata’s default confidence interval is the so-called “logit interval” which is one of several possibilities.<span id="fn16" class="footnote" data-pagedown-footnote-number="16" style="white-space: pre-line;">See Dean &amp; Pagano <span class="citation">[-@Dean-Pagano]</span> for discussion. If you estimate a proportion where the sample have either 0% or 100% of respondents with the outcome, then as of the time of this writing, neither Stata nor R’s <a href="http://r-survey.r-forge.r-project.org/survey/">survey</a> package will report a confidence interval. Here at Biostat Global Consulting, we have written programs in both Stata and R that yield meaningful confidence intervals for any proportion. Those programs are made freely available as part of software we have written for the World Health Organization. If you want to learn more about them, write to us at <a href="mailto:Dale.Rhoda@biostatglobal.com">Dale.Rhoda@biostatglobal.com</a> or <a href="mailto:Caitlin.Clary@biostatglobal.com">Caitlin.Clary@biostatglobal.com</a>.</span> For now we will simply say that the default logit interval is a fine choice for most circumstances. To request a different kind of confidence interval, read about the options and specify what you want using the <code>citype()</code> option to the <code>svy: proportion</code> command (e.g., <code>citype(wilson)</code> or <code>citype(exact)</code>).</p>
+<p>To describe this output in an English language sentence, we might say something like: “Based on this survey sample of 5,207 women from Burkina Faso, we estimate that if the surveys were free from bias then about 18.8% women who were eligible to be sampled in the PMA surveys would be self-reported users of contraception in both Phases 1 and 2 (95% CI: 16.4-21.4%).”</p>
+</div>
+<div id="design-effect" class="section level3" number="1.5.2">
+<h3><span class="header-section-number">1.5.2</span> Design Effect</h3>
+<p>With survey data collected from using a complex sample design that employs strata and/or clusters, we sometimes like to report the <strong>design effect</strong>, which is an index of the statistical precision penalty that we pay for using that sample design. In Stata, we can see the design effect by issuing the following post-estimation command <a href="https://www.stata.com/manuals/svysvypostestimation.pdf">estat effects</a>.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">estat</span> <span class="kw">effects</span></span></code></pre></div>
+<pre><code>----------------------------------------------------------
+             |             Linearized
+             | Proportion   std. err.       DEFF      DEFT
+-------------+--------------------------------------------
+     cp_both |
+         No  |   .8122041    .012815      5.6052   2.36753
+        Yes  |   .1877959    .012815      5.6052   2.36753
+----------------------------------------------------------</code></pre>
+<p>We see that the design effect <code>DEFF</code> is 5.6, which we might interpret by saying “The confidence interval for this estimation is as wide as we would expect from a simple random sample of this sample size (5,207) divided by 5.6 or about 929 respondents.”</p>
+<p>The <code>DEFT</code> is the square root of <code>DEFF</code> and we might use it in a sentence thus: “Because of the complex sample design and heterogeneity of survey weights, the confidence interval for this estimation is 2.4 times wider than we would expect from a simple random sample of size 5,207 respondents.”</p>
+<p>The figure 929 is sometimes called the <strong>effective sample size</strong>.</p>
+<p>Let’s take a moment and estimate proportions from two simple random samples where 18.8% of the respondents have the outcome: one where the sample size is 5,207 and one where the sample size is 929. We can do this by generating an empty dataset with the appropriate number of respondents and a binary variable named <code>y</code>.</p>
+<p>Here we create <code>y</code> for the larger, complex sample:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">clear</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="kw">obs</span> 5207</span></code></pre></div>
+<pre><code>Number of observations (_N) was 0, now 5,207.</code></pre>
+<div class="sourceCode" id="cb31"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> <span class="fu">y</span> = 0</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> <span class="fu">y</span> = 1 <span class="kw">if</span> <span class="dt">_n</span> &lt; 0.188 * 5207</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="kw">tab</span> <span class="fu">y</span></span></code></pre></div>
+<pre><code>          y |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,229       81.22       81.22
+          1 |        978       18.78      100.00
+------------+-----------------------------------
+      Total |      5,207      100.00</code></pre>
+<div class="sourceCode" id="cb33"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">svyset</span> <span class="dt">_n</span></span></code></pre></div>
+<pre><code>Sampling weights: &lt;none&gt;
+             VCE: linearized
+     Single unit: missing
+        Strata 1: &lt;one&gt;
+ Sampling unit 1: &lt;observations&gt;
+           FPC 1: &lt;zero&gt;</code></pre>
+<div class="sourceCode" id="cb35"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="kw">svy</span>: <span class="kw">proportion</span> <span class="fu">y</span></span></code></pre></div>
+<pre><code>(running proportion on estimation sample)
+
+Survey: Proportion estimation
+
+Number of strata =     1               Number of obs   = 5,207
+Number of PSUs   = 5,207               Population size = 5,207
+                                       Design df       = 5,206
+
+--------------------------------------------------------------
+             |             Linearized            Logit
+             | Proportion   std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+           y |
+          0  |   .8121759   .0054131      .8013328    .8225583
+          1  |   .1878241   .0054131      .1774417    .1986672
+--------------------------------------------------------------</code></pre>
+<p>And here we create <code>y</code> for the smaller, simple sample:</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">clear</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="kw">obs</span> 929</span></code></pre></div>
+<pre><code>Number of observations (_N) was 0, now 929.</code></pre>
+<div class="sourceCode" id="cb39"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> <span class="fu">y</span> = 0</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> <span class="fu">y</span> = 1 <span class="kw">if</span> <span class="dt">_n</span> &lt; 0.188 * 929</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="kw">tab</span> <span class="fu">y</span></span></code></pre></div>
+<pre><code>          y |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        755       81.27       81.27
+          1 |        174       18.73      100.00
+------------+-----------------------------------
+      Total |        929      100.00</code></pre>
+<div class="sourceCode" id="cb41"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="kw">svyset</span> <span class="dt">_n</span></span></code></pre></div>
+<pre><code>Sampling weights: &lt;none&gt;
+             VCE: linearized
+     Single unit: missing
+        Strata 1: &lt;one&gt;
+ Sampling unit 1: &lt;observations&gt;
+           FPC 1: &lt;zero&gt;</code></pre>
+<div class="sourceCode" id="cb43"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="kw">svy</span>: <span class="kw">proportion</span> <span class="fu">y</span></span></code></pre></div>
+<pre><code>(running proportion on estimation sample)
+
+Survey: Proportion estimation
+
+Number of strata =   1                   Number of obs   = 929
+Number of PSUs   = 929                   Population size = 929
+                                         Design df       = 928
+
+--------------------------------------------------------------
+             |             Linearized            Logit
+             | Proportion   std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+           y |
+          0  |   .8127018   .0128073       .786262    .8365509
+          1  |   .1872982   .0128073      .1634491     .213738
+--------------------------------------------------------------</code></pre>
+<p>Now let’s compare the CI width from the simple random sample with N=929 with that from the complex sample with N=5,207. That is: we’ll divide the difference between the upper and lower limits of our 95% confidence interval from the complex data by that of the simple random sample. We’ll see that it is approximately equal to <code>DEFT</code>.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="kw">di</span> (.2144-.1638) / (.1987-.1774)</span></code></pre></div>
+<pre><code>2.3755869</code></pre>
+<p>It can be disheartening to know that the teams did all the work to interview 5,207 respondents and yet for this estimation that sample only has the statistical precision of a simple random sample of 929 respondents. The statistical penalty is because of both a clustering effect – spatial heterogeneity in the outcome across PSUs – and because of heterogeneity in the survey weights. In some survey reporting contexts you will be expected to report either <code>DEFF</code> or <code>DEFT</code>, or both. Be clear about which one you are reporting. The design effect will vary across outcomes, across strata, and across PMA Phases, so if it is of interest, estimate it anew for each analysis. You can learn more about the survey design effect in <a href="">materials on survey sampling statistics</a>.</p>
+</div>
+<div id="sample-strata-for-drc" class="section level3" number="1.5.3">
+<h3><span class="header-section-number">1.5.3</span> Sample strata for DRC</h3>
+<p>This syntax and <code>svyset</code> command worked well for Burkina Faso, but take note: the variable <a href="https://pma.ipums.org/pma-action/variables/strata#codes_section">strata</a> is not available for samples collected from DRC - Kinshasa or DRC - Kongo Central. If your extract includes any DRC sample, you’ll need to amend this variable to include a unique numeric code for each of those regions.</p>
+<p>For example, let’s look at a different wide extract, containing all of the samples included in this data release. Here, we again include only panel members who completed all or part of the female questionnaire in both phases, and who slept in the household during the night before the interview:</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">&quot;pma_00153.dta&quot;</span>, <span class="kw">clear</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> <span class="fu">inlist</span>(resident_1,11,22) &amp; <span class="fu">inlist</span>(resident_2,11,22) &amp; resultfq_2  == 1</span></code></pre></div>
+<pre><code>(12,453 observations deleted)</code></pre>
+<p>Notice that <a href="https://pma.ipums.org/pma-action/variables/strata#codes_section">strata_1</a> lists the sample strata for all values of <a href="https://pma.ipums.org/pma-action/variables/country#codes_section">country</a> except for DRC, where the variable is missing.</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="kw">table</span> ( strata_1 )  () ( country ), nototals <span class="fu">missing</span> zerocounts</span></code></pre></div>
+<pre><code>pma country = burkina faso
+----------------------------------
+                      |  Frequency
+----------------------+-----------
+strata                |           
+  urban, burkina faso |      3,058
+  rural, burkina faso |      2,154
+----------------------------------
+
+pma country = congo, democratic republic
+-------------------
+       |  Frequency
+-------+-----------
+strata |           
+  .    |      3,487
+-------------------
+
+pma country = kenya
+----------------------------------------
+                            |  Frequency
+----------------------------+-----------
+strata                      |           
+  bungoma - urban, kenya    |        153
+  bungoma - rural, kenya    |        489
+  kakamega - urban, kenya   |        133
+  kakamega - rural, kenya   |        438
+  kericho - urban, kenya    |        249
+  kericho - rural, kenya    |        453
+  kiambu - urban, kenya     |        214
+  kiambu - rural, kenya     |        311
+  kilifi - urban, kenya     |        170
+  kilifi - rural, kenya     |        455
+  kitui - urban, kenya      |        153
+  kitui - rural, kenya      |        586
+  nairobi - urban, kenya    |        494
+  nandi - urban, kenya      |        260
+  nandi - rural, kenya      |        711
+  nyamira - urban, kenya    |        143
+  nyamira - rural, kenya    |        382
+  siaya - urban, kenya      |        130
+  siaya - rural, kenya      |        437
+  west pokot - urban, kenya |        104
+  west pokot - rural, kenya |        474
+----------------------------------------
+
+pma country = nigeria
+-----------------------------
+                 |  Frequency
+-----------------+-----------
+strata           |           
+  lagos, nigeria |      1,088
+  kano - urban   |        437
+  kano - rural   |        561
+-----------------------------</code></pre>
+<p>We can replace those values with numeric codes from the variable <a href="https://pma.ipums.org/pma-action/variables/geocd#codes_section">geocd</a>:</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="kw">table</span> ( geocd ) <span class="kw">if</span> country == 2, nototals <span class="fu">missing</span> zerocounts</span></code></pre></div>
+<pre><code>-------------------------------
+                   |  Frequency
+-------------------+-----------
+province, congo dr |           
+  kinshasa         |      1,973
+  kongo central    |      1,514
+-------------------------------</code></pre>
+<div class="sourceCode" id="cb53"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="kw">tab</span> geocd</span></code></pre></div>
+<pre><code>    province, |
+     congo dr |      Freq.     Percent        Cum.
+--------------+-----------------------------------
+     kinshasa |      1,973       56.58       56.58
+kongo central |      1,514       43.42      100.00
+--------------+-----------------------------------
+        Total |      3,487      100.00</code></pre>
+<div class="sourceCode" id="cb55"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="kw">tab</span> geocd, <span class="kw">nolabel</span></span></code></pre></div>
+<pre><code>  province, |
+   congo dr |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |      1,973       56.58       56.58
+          2 |      1,514       43.42      100.00
+------------+-----------------------------------
+      Total |      3,487      100.00</code></pre>
+<p>Note that the values of <code>geocd</code> are distinct from the values of <code>strata_1</code>: if <code>geocd</code> is not missing, we’ll use its numeric code in place of <code>strata_1</code>. Otherwise, we’d like to leave <code>strata_1</code> unchanged. To avoid confusion with the original variable <code>strata_1</code>, we’ll call our new variable <code>strata_recode</code>.</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sum</span> strata_1</span></code></pre></div>
+<pre><code>    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+    strata_1 |     14,237    59259.26    20596.78      40410      85402
+</code></pre>
+<div class="sourceCode" id="cb59"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sum</span> geocd</span></code></pre></div>
+<pre><code>    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+       geocd |      3,487    1.434184    .4957204          1          2
+</code></pre>
+<div class="sourceCode" id="cb61"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="kw">clonevar</span> strata_recode = strata_1 </span></code></pre></div>
+<pre><code>(3,487 missing values generated)</code></pre>
+<div class="sourceCode" id="cb63"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span>  strata_recode = geocd <span class="kw">if</span> country == 2</span></code></pre></div>
+<pre><code>(3,487 real changes made)</code></pre>
+<p>Copy the value labels from <code>strata_1</code> into a new label <code>strata_recode</code> and update it with the labels from <code>geocd</code>. This leaves no blank values in <code>strata_recode</code>.</p>
+<div class="sourceCode" id="cb65"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> copy STRATA_1 strata_recode, <span class="kw">replace</span></span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">define</span> strata_recode 1 <span class="st">&quot;Kinshasa, DRC&quot;</span> 2 <span class="st">&quot;Kongo Central, DRC&quot;</span>, modify</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">values</span> strata_recode strata_recode</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a><span class="kw">tab</span> strata_recode, <span class="fu">m</span></span></code></pre></div>
+<pre><code>                                 strata |      Freq.     Percent        Cum.
+----------------------------------------+-----------------------------------
+                          Kinshasa, DRC |      1,973       11.13       11.13
+                     Kongo Central, DRC |      1,514        8.54       19.67
+                 bungoma - urban, kenya |        153        0.86       20.54
+                 bungoma - rural, kenya |        489        2.76       23.30
+                kakamega - urban, kenya |        133        0.75       24.05
+                kakamega - rural, kenya |        438        2.47       26.52
+                 kericho - urban, kenya |        249        1.40       27.92
+                 kericho - rural, kenya |        453        2.56       30.48
+                  kiambu - urban, kenya |        214        1.21       31.69
+                  kiambu - rural, kenya |        311        1.75       33.44
+                  kilifi - urban, kenya |        170        0.96       34.40
+                  kilifi - rural, kenya |        455        2.57       36.97
+                   kitui - urban, kenya |        153        0.86       37.83
+                   kitui - rural, kenya |        586        3.31       41.14
+                 nairobi - urban, kenya |        494        2.79       43.92
+                   nandi - urban, kenya |        260        1.47       45.39
+                   nandi - rural, kenya |        711        4.01       49.40
+                 nyamira - urban, kenya |        143        0.81       50.21
+                 nyamira - rural, kenya |        382        2.16       52.36
+                   siaya - urban, kenya |        130        0.73       53.10
+                   siaya - rural, kenya |        437        2.47       55.56
+              west pokot - urban, kenya |        104        0.59       56.15
+              west pokot - rural, kenya |        474        2.67       58.82
+                         lagos, nigeria |      1,088        6.14       64.96
+                           kano - urban |        437        2.47       67.43
+                           kano - rural |        561        3.17       70.59
+                    urban, burkina faso |      3,058       17.25       87.85
+                    rural, burkina faso |      2,154       12.15      100.00
+----------------------------------------+-----------------------------------
+                                  Total |     17,724      100.00</code></pre>
+<p>Now, we can use <code>strata_recode</code> with the <code>svyset</code> command to obtain population estimates for each nationally representative or sub-nationally representative sample.</p>
+<p>First, we’ll create <code>cp_both</code> again for this wide dataset.</p>
+<div class="sourceCode" id="cb67"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> cp_both = cp_1 == 1 &amp; cp_2 == 1 <span class="kw">if</span> cp_1 &lt; 90</span></code></pre></div>
+<pre><code>(19 missing values generated)</code></pre>
+<div class="sourceCode" id="cb69"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">variable</span> cp_both <span class="st">&quot;Contraceptive user (Phases 1 &amp; 2)&quot;</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">define</span> cp_both 1 <span class="st">&quot;Yes&quot;</span> 0 <span class="st">&quot;No&quot;</span>, <span class="kw">replace</span></span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">values</span> cp_both cp_both</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a><span class="kw">svyset</span> eaid_1, <span class="kw">strata</span>(strata_recode) <span class="kw">weight</span>(panelweight) </span></code></pre></div>
+<pre><code>Sampling weights: &lt;none&gt;
+             VCE: linearized
+     Single unit: missing
+        Strata 1: strata_recode
+ Sampling unit 1: eaid_1
+           FPC 1: &lt;zero&gt;
+        Weight 1: panelweight
+</code></pre>
+<p>For Stata to estimate the proportion for each population, we will use the <code>over(varname)</code> option where <code>varname</code> needs to be an integer variable - preferably with a value label.</p>
+<p>So, we construct a new variable named <code>pop_numeric</code> and give it a unique value for each PMA population.</p>
+<div class="sourceCode" id="cb71"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> pop_numeric = .</span></code></pre></div>
+<pre><code>(17,724 missing values generated)</code></pre>
+<div class="sourceCode" id="cb73"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 1 <span class="kw">if</span> country == 1              <span class="co">// Burkina Faso</span></span></code></pre></div>
+<pre><code>(5,212 real changes made)</code></pre>
+<div class="sourceCode" id="cb75"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 2 <span class="kw">if</span> country == 2 &amp; geocd == 1 <span class="co">// Kinshasa</span></span></code></pre></div>
+<pre><code>(1,973 real changes made)</code></pre>
+<div class="sourceCode" id="cb77"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 3 <span class="kw">if</span> country == 2 &amp; geocd == 2 <span class="co">// Kongo Central</span></span></code></pre></div>
+<pre><code>(1,514 real changes made)</code></pre>
+<div class="sourceCode" id="cb79"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 4 <span class="kw">if</span> country == 7              <span class="co">// Kenya</span></span></code></pre></div>
+<pre><code>(6,939 real changes made)</code></pre>
+<div class="sourceCode" id="cb81"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 5 <span class="kw">if</span> country == 9 &amp; geong == 4 <span class="co">// Kano</span></span></code></pre></div>
+<pre><code>(998 real changes made)
+</code></pre>
+<div class="sourceCode" id="cb83"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 6 <span class="kw">if</span> country == 9 &amp; geong == 2 <span class="co">// Lagos</span></span></code></pre></div>
+<pre><code>(1,088 real changes made)</code></pre>
+<div class="sourceCode" id="cb85"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">define</span> pop_numeric <span class="co">///</span></span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>           1 <span class="st">&quot;Burkina Faso&quot;</span> <span class="co">///</span></span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a>           2 <span class="st">&quot;DRC-Kinshasa&quot;</span> <span class="co">///</span></span>
+<span id="cb85-4"><a href="#cb85-4" aria-hidden="true" tabindex="-1"></a>           3 <span class="st">&quot;DRC-Kongo Central&quot;</span> <span class="co">///</span></span>
+<span id="cb85-5"><a href="#cb85-5" aria-hidden="true" tabindex="-1"></a>           4 <span class="st">&quot;Kenya&quot;</span> <span class="co">///</span></span>
+<span id="cb85-6"><a href="#cb85-6" aria-hidden="true" tabindex="-1"></a>           5 <span class="st">&quot;Nigeria-Kano&quot;</span> <span class="co">///</span></span>
+<span id="cb85-7"><a href="#cb85-7" aria-hidden="true" tabindex="-1"></a>           6 <span class="st">&quot;Nigeria-Lagos&quot;</span>, <span class="kw">replace</span></span>
+<span id="cb85-8"><a href="#cb85-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb85-9"><a href="#cb85-9" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">values</span> pop_numeric pop_numeric</span>
+<span id="cb85-10"><a href="#cb85-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb85-11"><a href="#cb85-11" aria-hidden="true" tabindex="-1"></a><span class="kw">svy</span> : <span class="kw">proportion</span> cp_both , <span class="bn">over</span>(pop_numeric) </span></code></pre></div>
+<pre><code>(running proportion on estimation sample)
+
+Survey: Proportion estimation
+
+Number of strata =  28                       Number of obs   =    17,705
+Number of PSUs   = 665                       Population size = 17,691.26
+                                             Design df       =       637
+
+------------------------------------------------------------------------
+                       |             Linearized            Logit
+                       | Proportion   std. err.     [95% conf. interval]
+-----------------------+------------------------------------------------
+   cp_both@pop_numeric |
+      No Burkina Faso  |   .8122041    .012815       .785736    .8360846
+      No DRC-Kinshasa  |   .6802513   .0163794       .647268     .711525
+ No DRC-Kongo Central  |   .7318119   .0287314      .6718062    .7843679
+             No Kenya  |   .6342298   .0083126      .6177575    .6503939
+      No Nigeria-Kano  |   .9463423   .0130503      .9141428    .9669031
+     No Nigeria-Lagos  |   .7065456   .0176703      .6706908    .7400099
+     Yes Burkina Faso  |   .1877959    .012815      .1639154     .214264
+     Yes DRC-Kinshasa  |   .3197487   .0163794       .288475     .352732
+Yes DRC-Kongo Central  |   .2681881   .0287314      .2156321    .3281938
+            Yes Kenya  |   .3657702   .0083126      .3496061    .3822425
+     Yes Nigeria-Kano  |   .0536577   .0130503      .0330969    .0858572
+    Yes Nigeria-Lagos  |   .2934544   .0176703      .2599901    .3293092
+------------------------------------------------------------------------</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<script>
+// when the page is about to reload via servr, remember the scroll position
+document.addEventListener('servr:reload', function(e) {
+  sessionStorage.setItem('pagedown-scroll', window.scrollY);
+});
+</script>
+</body>
+</html>

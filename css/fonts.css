@@ -16,7 +16,10 @@ b, strong {
 }
 
 /* Links */
-a {color: #98579B !important;}
+a {
+  color: #98579B !important;
+  text-decoration: none !important;
+}
 
 /* Code (inline and chunked) */
 code {

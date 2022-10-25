@@ -44,6 +44,10 @@
   background-color: white !important;
 }
 
+.stata {
+  background-color: white !important;
+}
+
 /* Console Output should be PMA pink, alpha 80%*/
 pre {
   background-color: #98579B20;
