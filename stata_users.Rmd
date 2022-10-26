@@ -148,7 +148,7 @@ Additionally, resident enumerators administered the Phase 2 Female Questionnaire
   
 \newpage 
 
-When you select the new **Longitudinal** sample option at checkout, you'll be able to include responses from every available phase of the study. These samples are available in either "long" format (responses from each phase will be organized in separate rows) or "wide" format (responses from each phase will be organized in columns). 
+When you select the new **Longitudinal** sample option from IPUMS PMA, you'll be able to include responses from every available phase of the study. These samples are available in either "long" format (responses from each phase will be organized in separate rows) or "wide" format (responses from each phase will be organized in columns). 
 
 ```{r}
 knitr::include_graphics("images/long_radio.png")
@@ -162,7 +162,7 @@ knitr::include_graphics("images/long_radio.png")
 
 In addition to following up with women in the panel over time, PMA also adjusted sampling so that a cross-sectional sample could be produced concurrently with each data collection phase. These samples mainly overlap with the data you'll obtain for a particular phase in the longitudinal sample, except that replacement households were drawn from each EA where more than 10% of households from the previous phase were no longer there. Conversely, panel members who were located in a new dwelling at Phase 2 will not be represented in the cross-sectional sample drawn from that EA. These adjustments ensure that population-level indicators may be derived from cross-sectional samples in a given year, even if panel members move or are lost to follow-up. 
 
-You'll find PMA cross-sectional samples dating back to 2013 if you select the **Cross-sectional** sample option at checkout. 
+You'll find PMA cross-sectional samples dating back to 2013 if you select the **Cross-sectional** sample option from IPUMS PMA. 
 
 ```{r}
 knitr::include_graphics("images/cross_radio.png")
@@ -180,10 +180,14 @@ Several chapters in this manual feature code you can use to reproduce key indica
   * [Nigeria - Kano](https://www.pmadata.org/sites/default/files/data_product_results/Nigeria%20KANO_Phase%202_Panel_Results%20Brief_Final.pdf)
   * [Nigeria - Lagos](https://www.pmadata.org/sites/default/files/data_product_results/Nigeria%20LAGOS_Phase%202_Panel_Results%20Brief_Final.pdf) 
 
+<aside>
+We will demonstrate how to request and download an IPUMS PMA data extract in Chapter 2.
+</aside>
+
 Panel data in these reports is limited to the *de facto* population of women who completed the Female Questionnaire in both Phase 1 and Phase 2. This includes women who slept in the household during the night before the interview for the Household Questionnaire. The *de jure* population includes women who are usual household members, but who slept elsewhere that night. We'll remove *de jure* cases recorded in the variable `r slink(RESIDENT)`. 
 
 <aside>
-We will demonstrate how to request and download an IPUMS PMA data extract in Chapter 2.
+Variable names in a "wide" extract have a numeric suffix for their data collection phase. `resident_1` is the Phase 1 version of `r slink(resident)`, while `resident_2` comes from Phase 2. 
 </aside>
 
 For example, let's consider a "wide" format data extract containing Phase 1 and Phase 2 respondents to the Female Questionnaire from Burkina Faso. You'll find the number of women who slept in the household before the Household Questionnaire for each phase reported in `r slink(resident_1)` and `r slink(resident_2)`:
@@ -225,7 +229,7 @@ usual member of household                                    |
 -------------------------------------------------------------------------
 ```
 
-Addtionally, the extract includes 230 women who are not members of the *de facto* population because they did not sleep in the sampled household during the night before the Phase 2 interview. Moreover, there are 492 blank values in `resident_2` representing women who were lost to follow-up after Phase 1. 
+The extract also includes 230 women who are not members of the *de facto* population because they did not sleep in the sampled household during the night before the Phase 2 interview. Moreover, there are 492 blank values in `resident_2` representing women who were lost to follow-up after Phase 1. 
 
 The *de facto* population is represented in both variables by codes 11 and 22. We will use an `if` statement or `keep` statement to include only those cases.
 
@@ -408,10 +412,6 @@ Additionally, PMA created a new weight, `r slink(PANELWEIGHT, description)`,
 which should be used in longitudinal analyses spanning multiple phases, as it adjusts for loss to follow-up. 
 
 ### Set survey design
-
-<aside>
-Variable names in a "wide" extract have a numeric suffix for their data collection phase. `cp_1` is the Phase 1 version of `r slink(CP)`, while `cp_2` comes from Phase 2. 
-</aside>
 
 In the following example, we'll show how to use `panelweight` to estimate the proportion of reproductive age women in Burkina Faso who were using contraception at the time of data collection for both Phase 1 and Phase 2. In a cross-sectional or "long" longitudinal extract, you'll find this information in the variable `r slink(CP)`. In the "wide" extract featured here, you'll find it in `cp_1` for Phase 1, and in `cp_2` for Phase 2.
 

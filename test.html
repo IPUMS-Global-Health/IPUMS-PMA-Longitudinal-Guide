@@ -146,6 +146,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Because data are collected through two questionnaires administered in three phases, there are several places where incomplete or missing data may indicate <strong>loss to follow-up</strong> - dropped cases from the original panel design. At the same time, PMA uses an <strong>open panel</strong> design, whereby women who move into the study area or reach participation age after Phase 1 are permitted to join the panel at any subsequent phase.</p>
 <p>In Chapter 3, we’ll cover these issues in detail. To illustrate, we’ll be using a <strong>wide format</strong> data extract from <a href="https://pma.ipums.org/pma/">IPUMS PMA</a> that includes “All cases” from both currently available phases. In other words, we’ll include every member of the household roster collected in the Household Questionnaire at the start of each phase (even if no Female Questionnaire was completed by that person).</p>
 <p>To make our explanation easier to follow, we’ll make use of a data visualization tool known in clinical research settings as a <a href="http://www.consort-statement.org/consort-statement/flow-diagram">CONSORT diagram</a>. This type of diagram is a flowchart showing enrollment and attrition points, most typically in longitudinal studies. PMA publishes a CONSORT diagram together with the User Notes for each longitudinal sample, which you can find via the links below:</p>
+<aside>
+R code showing how to build a combined CONSORT diagram with <a href="https://ggplot2.tidyverse.org">ggplot2</a> is available on the <a href="https://tech.popdata.org/pma-data-hub/posts/2022-04-01-phase2-members/">IPUMS PMA data analysis blog</a>.
+</aside>
 <ul>
 <li><a href="https://pma.ipums.org/pma/resources/longitudinal_flowcharts/Burkina_Faso_panel_phase2.pdf">Burkina Faso</a></li>
 <li><a href="https://pma.ipums.org/pma/resources/longitudinal_flowcharts/Kinshasa_panel_phase2.pdf">DRC - Kinshasa</a></li>
@@ -154,19 +157,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="https://pma.ipums.org/pma/resources/longitudinal_flowcharts/Lagos_panel_phase2.pdf">Nigeria - Lagos</a></li>
 <li><a href="https://pma.ipums.org/pma/resources/longitudinal_flowcharts/Kano_panel_phase2.pdf">Nigeria - Kano</a></li>
 </ul>
-<p>We’ve constructed a single diagram showing all six samples, and we’ll go over each level in turn.</p>
+<p>We’ve constructed a single diagram showing all six samples available from IPUMS PMA, and we’ll demonstrate how to identify cases for each level in turn:</p>
 <div class="page-break-after"></div>
 <p><img src="images/consort.png" width="100%" style="display: block; margin: auto;" /></p>
 <div id="setup" class="section level2" number="1.1">
 <h2><span class="header-section-number">1.1</span> Setup</h2>
-<p>To get started, we’ll need to request a <strong>wide</strong> longitudinal extract from the <a href="https://pma.ipums.org/pma/">IPUMS PMA data website</a>. As shown above, we’ll select all 6 of the available samples, and choose “All Cases (Respondents and Non-respondents to Household and Female Questionnaires)”. Notice that <em>both phases</em> are included with each sample when you request a longitudinal extract.</p>
-<p><img src="images/select-samples2.png" width="1081" style="display: block; margin: auto;" /></p>
+<p>This chapter features a <strong>wide</strong> longitudinal extract with all 6 of the available samples, including “All Cases (Respondents and Non-respondents to Household and Female Questionnaires)”. As mentioned in Chapter 2, both phases are included with each sample when you request a longitudinal extract.</p>
+<p><img src="images/select-samples2.png" width="85%" style="display: block; margin: auto;" /></p>
+<div class="page-break-after"></div>
 <p>Variables describing sample composition are located under the “Technical” topics heading. Our extract will contain all of the variables in the “Technical Variables” and “Longitudinal Panel” subheadings shown:</p>
 <p><img src="images/technical.png" width="1046" style="display: block; margin: auto;" /></p>
 <p>Once you’ve finished selecting variables and downloaded an extract, you’ll receive two files: an <code>.xml</code> DDI codebook, and a <code>.dat.gz</code> data file. We’ve saved both of these files in a folder called “data” in our R Working Directory, so we’ll load them into R together with the <a href="https://tidyverse.tidyverse.org/">tidyverse</a> and <a href="https://tech.popdata.org/ipumsr/">ipumsr</a> packages.</p>
-<aside>
-Need help downloading an IPUMS PMA data extract? Check out our <a href="../2022-03-15-phase2-formats/">full walkthrough</a>.
-</aside>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ipumsr)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -174,7 +175,8 @@ Need help downloading an IPUMS PMA data extract? Check out our <a href="../2022-
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">ddi =</span> <span class="st">&quot;data/pma_00086.xml&quot;</span>,</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="st">&quot;data/pma_00086.dat.gz&quot;</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<p>When you first load your <strong>wide</strong> data extract into R, you’ll notice that most variable names are duplicated: the same variable will appear once with the suffix “1” for Phase 1 variables, and again with the suffix “2” for Phase 2 variables. For example, you’ll find two copies of <a href="https://pma.ipums.org/pma-action/variables/SAMPLE#codes_section">SAMPLE</a>:</p>
+<div class="page-break-after"></div>
+<p>We mentioned in Chapter 1 that variables in a <strong>wide</strong> extract include a numeric suffix corresponding with a data collection phase. For example, you’ll find two versions of <a href="https://pma.ipums.org/pma-action/variables/SAMPLE#codes_section">SAMPLE</a>:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(SAMPLE_1)</span></code></pre></div>
 <pre><code># A tibble: 5 × 2
   SAMPLE_1                                                                          n
@@ -193,7 +195,8 @@ Need help downloading an IPUMS PMA data extract? Check out our <a href="../2022-
 3 56612 [Nigeria (Kano and Lagos) 2020 Phase 2]                                13227
 4 85412 [Burkina Faso 2021 Phase 2]                                            33931
 5    NA                                                                        83678</code></pre>
-<p>IPUMS PMA combines sub-nationally representative samples for DRC (Kinshasa and Kongo Central) and Nigeria (Kano and Lagos) with one <a href="https://pma.ipums.org/pma-action/variables/SAMPLE#codes_section">SAMPLE</a> code each. Here, we’ll separate those samples and abbreviate country names to ensure that everything fits nicely in our graphics output. We’ll also use the same recoded variable for Phase 1 and Phase 2 samples together. Let’s call this variable <code>pop</code> (for “population of study”).</p>
+<p>IPUMS PMA combines sub-nationally representative samples for DRC (Kinshasa and Kongo Central) and Nigeria (Kano and Lagos) with one <a href="https://pma.ipums.org/pma-action/variables/SAMPLE#codes_section">SAMPLE</a> code each. Here, we’ll separate those samples and abbreviate country names. Let’s call this variable <code>POP</code> (for “population of interest”).</p>
+<div class="page-break-after"></div>
 <p>We’ll combine the <a href="https://pma.ipums.org/pma-action/variables/COUNTRY#codes_section">COUNTRY</a> name for each sample together with the DRC and Nigeria regions shown in <a href="https://pma.ipums.org/pma-action/variables/GEOCD#codes_section">GEOCD</a> and <a href="https://pma.ipums.org/pma-action/variables/GEONG#codes_section">GEONG</a>, respectively.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Preview country and region names </span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(COUNTRY, GEOCD, GEONG)</span></code></pre></div>
@@ -214,16 +217,16 @@ Need help downloading an IPUMS PMA data extract? Check out our <a href="../2022-
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>      <span class="sc">~</span><span class="fu">as_factor</span>(.x) <span class="sc">%&gt;%</span> <span class="fu">as.character</span>()</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    ),</span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">COUNTRY =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(COUNTRY, <span class="st">&quot;Congo&quot;</span>), <span class="st">&quot;DRC&quot;</span>, COUNTRY),</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop =</span> <span class="fu">case_when</span>(</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">POP =</span> <span class="fu">case_when</span>(</span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>      <span class="sc">!</span><span class="fu">is.na</span>(GEOCD) <span class="sc">~</span> <span class="fu">paste</span>(COUNTRY, <span class="st">&quot;-&quot;</span>, GEOCD),</span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>      <span class="sc">!</span><span class="fu">is.na</span>(GEONG) <span class="sc">~</span> <span class="fu">paste</span>(COUNTRY, <span class="st">&quot;-&quot;</span>, GEONG),</span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> COUNTRY</span>
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(pop)</span></code></pre></div>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(POP)</span></code></pre></div>
 <pre><code># A tibble: 6 × 2
-  pop                     n
+  POP                     n
   &lt;chr&gt;               &lt;int&gt;
 1 Burkina Faso        57990
 2 DRC - Kinshasa      20831
@@ -234,7 +237,7 @@ Need help downloading an IPUMS PMA data extract? Check out our <a href="../2022-
 </div>
 <div id="phase-1" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> Phase 1</h2>
-<p>Phase 1 marks the beginning of the PMA panel study (baseline). As we’ve mentioned, it consists of two separate questionnaires administered in stages: first, resident enumerators visited 35 household dwellings selected at random within each sample cluster, or <a href="../2022-03-01-phase2-discovery/#sampling">enumeration area</a>. If a qualifying respondent was available, they were invited to complete a <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Household-Questionnaire-English-2019.10.09.pdf">Household Questionnaire</a><span id="fn1" class="footnote" data-pagedown-footnote-number="1" style="white-space: pre-line;">Questionnaires administered in each country may vary from this <strong>Core Household Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span> including a census of all household members and visitors who stayed there during the night before the interview. If this census included any women aged 15-49, the enumerator would later return to the household and invite each eligible woman to complete a <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Female-Questionnaire-English-2019.10.09.pdf">Female Questionnaire</a><span id="fn2" class="footnote" data-pagedown-footnote-number="2" style="white-space: pre-line;">Questionnaires administered in each country may vary from this <strong>Core Female Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span> and participate in the three-year panel study.</p>
+<p>Phase 1 marks the beginning of the PMA panel study (baseline). As we’ve mentioned, it consists of two separate questionnaires administered in stages: first, resident enumerators visited 35 household dwellings selected at random within each sample cluster, or <strong>enumeration area</strong>. If a qualifying respondent was available, they were invited to complete a <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Household-Questionnaire-English-2019.10.09.pdf">Household Questionnaire</a><span id="fn1" class="footnote" data-pagedown-footnote-number="1" style="white-space: pre-line;">Questionnaires administered in each country may vary from this <strong>Core Household Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span> including a census of all household members and visitors who stayed there during the night before the interview. If this census included any women aged 15-49, the enumerator would later return to the household and invite each eligible woman to complete a <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Female-Questionnaire-English-2019.10.09.pdf">Female Questionnaire</a><span id="fn2" class="footnote" data-pagedown-footnote-number="2" style="white-space: pre-line;">Questionnaires administered in each country may vary from this <strong>Core Female Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span> and participate in the three-year panel study.</p>
 <p>We’ll take a look at the inclusion criteria and missing data codes for each questionnaire, in turn.</p>
 <div id="household-questionnaire" class="section level3" number="1.2.1">
 <h3><span class="header-section-number">1.2.1</span> Household Questionnaire</h3>
@@ -265,12 +268,15 @@ Need help downloading an IPUMS PMA data extract? Check out our <a href="../2022-
 <p>If no household interview occurred, PMA creates one row to represent the household in <a href="https://pma.ipums.org/pma-action/variables/RESULTHQ">RESULTHQ_1</a>. Otherwise, if the household roster was completed during the interview, PMA creates one row for each person on the roster.</p>
 <p>In order to determine the proportion of households that completed all or part of the Household Questionnaire - or any other <strong>household-level statistics</strong> - you must count only one row per household. Each Phase 1 household receives a unique identifier in <a href="https://pma.ipums.org/pma-action/variables/HHID">HHID_1</a> - this value is an empty string <code>""</code> for household members included only in Phase 2. All Phase 1 households have a unique <a href="https://pma.ipums.org/pma-action/variables/HHID">HHID_1</a>, regardless of the outcome recorded in <a href="https://pma.ipums.org/pma-action/variables/RESULTHQ">RESULTHQ_1</a>.</p>
 <p>Therefore, you can use <a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a> to find the <a href="https://pma.ipums.org/pma-action/variables/RESULTHQ">RESULTHQ_1</a> outcome for each household via <a href="https://pma.ipums.org/pma-action/variables/HHID">HHID_1</a>. To obtain the proportion of Phase 1 households that completed all or part of the questionnaire, we’ll first use <a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a> to drop Phase 2 households with the value <code>""</code>. Then, we’ll use <a href="https://dplyr.tidyverse.org/reference/slice.html">slice</a> to include only the first row in each household. Finally, we’ll count the number of fully (code 1) or partly (code 5) completed questionnaires in <a href="https://pma.ipums.org/pma-action/variables/RESULTHQ">RESULTHQ_1</a> - the base R function <a href="https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/prop.table">prop.table</a> derives proportions for these counts.</p>
+<aside>
+Across samples, 96.4% of households completed all or part of the Phase 1 Household Questionnaire.
+</aside>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(HHID_1 <span class="sc">!=</span> <span class="st">&quot;&quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># drop Phase 2 households</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(HHID_1) <span class="sc">%&gt;%</span>     </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span>  <span class="co"># include only the first row in each household</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span>  <span class="co"># include only one row per household</span></span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span>            </span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(RESULTHQ_1 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>)) <span class="sc">%&gt;%</span> <span class="co"># how many households completed all / part?</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(RESULTHQ_1 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> <span class="fu">prop.table</span>(n))</span></code></pre></div>
 <pre><code># A tibble: 2 × 3
   `RESULTHQ_1 %in% c(1, 5)`     n   prop
@@ -278,14 +284,14 @@ Need help downloading an IPUMS PMA data extract? Check out our <a href="../2022-
 1 FALSE                       852 0.0365
 2 TRUE                      22494 0.964 </code></pre>
 <aside>
-Across samples, 96.4% of households completed all or part of the Phase 1 Household Questionnaire.
+Total number of Phase 1 household members, per sample
 </aside>
-<p>Conversely, it is often useful to exclude non-interviewed households when calculating <strong>person-level statistics</strong>. In the first row of our CONSORT diagram above, we drop these households before we count the total number of sampled Phase 1 household members.</p>
+<p>It is also often useful to exclude non-interviewed households when calculating <strong>person-level statistics</strong>. In the first row of our CONSORT diagram above, we drop these households before we count the total number of sampled Phase 1 household members.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(RESULTHQ_1 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(pop)</span></code></pre></div>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(POP)</span></code></pre></div>
 <pre><code># A tibble: 6 × 2
-  pop                     n
+  POP                     n
   &lt;chr&gt;               &lt;int&gt;
 1 Burkina Faso        30210
 2 DRC - Kinshasa      10309
@@ -293,26 +299,11 @@ Across samples, 96.4% of households completed all or part of the Phase 1 Househo
 4 Kenya               42308
 5 Nigeria - Kano       5722
 6 Nigeria - Lagos      6062</code></pre>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>hh <span class="ot">&lt;-</span> dat </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Household members at Phase 1</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>hh <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(pop) <span class="sc">%&gt;%</span>  <span class="fu">mutate</span>(<span class="at">step =</span> <span class="dv">1</span>, <span class="at">keep =</span> RESULTHQ_1 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>))</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>hh_plot <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span> </span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(keep) <span class="sc">%&gt;%</span> </span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(step, keep) <span class="sc">%&gt;%</span> </span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">samedw =</span> <span class="cn">NA</span>,</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="st">&quot;Phase 1 household members&quot;</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="fu">consort</span>(hh_plot)</span></code></pre></div>
-<pre><code>Warning: Removed 6 rows containing missing values (geom_segment).</code></pre>
-<p><img src="test_files/figure-html/unnamed-chunk-11-1.png" width="1536" style="display: block; margin: auto;" /></p>
 </div>
 <div id="female-questionnaire" class="section level3" number="1.2.2">
 <h3><span class="header-section-number">1.2.2</span> Female Questionnaire</h3>
 <p>IPUMS PMA uses a <strong>non-response code</strong> labeled “Not interviewed (household questionnaire)” for variables related to questions that were only relevant if the Household Questionnaire was fully or partly completed. This includes <a href="https://pma.ipums.org/pma-action/variables/ELIGIBLE">ELIGIBLE_1</a>, which indicates whether a particular household member was a woman aged 15-49 at Phase 1, and therefore eligible for the Phase 1 Female Questionnaire. If the household was not interviewed, eligibility for the Female Questionnaire could not be determined.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(RESULTHQ_1, ELIGIBLE_1)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(RESULTHQ_1, ELIGIBLE_1)</span></code></pre></div>
 <pre><code># A tibble: 12 × 3
    RESULTHQ_1                    ELIGIBLE_1                                         n
    &lt;int+lbl&gt;                     &lt;int+lbl&gt;                                      &lt;int&gt;
@@ -329,7 +320,7 @@ Across samples, 96.4% of households completed all or part of the Phase 1 Househo
 11  9 [Absent extended period]   96 [Not interviewed (household questionnaire)]   296
 12 NA                            NA                                             98687</code></pre>
 <p><a href="https://pma.ipums.org/pma-action/variables/RESULTLFQ">RESULTLFQ_1</a> shows the result of the Female Questionnaire for eligible women. The <strong>non-response code</strong> “NIU (not in universe)” is used for household members who were not eligible.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(RESULTFQ_1)</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(RESULTFQ_1)</span></code></pre></div>
 <pre><code># A tibble: 9 × 2
   RESULTFQ_1                                         n
   &lt;int+lbl&gt;                                      &lt;int&gt;
@@ -342,30 +333,34 @@ Across samples, 96.4% of households completed all or part of the Phase 1 Househo
 7 96 [Not interviewed (household questionnaire)]   852
 8 99 [NIU (not in universe)]                     79124
 9 NA                                             98687</code></pre>
+<div class="page-break-after"></div>
+<aside>
+Across samples, 96.9% of eligible women completed the Phase 1 Female Questionnaire.
+</aside>
 <p>You can calculate the proportion of eligible women who completed the Phase 1 Female Questionnaire like so:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ELIGIBLE_1 <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="co"># drops ineligible / Phase 2 household members</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(RESULTFQ_1 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> <span class="fu">prop.table</span>(n))</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ELIGIBLE_1 <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="co"># drop if ineligible </span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(RESULTFQ_1 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> <span class="fu">prop.table</span>(n))</span></code></pre></div>
 <pre><code># A tibble: 2 × 3
   `RESULTFQ_1 %in% c(1, 5)`     n   prop
   &lt;lgl&gt;                     &lt;int&gt;  &lt;dbl&gt;
 1 FALSE                       745 0.0306
 2 TRUE                      23591 0.969 </code></pre>
-<aside>
-Across samples, 96.9% of eligible women completed the Phase 1 Female Questionnaire.
-</aside>
 <p>Our CONSORT diagram shows the total number of women who were eligible to participate in the panel study at Phase 1, after excluding women who:</p>
+<aside>
+Total number of eligible women, per sample, who completed all or part of the Phase 1 Female Questionnaire
+</aside>
 <ul>
 <li>were members of a household where no Phase 1 Household Questionnaire was administered</li>
 <li>were not eligible (aged 15-49)</li>
 <li>did not complete at least part of the Phase 1 Female Questionnaire</li>
 </ul>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(RESULTFQ_1 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(pop)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(RESULTFQ_1 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(POP)</span></code></pre></div>
 <pre><code># A tibble: 6 × 2
-  pop                     n
+  POP                     n
   &lt;chr&gt;               &lt;int&gt;
 1 Burkina Faso         6790
 2 DRC - Kinshasa       2639
@@ -373,85 +368,48 @@ Across samples, 96.9% of eligible women completed the Phase 1 Female Questionnai
 4 Kenya                9558
 5 Nigeria - Kano       1127
 6 Nigeria - Lagos      1507</code></pre>
-<aside>
-If you select a data extract with “Female Respondents” rather than “All cases”, you will receive only records for women who completed all or part of the Female Questionnaire in at least one phase. See our <a href="../2022-03-15-phase2-formats/">last post</a> for details.
-</aside>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: HH members Eligible at Phase 1</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>hh <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span> <span class="fu">filter</span>(keep) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">step =</span> <span class="dv">2</span>, <span class="at">keep =</span> ELIGIBLE_1 <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>hh_plot <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span> </span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(step, keep) <span class="sc">%&gt;%</span> </span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">if_else</span>(</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    keep,</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Women aged 15-49&quot;</span>,</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Not eligible for Phase 1 FQ&quot;</span></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span> </span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(hh_plot)</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Result of Phase 1 FQ</span></span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>hh <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span> <span class="fu">filter</span>(keep) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">step =</span> <span class="dv">3</span>, <span class="at">keep =</span> RESULTFQ_1 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>))</span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>hh_plot <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span> </span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(step, keep) <span class="sc">%&gt;%</span> </span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">if_else</span>(</span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>    keep,</span>
-<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Completed all / part of Phase 1 FQ&quot;</span>,</span>
-<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Not interviewed for Phase 1 FQ: not home, refused, vacant, etc&quot;</span></span>
-<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span> </span>
-<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(hh_plot)</span>
-<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a><span class="fu">consort</span>(hh_plot)</span></code></pre></div>
-<pre><code>Warning: Removed 6 rows containing missing values (geom_segment).</code></pre>
-<p><img src="test_files/figure-html/unnamed-chunk-17-1.png" width="1536" style="display: block; margin: auto;" /></p>
+<div class="page-break-after"></div>
 <p>Enumerators invited these women to participate in Phase 2 of the panel study one year later. Only women who agreed to participate at that time are considered panel members at Phase 2, as shown in <a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN">PANELWOMAN_2</a>.<span id="fn3" class="footnote" data-pagedown-footnote-number="3" style="white-space: pre-line;">Women who completed the Phase 1 Female Questionnaire but declined to participate in the panel were given an opportunity to join the panel again at Phase 2 (if eligible). They are not panel members as shown in <a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN">PANELWOMAN_2</a>, but they may be listed as such in <a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN">PANELWOMAN_3</a> if they agree to participation in the panel going forward.</span></p>
+<aside>
+Total number of women, per sample, who consented at Phase 1 to the Phase 2 follow-up
+</aside>
 <p>Their responses to the panel invitation are recorded in <a href="https://pma.ipums.org/pma-action/variables/SURVEYWILLING">SURVEYWILLING_1</a>. IPUMS PMA uses the <strong>non-response code</strong> “Not interviewed (female questionnaire)” to indicate women who were eligible, but not interviewed for the Female Questionnaire as shown in <a href="https://pma.ipums.org/pma-action/variables/RESULTLFQ">RESULTLFQ_1</a>. Additionally, “No response or missing” is used for women who did not respond to the panel invitation.</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(SURVEYWILLING_1)</span></code></pre></div>
-<pre><code># A tibble: 7 × 2
-  SURVEYWILLING_1                                    n
-  &lt;int+lbl&gt;                                      &lt;int&gt;
-1  0 [No]                                         1023
-2  1 [Yes]                                       22515
-3 95 [Not interviewed (female questionnaire)]      743
-4 96 [Not interviewed (household questionnaire)]   852
-5 98 [No response or missing]                       53
-6 99 [NIU (not in universe)]                     79124
-7 NA                                             98687</code></pre>
-<p>You should include “No response or missing” cases when calculating the proportion of Phase 1 female respondents who agreed to participate in the panel follow-up:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(RESULTFQ_1 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>)) <span class="sc">%&gt;%</span> <span class="co"># Drops NIU and Not interviewed cases </span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(SURVEYWILLING_1) <span class="sc">%&gt;%</span> </span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> <span class="fu">prop.table</span>(n))</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(SURVEYWILLING_1 <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(POP)</span></code></pre></div>
+<pre><code># A tibble: 6 × 2
+  POP                     n
+  &lt;chr&gt;               &lt;int&gt;
+1 Burkina Faso         6597
+2 DRC - Kinshasa       2578
+3 DRC - Kongo Central  1920
+4 Kenya                8897
+5 Nigeria - Kano       1098
+6 Nigeria - Lagos      1425</code></pre>
+<aside>
+Across samples, 95.4% of women who completed the Phase 1 Female Questionnaire agreed to participate in panel follow-ups one year later.
+</aside>
+<p>Make sure to include “No response or missing” cases in the denominator when calculating the proportion of Phase 1 female respondents who agreed to participate in the panel follow-up:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(RESULTFQ_1 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(SURVEYWILLING_1) <span class="sc">%&gt;%</span> </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> <span class="fu">prop.table</span>(n))</span></code></pre></div>
 <pre><code># A tibble: 3 × 3
   SURVEYWILLING_1                 n    prop
   &lt;int+lbl&gt;                   &lt;int&gt;   &lt;dbl&gt;
 1  0 [No]                      1023 0.0434 
 2  1 [Yes]                    22515 0.954  
 3 98 [No response or missing]    53 0.00225</code></pre>
-<aside>
-Across samples, 95.4% of women who completed the Phase 1 Female Questionnaire agreed to participate in panel follow-ups one year later.
-</aside>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 4: Willing to participate in Phase 2</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>hh <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span> <span class="fu">filter</span>(keep) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">step =</span> <span class="dv">4</span>, <span class="at">keep =</span> SURVEYWILLING_1 <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>hh_plot <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span> </span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(step, keep) <span class="sc">%&gt;%</span> </span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">if_else</span>(</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    keep,</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Consented at Phase 1 to Phase 2 follow-up&quot;</span>,</span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Declined Phase 2 follow-up at Phase 1&quot;</span></span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span> </span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(hh_plot)</span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="fu">consort</span>(hh_plot)</span></code></pre></div>
-<pre><code>Warning: Removed 6 rows containing missing values (geom_segment).</code></pre>
-<p><img src="test_files/figure-html/unnamed-chunk-20-1.png" width="1536" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="phase-2" class="section level2" number="1.3">
 <h2><span class="header-section-number">1.3</span> Phase 2</h2>
-<p>Both questionnaires were administered again in Phase 2, approximately one year later. Resident enumerators visited the same dwellings where Phase 1 interviews occurred; if the woman’s household had moved elsewhere within the study area,<span id="fn4" class="footnote" data-pagedown-footnote-number="4" style="white-space: pre-line;">The “study area” is area within which resident enumerators should attempt to find panel women that have moved out of their Phase 1 dwelling. This may extend beyond the woman’s original EA as determined by in-country administrators - see <a href="https://www.pmadata.org/data/survey-methodology">PMA Phase 2 and Phase 3 Survey Protocol</a> for details.</span> enumerators used local contacts to find its new location. If found, they administered a Household Questionnaire including an updated household roster.</p>
+<p>Both questionnaires were administered again in Phase 2, approximately one year after Phase 1. Resident enumerators visited the same dwellings where Phase 1 interviews occurred; if the woman’s household had moved elsewhere within the study area,<span id="fn4" class="footnote" data-pagedown-footnote-number="4" style="white-space: pre-line;">The “study area” is area within which resident enumerators should attempt to find panel women that have moved out of their Phase 1 dwelling. This may extend beyond the woman’s original EA as determined by in-country administrators - see <a href="https://www.pmadata.org/data/survey-methodology">PMA Phase 2 and Phase 3 Survey Protocol</a> for details.</span> enumerators used local contacts to find its new location. If found, they administered a Household Questionnaire including an updated household roster.</p>
 <p>As we’ve mentioned, any woman aged 15-49 listed on the Phase 2 household roster was eligible to complete a Phase 2 Female Questionnaire. However, only women who completed all or part of a Phase 1 Female Questionnaire are considered members of the panel in <a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN">PANELWOMAN_2</a>.</p>
 <div id="household-questionnaire-1" class="section level3" number="1.3.1">
 <h3><span class="header-section-number">1.3.1</span> Household Questionnaire</h3>
 <p>Several variables are available to describe the <a href="https://pma.ipums.org/pma-action/variables/group?id=tech_panel">status of households</a> surveyed at Phase 2. As with Phase 1, <a href="https://pma.ipums.org/pma-action/variables/RESULTHQ">RESULTHQ_2</a> describes the result of the Phase 2 Household Questionnaire.</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(RESULTHQ_2)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(RESULTHQ_2)</span></code></pre></div>
 <pre><code># A tibble: 10 × 2
    RESULTHQ_2                         n
    &lt;int+lbl&gt;                      &lt;int&gt;
@@ -466,7 +424,7 @@ Across samples, 95.4% of women who completed the Phase 1 Female Questionnaire ag
  9  9 [Absent extended period]      313
 10 NA                             83678</code></pre>
 <p><a href="https://pma.ipums.org/pma-action/variables/SAMEDWELLING">SAMEDWELLING_2</a> indicates whether the Household Questionnaire was administered at the same physical dwelling from Phase 1, or whether the enumerator located the woman’s household in a new dwelling.</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(SAMEDWELLING_2)</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(SAMEDWELLING_2)</span></code></pre></div>
 <pre><code># A tibble: 6 × 2
   SAMEDWELLING_2                                      n
   &lt;int+lbl&gt;                                       &lt;int&gt;
@@ -476,8 +434,9 @@ Across samples, 95.4% of women who completed the Phase 1 Female Questionnaire ag
 4 96 [Not interviewed (household questionnaire)]     19
 5 99 [NIU (not in universe)]                       1057
 6 NA                                              83678</code></pre>
+<div class="page-break-after"></div>
 <p>Each Phase 2 sample may also include new households that were not included in Phase 1, as indicated by <a href="https://pma.ipums.org/pma-action/variables/HHTYPE">HHTYPE_2</a>: these are replacement households drawn for enumeration areas where more than 10% of Phase 1 households were no longer present. They account for all of the <strong>non-response code</strong> shown in <a href="https://pma.ipums.org/pma-action/variables/SAMEDWELLING">SAMEDWELLING_2</a>, as no prior dwelling was sampled.</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(SAMEDWELLING_2, HHTYPE_2)</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(SAMEDWELLING_2, HHTYPE_2)</span></code></pre></div>
 <pre><code># A tibble: 6 × 3
   SAMEDWELLING_2                                 HHTYPE_2                            n
   &lt;int+lbl&gt;                                      &lt;int+lbl&gt;                       &lt;int&gt;
@@ -488,7 +447,7 @@ Across samples, 95.4% of women who completed the Phase 1 Female Questionnaire ag
 5 99 [NIU (not in universe)]                      2 [Replacement cross-section]   1057
 6 NA                                             NA                              83678</code></pre>
 <p>As mentioned above, it is not possible to link Phase 1 and Phase 2 records for household members who were not women participating in the panel study. However, the variable <a href="https://pma.ipums.org/pma-action/variables/HHMEMSTAT">HHMEMSTAT_2</a> does describe whether a Phase 1 household member was listed on the household roster for Phase 2; if not, PMA creates a Phase 2 record for that person indicating whether they moved or were deceased.</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(HHMEMSTAT_2)</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(HHMEMSTAT_2)</span></code></pre></div>
 <pre><code># A tibble: 10 × 2
    HHMEMSTAT_2                                        n
    &lt;int+lbl&gt;                                      &lt;int&gt;
@@ -502,74 +461,21 @@ Across samples, 95.4% of women who completed the Phase 1 Female Questionnaire ag
  8 97 [Don&#39;t know]                                   30
  9 99 [NIU (not in universe)]                     24813
 10 NA                                             83678</code></pre>
+<div class="page-break-after"></div>
 <p>After excluding women who reached age 50 at Phase 2, our CONSORT diagram diverges to show whether panel members were found in their Phase 1 dwelling or a new one. Women whose household was not found in the study area are considered <strong>lost to follow-up</strong>, as are those where the Phase 2 Household Questionnaire was not completed.</p>
 <p>The variable <a href="https://pma.ipums.org/pma-action/variables/HHPANELP2">HHPANELP2_2</a> indicates whether any woman who completed the Phase 1 Female Questionnaire was living in the dwelling at Phase 2. Women who were no longer residents of the household are also considered <strong>lost to follow-up</strong>.</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(HHPANELP2_2)</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(HHPANELP2_2)</span></code></pre></div>
 <pre><code># A tibble: 3 × 2
   HHPANELP2_2     n
   &lt;int+lbl&gt;   &lt;int&gt;
 1  0 [No]     29587
 2  1 [Yes]    89732
 3 NA          83678</code></pre>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 5: Aged out </span></span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>hh <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span> <span class="fu">filter</span>(keep) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">step =</span> <span class="dv">5</span>, <span class="at">keep =</span> AGE_1 <span class="sc">&lt;</span> <span class="dv">49</span>)</span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>hh_plot <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span> </span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(step, keep) <span class="sc">%&gt;%</span> </span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">if_else</span>(</span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>    keep,</span>
-<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Women aged 15-49 at Phase 2&quot;</span>,</span>
-<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Women age 50 at Phase 2&quot;</span></span>
-<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span> </span>
-<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(hh_plot)</span>
-<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 6: Same dwelling </span></span>
-<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>hh <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span> </span>
-<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(keep) <span class="sc">%&gt;%</span> </span>
-<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">step =</span> <span class="dv">6</span>, </span>
-<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">keep =</span> RESULTHQ_2 <span class="sc">%in%</span> <span class="dv">1</span>,</span>
-<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">samedw =</span> SAMEDWELLING_2 <span class="sc">%in%</span> <span class="dv">1</span></span>
-<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(pop, samedw)</span>
-<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a>hh_plot <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span></span>
-<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">samedw =</span> <span class="fu">ifelse</span>(<span class="sc">!</span>keep, <span class="cn">TRUE</span>, samedw)) <span class="sc">%&gt;%</span> </span>
-<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(step, keep) <span class="sc">%&gt;%</span> </span>
-<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb44-25"><a href="#cb44-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">case_when</span>(</span>
-<span id="cb44-26"><a href="#cb44-26" aria-hidden="true" tabindex="-1"></a>      keep <span class="sc">&amp;</span> samedw <span class="sc">~</span> <span class="fu">paste</span>(n, <span class="st">&quot;Phase 1&quot;</span>, <span class="st">&quot;Dwelling&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>),</span>
-<span id="cb44-27"><a href="#cb44-27" aria-hidden="true" tabindex="-1"></a>      keep <span class="sc">&amp;</span> <span class="sc">!</span>samedw <span class="sc">~</span> <span class="fu">paste</span>(n, <span class="st">&quot;New&quot;</span>, <span class="st">&quot;Dwelling&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>), </span>
-<span id="cb44-28"><a href="#cb44-28" aria-hidden="true" tabindex="-1"></a>      <span class="sc">!</span>keep <span class="sc">~</span> <span class="fu">as.character</span>(n)</span>
-<span id="cb44-29"><a href="#cb44-29" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb44-30"><a href="#cb44-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">if_else</span>(</span>
-<span id="cb44-31"><a href="#cb44-31" aria-hidden="true" tabindex="-1"></a>      keep,</span>
-<span id="cb44-32"><a href="#cb44-32" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Completed all of the Phase 2 HQ survey&quot;</span>,</span>
-<span id="cb44-33"><a href="#cb44-33" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Household not found, HQ incomplete, or woman missing from HQ roster&quot;</span></span>
-<span id="cb44-34"><a href="#cb44-34" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb44-35"><a href="#cb44-35" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb44-36"><a href="#cb44-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(hh_plot <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">n =</span> <span class="fu">as.character</span>(n))) </span>
-<span id="cb44-37"><a href="#cb44-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-38"><a href="#cb44-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 7: Resident in dwelling</span></span>
-<span id="cb44-39"><a href="#cb44-39" aria-hidden="true" tabindex="-1"></a>hh <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span> <span class="fu">filter</span>(keep) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">step =</span> <span class="dv">7</span>, <span class="at">keep =</span> HHMEMSTAT_2 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">99</span>))</span>
-<span id="cb44-40"><a href="#cb44-40" aria-hidden="true" tabindex="-1"></a>hh_plot <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span></span>
-<span id="cb44-41"><a href="#cb44-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(step, keep) <span class="sc">%&gt;%</span></span>
-<span id="cb44-42"><a href="#cb44-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb44-43"><a href="#cb44-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">as.character</span>(n),</span>
-<span id="cb44-44"><a href="#cb44-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">if_else</span>(</span>
-<span id="cb44-45"><a href="#cb44-45" aria-hidden="true" tabindex="-1"></a>      keep,</span>
-<span id="cb44-46"><a href="#cb44-46" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Resident in dwelling&quot;</span>,</span>
-<span id="cb44-47"><a href="#cb44-47" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;No longer residents&quot;</span></span>
-<span id="cb44-48"><a href="#cb44-48" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb44-49"><a href="#cb44-49" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb44-50"><a href="#cb44-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(hh_plot)</span>
-<span id="cb44-51"><a href="#cb44-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-52"><a href="#cb44-52" aria-hidden="true" tabindex="-1"></a><span class="fu">consort</span>(hh_plot)</span></code></pre></div>
-<pre><code>Warning: Removed 12 rows containing missing values (geom_segment).</code></pre>
-<p><img src="test_files/figure-html/unnamed-chunk-26-1.png" width="1536" style="display: block; margin: auto;" /></p>
 </div>
 <div id="female-questionnaire-1" class="section level3" number="1.3.2">
 <h3><span class="header-section-number">1.3.2</span> Female Questionnaire</h3>
 <p>Finally, eligible women who were found in a household at Phase 2 were invited to complete a Female Questionnaire. <a href="https://pma.ipums.org/pma-action/variables/RESULTFQ">RESULTFQ_2</a> indicates the result of the Phase 2 Female Questionnaire both for panel members and women who were otherwise eligible to participate.</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(RESULTFQ_2)</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> <span class="fu">count</span>(RESULTFQ_2)</span></code></pre></div>
 <pre><code># A tibble: 11 × 2
    RESULTFQ_2                                         n
    &lt;int+lbl&gt;                                      &lt;int&gt;
@@ -584,25 +490,30 @@ Across samples, 95.4% of women who completed the Phase 1 Female Questionnaire ag
  9 96 [Not interviewed (household questionnaire)]  2337
 10 99 [NIU (not in universe)]                     91234
 11 NA                                             83678</code></pre>
+<aside>
+<p>Across samples, Phase 1 data are available for 73.4% of women who completed the Phase 2 Female Questionnaire.</p>
+26.6% of these women are newcomers at Phase 2.
+</aside>
 <p>You can find the proportion of women who completed the Phase 2 Female Questionnaire that were also available at Phase 1 (i.e. panel members) like so:</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(RESULTFQ_2 <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(PANELWOMAN_2) <span class="sc">%&gt;%</span> </span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> <span class="fu">prop.table</span>(n))</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(RESULTFQ_2 <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(PANELWOMAN_2) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> <span class="fu">prop.table</span>(n))</span></code></pre></div>
 <pre><code># A tibble: 2 × 3
   PANELWOMAN_2     n  prop
   &lt;int+lbl&gt;    &lt;int&gt; &lt;dbl&gt;
 1 0 [No]        6576 0.266
 2 1 [Yes]      18180 0.734</code></pre>
+<p><strong>Wide</strong> data extracts make it particularly easy to combine Phase 1 and Phase 2 variables for the same woman. Note that potential panel members were identified at Phase 1: they are women who agreed to participate in <a href="https://pma.ipums.org/pma-action/variables/SURVEYWILLING">SURVEYWILLING_1</a> and were under age 49 in <a href="https://pma.ipums.org/pma-action/variables/AGE">AGE_1</a>. In order to calculate the proportion of potential panel members who ultimately completed the Female Questionnaire at Phase 2, you must include Phase 1 female respondents for whom no Phase 2 data exists.</p>
+<div class="page-break-after"></div>
 <aside>
-<p>Across samples, Phase 1 data are available for 73.4% of women who completed the Phase 2 Female Questionnaire.</p>
-26.6% of these women are newcomers at Phase 2.
+Across samples, 81.7% of potential panel members completed the Phase 2 Female Questionnaire.
 </aside>
-<p><strong>Wide</strong> data extracts make it particularly easy to combine Phase 1 and Phase 2 variables for the same woman. Note that potential panel members were identified at Phase 1: they are women who agreed to participate in <a href="https://pma.ipums.org/pma-action/variables/SURVEYWILLING">SURVEYWILLING_1</a> and were under age 49 in <a href="https://pma.ipums.org/pma-action/variables/AGE">AGE_1</a>. In order to calculate the proportion of potential panel members who ultimately completed the Female Questionnaire at Phase 2, you must include Phase 1 female respondents for whom no Phase 2 data exists. These cases are marked <code>NA</code> in <a href="https://pma.ipums.org/pma-action/variables/RESULTFQ">RESULTFQ_2</a>, so they are easily included like so:</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(SURVEYWILLING_1 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> AGE_1 <span class="sc">&lt;</span> <span class="dv">49</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(RESULTFQ_2 <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> <span class="fu">prop.table</span>(n))</span></code></pre></div>
+<p>These cases are marked <code>NA</code> in <a href="https://pma.ipums.org/pma-action/variables/RESULTFQ">RESULTFQ_2</a>, so they are easily included like so:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(SURVEYWILLING_1 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> AGE_1 <span class="sc">&lt;</span> <span class="dv">49</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(RESULTFQ_2 <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> <span class="fu">prop.table</span>(n))</span></code></pre></div>
 <pre><code># A tibble: 3 × 3
   `RESULTFQ_2 == 1`     n   prop
   &lt;lgl&gt;             &lt;int&gt;  &lt;dbl&gt;
@@ -610,22 +521,19 @@ Across samples, 95.4% of women who completed the Phase 1 Female Questionnaire ag
 2 TRUE              18180 0.817 
 3 NA                 1632 0.0733</code></pre>
 <aside>
-Across samples, 81.7% of potential panel members completed the Phase 2 Female Questionnaire.
+Total number and proportion of potential panel members, per Phase 1 sample, that ultimately completed a Phase 2 Female Questionnaire
 </aside>
 <p>The final row of our CONSORT diagram shows the total number of completed Phase 2 Female Questionnaires for each sample. The totals below match the results reported in each of the PMA User Guides published for individual samples.</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(pop) <span class="sc">%&gt;%</span> </span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># denominator: potential panel members at Phase 1</span></span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(SURVEYWILLING_1 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> AGE_1 <span class="sc">&lt;</span> <span class="dv">49</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># numerator: did a potential panel member complete Phase 2 FQ? </span></span>
-<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(<span class="at">final =</span> RESULTFQ_2 <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> <span class="fu">prop.table</span>(n)) <span class="sc">%&gt;%</span> </span>
-<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># drop members who did not compete Phase 2 FQ / no record in Phase 2</span></span>
-<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(final) <span class="sc">%&gt;%</span> </span>
-<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>final)</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(POP) <span class="sc">%&gt;%</span> </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(SURVEYWILLING_1 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> AGE_1 <span class="sc">&lt;</span> <span class="dv">49</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(<span class="at">final =</span> RESULTFQ_2 <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> <span class="fu">prop.table</span>(n)) <span class="sc">%&gt;%</span> </span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(final) <span class="sc">%&gt;%</span> </span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>final)</span></code></pre></div>
 <pre><code># A tibble: 6 × 3
-# Groups:   pop [6]
-  pop                     n  prop
+# Groups:   POP [6]
+  POP                     n  prop
   &lt;chr&gt;               &lt;int&gt; &lt;dbl&gt;
 1 Burkina Faso         5491 0.841
 2 DRC - Kinshasa       2006 0.787
@@ -633,34 +541,6 @@ Across samples, 81.7% of potential panel members completed the Phase 2 Female Qu
 4 Kenya                7018 0.798
 5 Nigeria - Kano       1001 0.923
 6 Nigeria - Lagos      1130 0.808</code></pre>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 8: Result of Phase 2 FQ</span></span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>hh <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span> <span class="fu">filter</span>(keep) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">step =</span> <span class="dv">8</span>, <span class="at">keep =</span> RESULTFQ_2 <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>hh_plot <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span></span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(step, keep) <span class="sc">%&gt;%</span></span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">as.character</span>(n),</span>
-<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">if_else</span>(</span>
-<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>      keep,</span>
-<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Completed all of the Phase 2 FQ survey&quot;</span>,</span>
-<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Incomplete Phase 2 FQ survey: not home, refused, incapacitated, etc&quot;</span></span>
-<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(hh_plot)</span>
-<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 9: Final diagram</span></span>
-<span id="cb54-16"><a href="#cb54-16" aria-hidden="true" tabindex="-1"></a>hh <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span> <span class="fu">filter</span>(keep) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">step =</span> <span class="dv">9</span>, <span class="at">keep =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb54-17"><a href="#cb54-17" aria-hidden="true" tabindex="-1"></a>hh_plot <span class="ot">&lt;-</span> hh <span class="sc">%&gt;%</span></span>
-<span id="cb54-18"><a href="#cb54-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(pop) <span class="sc">%&gt;%</span></span>
-<span id="cb54-19"><a href="#cb54-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(step, keep) <span class="sc">%&gt;%</span></span>
-<span id="cb54-20"><a href="#cb54-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb54-21"><a href="#cb54-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">as.character</span>(n),</span>
-<span id="cb54-22"><a href="#cb54-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="st">&quot;Panel Members at Phase 2&quot;</span></span>
-<span id="cb54-23"><a href="#cb54-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb54-24"><a href="#cb54-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(hh_plot)</span>
-<span id="cb54-25"><a href="#cb54-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-26"><a href="#cb54-26" aria-hidden="true" tabindex="-1"></a><span class="fu">consort</span>(hh_plot)</span></code></pre></div>
-<pre><code>Warning: Removed 6 rows containing missing values (geom_segment).</code></pre>
-<p><img src="test_files/figure-html/unnamed-chunk-31-1.png" width="1536" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="summary" class="section level2" number="1.4">
