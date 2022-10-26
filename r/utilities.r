@@ -74,7 +74,10 @@ if(!suppressWarnings(suppressMessages(require(showtext)))){
 # Build hyperlink to a variable page on pma.ipums.org 
 # Optionally, select a metadata tab 
 varlink <- function(varname, tab = codes){
-  tab_section <- paste0(substitute(varname), "#", substitute(tab), "_section")
+  varlink <- substitute(varname) %>% 
+    str_remove("_1") %>% 
+    str_remove("_2") 
+  tab_section <- paste0(varlink, "#", substitute(tab), "_section")
   url <- file.path("https://pma.ipums.org/pma-action/variables", tab_section)
   # if(exists("url.exists")){
   #   if(!url.exists(url)){

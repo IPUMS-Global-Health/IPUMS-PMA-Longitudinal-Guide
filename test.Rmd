@@ -25,351 +25,833 @@ knitr::opts_chunk$set(
 source(here::here("r/utilities.r"))
 ```
 
-# Panel Membership 
+# Family Planning Indicators
 
-In Chapter 1, we mentioned that PMA uses a **multi-stage cluster sample design** for each phase of the panel study. This means you'll find data from a Household Questionnaire administered once each year, and you'll find data from a subsequent Female Questionnaire collected shortly afterward. Three years - or phases - of data will be collected in total. 
+```{r, echo=FALSE, results='hide'}
+# knitr options 
+knitr::opts_chunk$set(
+  echo = TRUE, 
+  eval = TRUE,
+  fig.width = 12,
+  fig.height = 8,
+  R.options = list(width = 100)
+)
 
-Because data are collected through two questionnaires administered in three phases, there are several places where incomplete or missing data may indicate **loss to follow-up** - dropped cases from the original panel design. At the same time, PMA uses an **open panel** design, whereby women who move into the study area or reach participation age after Phase 1 are permitted to join the panel at any subsequent phase. 
+# tibble options 
+options(tibble.print_min = 30)
 
-In Chapter 3, we'll cover these issues in detail. To illustrate, we'll be using a **wide format** data extract from [IPUMS PMA](https://pma.ipums.org/pma/) that includes "All cases" from both currently available phases. In other words, we'll include every member of the household roster collected in the Household Questionnaire at the start of each phase (even if no Female Questionnaire was completed by that person). 
-
-To make our explanation easier to follow, we'll make use of a data visualization tool known in clinical research settings as a [CONSORT diagram](http://www.consort-statement.org/consort-statement/flow-diagram). This type of diagram is a flowchart showing enrollment and attrition points, most typically in longitudinal studies. PMA publishes a CONSORT diagram together with the User Notes for each longitudinal sample, which you can find via the links below:
-
-<aside>
-R code showing how to build a combined CONSORT diagram with `r funlink(ggplot2)` is available on the [IPUMS PMA data analysis blog](https://tech.popdata.org/pma-data-hub/posts/2022-04-01-phase2-members/).
-</aside>
-
-  * [Burkina Faso](https://pma.ipums.org/pma/resources/longitudinal_flowcharts/Burkina_Faso_panel_phase2.pdf)
-  * [DRC - Kinshasa](https://pma.ipums.org/pma/resources/longitudinal_flowcharts/Kinshasa_panel_phase2.pdf)
-  * [DRC - Kongo Central](https://pma.ipums.org/pma/resources/longitudinal_flowcharts/Kongo_Central_panel_phase2.pdf)
-  * [Kenya](https://pma.ipums.org/pma/resources/longitudinal_flowcharts/Kenya_panel_phase2.pdf)
-  * [Nigeria - Lagos](https://pma.ipums.org/pma/resources/longitudinal_flowcharts/Lagos_panel_phase2.pdf)
-  * [Nigeria - Kano](https://pma.ipums.org/pma/resources/longitudinal_flowcharts/Kano_panel_phase2.pdf)
-  
-We've constructed a single diagram showing all six samples available from IPUMS PMA, and we'll demonstrate how to identify cases for each level in turn:
-
-\newpage
-
-```{r, echo=FALSE, out.width="100%"}
-knitr::include_graphics(here("images/consort.png"))
+# load dat 
+dat <- read_ipums_micro(
+  ddi = "data/pma_00106.xml",
+  data = "data/pma_00106.dat.gz"
+) 
 ```
 
-## Setup
+In Chapter 4, we'll demonstrate how to calculate key family planning indicators appearing in the **PMA Longitudinal Brief** for each of the longitudinal samples currently available from IPUMS PMA. The brief for each sample is linked below.
 
-This chapter features a **wide** longitudinal extract with all 6 of the available samples, including "All Cases (Respondents and Non-respondents to Household and Female Questionnaires)". As mentioned in Chapter 2, both phases are included with each sample when you request a longitudinal extract.
+<aside>
+Chapter 5 includes R code you can use to reproduce the **alluvial plots** seen in these briefs.
+</aside>
 
-```{r, echo=FALSE, out.width="85%"}
-knitr::include_graphics("images/select-samples2.png")
+  * [Burkina Faso](https://www.pmadata.org/sites/default/files/data_product_results/Burkina%20National_Phase%202_Panel_Results%20Brief_English_Final.pdf)
+  * [DRC - Kinshasa](https://www.pmadata.org/sites/default/files/data_product_results/DRC%20Kinshasa_%20Phase%202%20Panel%20Results%20Brief_English_Final.pdf)
+  * [DRC - Kongo Central](https://www.pmadata.org/sites/default/files/data_product_results/DRC%20Kongo%20Central_%20Phase%202%20Panel%20Results%20Brief_English_Final.pdf)
+  * [Kenya](https://www.pmadata.org/sites/default/files/data_product_results/Kenya%20National_Phase%202_Panel%20Results%20Brief_Final.pdf)
+  * [Nigeria - Kano](https://www.pmadata.org/sites/default/files/data_product_results/Nigeria%20KANO_Phase%202_Panel_Results%20Brief_Final.pdf)
+  * [Nigeria - Lagos](https://www.pmadata.org/sites/default/files/data_product_results/Nigeria%20LAGOS_Phase%202_Panel_Results%20Brief_Final.pdf) 
+
+Indicators calculated in this chapter cover topics like: 
+
+  * pregnancy intentions and outcomes
+  * current use of long-acting, short-acting, and traditional contraceptives
+  * discontinuation of family planning 
+  * intentions for future use of family planning 
+  * unmet need for family planning 
+  * partner's support for use of family planning 
+
+<aside class="hex">
+```{r, echo = FALSE}
+hex("ggplot2")
+```
+</aside>
+
+As we demonstrate how to calculate these indicators, we'll also provide code you can use to produce appropriate **data visualizations** built with the [ggplot2](https://ggplot2.tidyverse.org/index.html) package included in the [tidyverse](https://tidyverse.tidyverse.org/index.html) toolkit for R.  
+
+If you installed [tidyverse](https://tidyverse.tidyverse.org/index.html) in Chapter 1, no additional installation is necessary to use [ggplot2](https://ggplot2.tidyverse.org/index.html). If not, we recommend installing the complete [tidyverse](https://tidyverse.tidyverse.org/index.html) like so now: 
+
+```{r, eval = FALSE}
+install.packages("tidyverse")
+```
+
+
+## Chapter Setup 
+
+Chapter 4 features a **wide** longitudinal extract with all 6 of the available samples. Unlike Chapter 3, the data extract used in this chapter includes **only Female Respondents**. 
+
+```{r, echo = FALSE, out.width="85%"}
+knitr::include_graphics("images/samples.png")
 ```
 
 \newpage 
 
-Variables describing sample composition are located under the "Technical" topics heading. Our extract will contain all of the variables in the "Technical Variables" and "Longitudinal Panel" subheadings shown:
+Using the variable selection process described in Chapter 2, add the following variables to you Data Cart and click the [View Cart](https://pma.ipums.org/pma-action/extract_requests/variables) button to begin checkout ([preselected](https://pma.ipums.org/pma-action/faq#ques28) variables are added automatically).
 
-```{r, echo=FALSE}
-knitr::include_graphics("images/technical.png")
+  * `r varlink(RESULTFQ)` - Result of female questionnaire
+  * `r varlink(PANELWEIGHT)` - Phase 2 female panel weight
+  * `r varlink(RESIDENT)` - Household residence / membership
+  * `r varlink(AGE)` - Age in female questionnaire
+  * `r varlink(PREGNANT)` - Pregnancy status
+  * `r varlink(BIRTHEVENT)` - Number of birth events
+  * `r varlink(EDUCATTGEN)` - Highest level of school attended (4 categories)
+  * `r varlink(MARSTAT)` - Marital status 
+  * `r varlink(GEOCD)` - Province, DRC
+  * `r varlink(GEONG)` - State, Nigeria
+  * `r varlink(CP)` - Contraceptive user
+  * `r varlink(FPCURREFFMETHRC)` - Most effective current FP method 
+  * `r varlink(UNMETYN)` - Total unmet need
+  * `r varlink(FPPARTSUPPORT)` - Husband / partner would be supportive of FP use
+  * `r varlink(FPPLANVAL)` - When will start using FP method in the future - value
+  * `r varlink(FPPLANWHEN)` - When will start using FP method in the future - unit
+  * `r varlink(COUNTRY)` - PMA country (preselected)
+  * `r varlink(EAID)` - Enumeration area (preselected)
+
+Before completing checkout, make sure that you've selected the `dat` data format (fixed-width text). 
+
+```{r, echo = FALSE, out.width="60%"}
+knitr::include_graphics("images/checkout.png")
 ```
 
-Once you've finished selecting variables and downloaded an extract, you'll receive two files: an `.xml` DDI codebook, and a `.dat.gz` data file. We've saved both of these files in a folder called "data" in our R Working Directory, so we'll load them into R together with the [tidyverse](https://tidyverse.tidyverse.org/) and [ipumsr](https://tech.popdata.org/ipumsr/) packages.
+\newpage 
 
-```{r, results='hide'}
-library(ipumsr)
+In R, load the following packages described in Chapter 1. 
+
+```{r, eval = FALSE}
 library(tidyverse)
+library(ipumsr)
+library(srvyr)
+```
 
+Place the IPUMS PMA `xml` metadata file and `dat.gz` data file in a subfolder called `data` in the R working directory. Then, load your extract into R as an object called `dat` like so: 
+
+```{r, eval = FALSE}
 dat <- read_ipums_micro(
-  ddi = "data/pma_00086.xml",
-  data = "data/pma_00086.dat.gz"
+  ddi = "data/pma_00106.xml",
+  data = "data/pma_00106.dat.gz"
 )
 ```
 
-\newpage 
+### Populations of Interest 
 
-We mentioned in Chapter 1 that variables in a **wide** extract include a numeric suffix corresponding with a data collection phase. For example, you'll find two versions of `r varlink(SAMPLE)`:
+We've mentioned in Chapter 1 that PMA samples are only valid for the *de facto* population: these are women who slept in the household during the night before the interview for the Household Questionnaire in both phases. These women are coded either `11` or `22` in both `RESIDENT_1` and `RESIDENT_2`. We'll drop all other women from our extract:
 
 ```{r}
-dat %>% count(SAMPLE_1)
-dat %>% count(SAMPLE_2)
+dat <- dat %>% filter(RESIDENT_1 %in% c(11, 22) & RESIDENT_2 %in% c(11, 22))
 ```
 
-IPUMS PMA combines sub-nationally representative samples for DRC (Kinshasa and Kongo Central) and Nigeria (Kano and Lagos) with one `r varlink(SAMPLE)` code each. Here, we'll separate those samples and abbreviate country names. Let's call this variable `POP` (for "population of interest"). 
-
-\newpage 
-
-We'll combine the `r varlink(COUNTRY)` name for each sample together with the DRC and Nigeria regions shown in `r varlink(GEOCD)` and `r varlink(GEONG)`, respectively. 
+We also mentioned in Chapter 2 that women who completed the Phase 1 Female Questionnaire may have been **lost to follow-up** at Phase 2. As a reminder, we'll need to drop any cases where `RESULTFQ_2` is not coded `1` for "fully completed". 
 
 ```{r}
-# Preview country and region names 
-dat %>% count(COUNTRY, GEOCD, GEONG)
+dat <- dat %>% filter(RESULTFQ_2 == 1)
+```
 
-# Abbreviate "DRC" and combine `COUNTRY` with `GEOCD` and `GEONG`
+Additionally, a small number of women in each sample elected not to respond to key questions regarding current use of contraceptives, reported in the variable `r varlink(CP)`. These cases are coded `90` and above, as shown on the `r varlink(CP)` Codes tab. We'll exclude those cases, as well.
+
+```{r}
+dat <- dat %>% filter(CP_1 < 90, CP_2 < 90) 
+```
+
+Finally, recall that only the Burkina Faso and Kenya samples are **nationally representative**. Samples from DRC represent regions identified by `r varlink(GEOCD)`, while samples from Nigeria represent regions identified by `r varlink(GEONG)`. In order to distinguish each population of interest, we'll define a custom variable `POP` that shows each sample's `r varlink(COUNTRY)` label concatenated with each of these regions where appropriate. 
+
+  * `POP` - Population of interest 
+
+```{r}
 dat <- dat %>% 
-  mutate(
-    across(
-      c(COUNTRY, GEOCD, GEONG),
-      ~as_factor(.x) %>% as.character()
-    ),
-    COUNTRY = if_else(str_detect(COUNTRY, "Congo"), "DRC", COUNTRY),
-    POP = case_when(
-      !is.na(GEOCD) ~ paste(COUNTRY, "-", GEOCD),
-      !is.na(GEONG) ~ paste(COUNTRY, "-", GEONG),
-      TRUE ~ COUNTRY
-    )
-  )
+  mutate(POP = case_when(
+    !is.na(GEOCD) ~ paste("DRC -", as_factor(GEOCD)),
+    !is.na(GEONG) ~ paste("Nigeria -", as_factor(GEONG)),
+    TRUE ~ as_factor(COUNTRY) %>% as.character()
+  ))
+```
 
+The remaining sample size for each population of interest is simply a [count](https://dplyr.tidyverse.org/reference/count.html) of each level in `POP`. 
+
+```{r}
 dat %>% count(POP)
 ```
 
-## Phase 1 
+As described in Chapter 1, we'll use the [srvyr](http://gdfe.co/srvyr/index.html) package to incorporate survey design information into each of the population estimates calculated below. This includes `r varlink(PANELWEIGHT)`, which represents the calculated inverse selection probability for all panel members, adjusted for loss to follow-up. We'll also include identifying numbers for each sample via `r varlink(EAID_1)`.^[Because women are considered "lost to follow-up" if they moved outside the study area, `EAID_1` and `EAID_2` are identical for all panel members: you can use either one to identify sample clusters.]
 
-Phase 1 marks the beginning of the PMA panel study (baseline). As we've mentioned, it consists of two separate questionnaires administered in stages: first, resident enumerators visited 35 household dwellings selected at random within each sample cluster, or **enumeration area**. If a qualifying respondent was available, they were invited to complete a [Household Questionnaire](https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Household-Questionnaire-English-2019.10.09.pdf)^[Questionnaires administered in each country may vary from this **Core Household Questionnaire** - [click here](https://pma.ipums.org/pma/enum_materials.shtml) for details.] including a census of all household members and visitors who stayed there during the night before the interview. If this census included any women aged 15-49, the enumerator would later return to the household and invite each eligible woman to complete a  [Female Questionnaire](https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Female-Questionnaire-English-2019.10.09.pdf)^[Questionnaires administered in each country may vary from this **Core Female Questionnaire** - [click here](https://pma.ipums.org/pma/enum_materials.shtml) for details.] and participate in the three-year panel study. 
-
-We'll take a look at the inclusion criteria and missing data codes for each questionnaire, in turn. 
-
-### Household Questionnaire
-
-In our **wide** data extract, each `r varlink(PANELWOMAN)` is a woman who completed all or part of the Phase 1 Female Questionnaire and agreed to participate in the longitudinal panel study: as a result, you'll find all of her Phase 1 responses and her Phase 2 responses together in *a single row*. 
-
-This is *not* the case for household members who are not, themselves, participants in the panel study. These household members are represented by *one row per phase*. For example, if a young child was listed on the Phase 1 Household Questionnaire, you'll find details about their age in [AGEHQ_1](https://pma.ipums.org/pma-action/variables/AGEHQ), their sex in [SEX_1](https://pma.ipums.org/pma-action/variables/SEX), and their relationship to the head of household in [RELATE_1](https://pma.ipums.org/pma-action/variables/RELATE). If you look in the same row for corresponding Phase 2 variables ([AGEHQ_2](https://pma.ipums.org/pma-action/variables/AGEHQ), [SEX_2](https://pma.ipums.org/pma-action/variables/SEX), and [RELATE_2](https://pma.ipums.org/pma-action/variables/RELATE)), you'll find `NA` values even if the child still lived in the household at Phase 2: their Phase 2 data may be located in another row (with `NA` values listed for Phase 1), or it may not exist if the child was not listed on the Phase 2 household roster. It is not possible to link Phase 1 and Phase 2 responses for household members who were not participants in the panel study.
-
-This explains why, for example, you'll see a large number of `NA` values in [RESULTHQ_1](https://pma.ipums.org/pma-action/variables/RESULTHQ), which gives the result of the Phase 1 Household Questionnaire. 
+Our data extract includes samples from the DRC - Kinshasa and DRC - Kongo Central, so we'll use the procedure described in Chapter 1 to create a variable for sample strata called `STRATA_RECODE`. To review: `STRATA_RECODE` uses unique numeric codes from `STRATA`, except that it also includes unique identifiers for each sampled region in `GEOCD`.
 
 ```{r}
-dat %>% count(RESULTHQ_1)
+dat <- dat %>% 
+  mutate(
+    STRATA_RECODE = if_else(
+      is.na(GEOCD), 
+      as.numeric(STRATA_1), 
+      as.numeric(GEOCD)
+    )
+  ) 
 ```
 
-Close to half of the values in [RESULTHQ_1](https://pma.ipums.org/pma-action/variables/RESULTHQ) are `NA`: these are household members for whom no linked Phase 2 data exists. 
+## Population Inference 
 
-What about the other values in [RESULTHQ_1](https://pma.ipums.org/pma-action/variables/RESULTHQ)? You'll notice a range of outcomes including: 
+The [srvyr](http://gdfe.co/srvyr/index.html) function [as_survey_design](http://gdfe.co/srvyr/reference/as_survey_design.html) allows us to pass the information in `PANELWEIGHT`, `EAID_1`, and `STRATA_RECODE` to other package functions like [survey_mean](http://gdfe.co/srvyr/reference/survey_mean.html). We'll also demonstrate how to use this information in formal significance tests within each sample via [svychisq](http://gdfe.co/srvyr/reference/svychisq.html).
 
-  * `1` - Completed
-  * `5` - Partly completed 
-  * several other codes giving the reason why no household interview occurred 
+Let's begin with a simple example. The variable `r varlink(CP)` indicates whether a woman was currently using any family planning method. The variables `CP_1` and `CP_2` in our **wide** extract represent responses collected at Phase 1 and Phase 2, respectively. With help from [srvyr](http://gdfe.co/srvyr/index.html), we'll obtain a population-level estimate of the proportion of women who were using a method at Phase 2, given their status at Phase 1. 
+
+Below, we first use [group_by](http://gdfe.co/srvyr/reference/group_by.html) to divide the data extract into individual samples defined by `POP`. We then reference each of these samples as [cur_data](https://dplyr.tidyverse.org/reference/context.html) inside a summary function defined by [summarise](http://gdfe.co/srvyr/reference/summarise.html) - this ensures that the population estimates obtained from our combined data extract are identical to those you would obtain if you downloaded one extract for each sample and analyzed them separately. 
+
+Within [summarise](http://gdfe.co/srvyr/reference/summarise.html), we use [as_survey_design](http://gdfe.co/srvyr/reference/as_survey_design.html) to specify information about the design of each sample, and we then use a second [group_by](http://gdfe.co/srvyr/reference/group_by.html) to identify each of our variables of interest, `CP_1` and `CP_2`. Finally, we use a second [summarise](http://gdfe.co/srvyr/reference/summarise.html) function to calculate a [srvyr](http://gdfe.co/srvyr/index.html) summary statistic: in this case, we use [survey_mean](http://gdfe.co/srvyr/reference/survey_mean.html) to estimate proportions in the population. 
+
+<aside>
+You may change the confidence interval to, for example, 99% by setting `level = 0.99` in [survey_mean](http://gdfe.co/srvyr/reference/survey_mean.html).
+</aside>
+
+```{r}
+cp_tbl <- dat %>% 
+  group_by(POP) %>% 
+  summarise(
+    .groups = "keep",
+    cur_data() %>% 
+      as_survey_design(
+        weight = PANELWEIGHT, 
+        id = EAID_1, 
+        strata = STRATA_RECODE
+      ) %>% 
+      group_by(CP_1, CP_2) %>% 
+      summarise(survey_mean(
+        vartype = "ci", 
+        prop = TRUE, 
+        prop_method = "logit"
+      ))
+  )
+```
+
+Let's take a look at the results in `cp_tbl`.
+
+```{r}
+cp_tbl
+```
+
+The population estimate for each row appears in the column `_coef`. Looking at row 1, we would estimate that 79% of women aged 15-49 in Burkina Faso used *no method* both at Phase 1 and again at Phase 2. The columns `_low` and `_upp` report the limits of a 95% confidence interval: 76.3% and 81.5%.
+
+Comparing these confidence intervals gives us an informal, conservative way to test for a significant difference between outcomes for each `POP`: if the intervals for any pair of outcomes in the same sample include no common values, we'll say that a significant difference exists. *Formal testing may also reveal significant differences between pairs of outcomes where these intervals overlap only slightly.* Our approach is well suited for data visualization, but it should not replace formal testing. Fortunately, you can adapt our code to replace (or complement) the output from [survey_mean](http://gdfe.co/srvyr/reference/survey_mean.html). 
+
+## Significance Test
+
+For example, here we demonstrate how to calculate a Rao-Scott chi-square test for significant differences between the estimated population proportions for each `POP` and the proportions we would *expect* to observe if Phase 2 outcomes were statistically independent from Phase 1 conditions.^[The Rao-Scott second-order correction to Pearson's chi-square test is used to incorporate survey design information from [as_survey_design](http://gdfe.co/srvyr/reference/as_survey_design.html), reflecting weighted population estimates. Wald-type chi-square tests are also available: see [svychisq](https://rdrr.io/cran/survey/man/svychisq.html) for details.] Because we're interested in just one summary statistic per sample, we no longer need to [group_by](http://gdfe.co/srvyr/reference/group_by.html) `CP_1` and `CP_2`; instead, we'll use the formula `~CP_1 + CP_2` in the function [svychisq](https://rdrr.io/cran/survey/man/svychisq.html).
+
+```{r}
+rao_tbl <- dat %>% 
+  group_by(POP) %>% 
+  summarise(
+    .groups = "keep",
+    cur_data() %>% 
+      as_survey_design(
+        weight = PANELWEIGHT, 
+        id = EAID_1,  
+        strata = STRATA_RECODE
+      ) %>% 
+      summarise(rao = svychisq(~CP_1 + CP_2, design = .) %>% list)
+  )
+
+rao_tbl
+```
+
+Our new summary column `rao` contains output for each sample's test in a [list](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/list). From here, you can extract output elements [rowwise](https://dplyr.tidyverse.org/articles/rowwise.html) by name like so: 
+
+```{r}
+rao_tbl %>% 
+  rowwise() %>% 
+  mutate(
+    `F` = rao$statistic, 
+    p.value = rao$p.value,
+    sig95 = p.value < 0.05
+  )
+```
+
+## Data Visualization 
+
+We'll use simple **grouped bar charts** to show population estimates for each proportion calculated throughout the remainder of this chapter. A grouped bar chart differs from the **stacked bar charts** shown in PMA reports in that each response is plotted along an axis (rather than stacked together in a single bar). We'll show **grouped bar charts** here so that we can also include **error bars** representing a 95% confidence interval for each proportion.
+
+For example, let's plot the estimates created in `cp_tbl` above. As a preliminary step, we'll recode `CP_1` and `CP_2` with [as_factor](https://forcats.tidyverse.org/reference/as_factor.html) and sort their levels with [fct_relevel](https://forcats.tidyverse.org/reference/fct_relevel.html). This ensures that the *value labels* for each variable will be printed on our plot.
+
+```{r}
+cp_tbl <- cp_tbl %>% 
+  mutate(
+    across(
+      c(CP_1, CP_2),
+      ~as_factor(.x) %>% fct_relevel("No", "Yes")
+    )
+  )
+```
+
+Next, we'll use [ggplot2](https://ggplot2.tidyverse.org/reference/ggplot.html) to build the plot. Because our data includes multiple samples, we'll use [facet_grid](https://ggplot2.tidyverse.org/reference/facet_grid.html) to plot all summary data in multiple panels. The functions [geom_bar](https://ggplot2.tidyverse.org/reference/geom_bar.html) and [geom_errorbar](https://ggplot2.tidyverse.org/reference/geom_linerange.html) plot the grouped bars and error bars, respectively. A baseline plot should look something like this:   
+
+```{r, layout = "l-body", fig.height=5}
+cp_tbl %>% 
+  ggplot(aes(x = coef, y = CP_2)) + 
+  facet_grid(rows = vars(POP), cols = vars(CP_1)) + 
+  geom_bar(stat = "identity") + 
+  geom_errorbar(aes(xmin = `_low`, xmax = `_upp`), width = 0.2)
+```
+
+### Plot theme
+
+One of the powerful features of [ggplot2](https://ggplot2.tidyverse.org/reference/ggplot.html) is that you can use [pre-built themes](https://ggplot2.tidyverse.org/reference/ggtheme.html) to customize this baseline layout. We'll build on [theme_minimal](https://ggplot2.tidyverse.org/reference/ggtheme.html) to create our own `theme_pma` (with custom fonts incorporated by the [sysfonts](https://cran.r-project.org/package=sysfonts) and [showtext](https://cran.rstudio.com/web/packages/showtext/vignettes/introduction.html) packages). **Feel free to use our theme, or tweak it to create your own!** 
+
+```{r}
+library(showtext)
+
+sysfonts::font_add(
+  family = "cabrito", 
+  regular =  here("fonts/cabritosansnormregular-webfont.ttf")
+)
+showtext::showtext_auto()
+
+theme_pma <- theme_minimal() %+replace% 
+  theme(
+    text = element_text(family = "cabrito", size = 13),
+    plot.title = element_text(size = 22, color = "#00263A", 
+                              hjust = 0, margin = margin(b = 5)),
+    plot.subtitle = element_text(hjust = 0, margin = margin(b = 10)),
+    strip.background = element_blank(),
+    strip.text.y = element_text(size = 16, angle = 0),
+    panel.spacing = unit(1, "lines"),
+    axis.title.y = element_text(angle = 0, margin = margin(r = 10))
+  )
+```
+
+### Plot function
+
+Because we'll be constructing the same type of plot for each indicator, we'll need to re-use the same `r funlink(ggplot2)` functions several times. In this circumstance, it's often helpful to combine repeated functions inside a custom function of your own: this prevents errors and saves time. 
+
+We'll call our custom function `pma_bars`. It includes: 
+
+  - `theme_pma` created above
+  - `r funlink(ggplot2::labs)` for plot labels (passed from function arguments)
+  - `r funlink(ggplot2::scale_x_continuous)` formatting for continuous x-axis labels 
+  - `r funlink(ggplot2::scale_y_discrete)` formatting for discrete y-axis labels 
+  - `r funlink(ggplot2::geom_bar)` for grouped bars 
+  - `r funlink(ggplot2::geom_bar)` for error bars 
+
+```{r}
+pma_bars <- function(
+  title = NULL,     # an optional title 
+  subtitle = NULL,  # an optional subtitle 
+  xaxis = NULL,     # an optional label for the x-axis (displayed above)
+  yaxis = NULL      # an optional label for the y-axis (displayed left)
+){
+  components <- list(
+    if(exists("theme_pma")){theme_pma},
+    labs(
+      title = title,
+      subtitle = subtitle,
+      y = str_wrap(yaxis, 10),
+      x = NULL,
+      fill = NULL
+    ),
+    scale_x_continuous(
+      position = 'bottom',
+      sec.axis = sec_axis(trans = ~., name = xaxis, breaks = NULL),
+      labels = scales::label_percent()
+    ),
+    scale_y_discrete(limits = rev),
+    geom_bar(stat = "identity", fill = "#98579BB0"),
+    geom_errorbar(
+      aes(xmin = `_low`, xmax = `_upp`), 
+      width = 0.2, 
+      color = "#00263A"
+    )
+  )
+}
+```
+
+\newpage
+
+Going forward, we'll incorporate `pma_bars` together with a [ggplot](https://ggplot2.tidyverse.org/reference/ggplot.html) and [facet](https://ggplot2.tidyverse.org/reference/index.html#facetting) function for a given set of variables like so:
+
+```{r, fig.height=10}
+cp_tbl %>% 
+  ggplot(aes(x = coef, y = CP_2)) + 
+  facet_grid(rows = vars(POP), cols = vars(CP_1)) + 
+  pma_bars(
+    title = "Change in Contracptive Use Status",
+    subtitle = "A grouped bar chart, faceted by population of interest",
+    xaxis = "Phase 1",
+    yaxis = "Phase 2"
+  )
+```
+
+## Contraceptive Use or Non-Use
+
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(fig.height = 10)
+options(tibble.print_min = 12)
+```
+
+Let's continue our examination of `r varlink(CP)`. In the PMA reports for each sample linked above, you'll notice that women who were pregnant at either phase are distinguished from women who reported use or non-use in `CP_1` or `CP_2`. We'll identify these women in the variable `r varlink(PREGNANT)`, and then we'll create a combined indicator called `FPSTATUS`. 
+
+  * `FPSTATUS` - Pregnant, using contraception, or using no contraception 
+
+```{r}
+dat <- dat %>% 
+  mutate(
+    FPSTATUS_1 = case_when(
+      PREGNANT_1 == 1 ~ "Pregnant",
+      CP_1 == 1 ~ "Using FP",
+      CP_1 == 0 ~ "Not Using FP"
+    ), 
+    FPSTATUS_2 = case_when(
+      PREGNANT_2 == 1 ~ "Pregnant",
+      CP_2 == 1 ~ "Using FP",
+      CP_2 == 0 ~ "Not Using FP"
+    ),
+    across(
+      c(FPSTATUS_1, FPSTATUS_2),
+      ~.x %>% fct_relevel("Pregnant", "Not Using FP", "Using FP")
+    )
+  )
+```
+
+We'll now revise `cp_tbl` to include information from `FPSTATUS_1` and `FPSTATUS_2`. This will help us answer key questions like: 
+
+  * Are women who were pregnant at Phase 1 more likely to use or not use family planning at Phase 2? 
+  * Are women who were using (or not using) contraception at Phase 1 likely to maintain the same status at Phase 2? 
   
-If no household interview occurred, PMA creates one row to represent the household in [RESULTHQ_1](https://pma.ipums.org/pma-action/variables/RESULTHQ). Otherwise, if the household roster was completed during the interview, PMA creates one row for each person on the roster. 
-
-In order to determine the proportion of households that completed all or part of the Household Questionnaire - or any other **household-level statistics** - you must count only one row per household. Each Phase 1 household receives a unique identifier in [HHID_1](https://pma.ipums.org/pma-action/variables/HHID) - this value is an empty string `""` for household members included only in Phase 2. All Phase 1 households have a unique [HHID_1](https://pma.ipums.org/pma-action/variables/HHID), regardless of the outcome recorded in [RESULTHQ_1](https://pma.ipums.org/pma-action/variables/RESULTHQ).
-
-Therefore, you can use [group_by](https://dplyr.tidyverse.org/reference/group_by.html) to find the [RESULTHQ_1](https://pma.ipums.org/pma-action/variables/RESULTHQ) outcome for each household via [HHID_1](https://pma.ipums.org/pma-action/variables/HHID). To obtain the proportion of Phase 1 households that completed all or part of the questionnaire, we'll first use [filter](https://dplyr.tidyverse.org/reference/filter.html) to drop Phase 2 households with the value `""`. Then, we'll use [slice](https://dplyr.tidyverse.org/reference/slice.html) to include only the first row in each household. Finally, we'll count the number of fully (code 1) or partly (code 5) completed questionnaires in [RESULTHQ_1](https://pma.ipums.org/pma-action/variables/RESULTHQ) - the base R function [prop.table](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/prop.table) derives proportions for these counts. 
-
-<aside>
-Across samples, 96.4% of households completed all or part of the Phase 1 Household Questionnaire. 
-</aside>
-
 ```{r}
-dat %>% 
-  filter(HHID_1 != "") %>% # drop Phase 2 households
-  group_by(HHID_1) %>%     
-  slice(1) %>%  # include only one row per household
-  ungroup() %>%            
-  count(RESULTHQ_1 %in% c(1, 5)) %>% 
-  mutate(prop = prop.table(n))
-```
-
-<aside>
-Total number of Phase 1 household members, per sample
-</aside>
-
-It is also often useful to exclude non-interviewed households when calculating **person-level statistics**. In the first row of our CONSORT diagram above, we drop these households before we count the total number of sampled Phase 1 household members. 
-
-```{r}
-dat %>%
-  filter(RESULTHQ_1 %in% c(1, 5)) %>% 
-  count(POP)
-```
-
-### Female Questionnaire 
-
-IPUMS PMA uses a **non-response code** labeled "Not interviewed (household questionnaire)" for variables related to questions that were only relevant if the Household Questionnaire was fully or partly completed. This includes [ELIGIBLE_1](https://pma.ipums.org/pma-action/variables/ELIGIBLE), which indicates whether a particular household member was a woman aged 15-49 at Phase 1, and therefore eligible for the Phase 1 Female Questionnaire. If the household was not interviewed, eligibility for the Female Questionnaire could not be determined.
-
-```{r, R.options = list(width = 100)}
-dat %>% count(RESULTHQ_1, ELIGIBLE_1)
-```
-
-[RESULTLFQ_1](https://pma.ipums.org/pma-action/variables/RESULTLFQ) shows the result of the Female Questionnaire for eligible women. The **non-response code** "NIU (not in universe)" is used for household members who were not eligible. 
-
-```{r, eval = FALSE}
-dat %>% count(RESULTFQ_1)
-```
-```{r, echo = FALSE}
-# data entry error: code 95 is invalid 
-dat %>% 
-  filter(RESULTFQ_1 != 95 | is.na(RESULTFQ_1)) %>% 
-  count(RESULTFQ_1)
+cp_tbl <- dat %>% 
+  group_by(POP) %>% 
+  summarise(
+    .groups = "keep",
+    cur_data() %>% 
+      as_survey_design(weight = PANELWEIGHT, id = EAID_1, strata = STRATA_RECODE) %>% 
+      group_by(FPSTATUS_1, FPSTATUS_2) %>% 
+      summarise(survey_mean(vartype = "ci", prop = TRUE, prop_method = "logit"))
+  )
 ```
 
 \newpage 
 
-<aside>
-Across samples, 96.9% of eligible women completed the Phase 1 Female Questionnaire.
-</aside>
-
-You can calculate the proportion of eligible women who completed the Phase 1 Female Questionnaire like so: 
+This new version of `cp_tbl` includes the labels we assigned to `FPSTATUS_1` and `FPSTATUS_2`. The first dozen rows are shown below.
 
 ```{r}
-dat %>% 
-  filter(ELIGIBLE_1 == 1) %>% # drop if ineligible 
-  count(RESULTFQ_1 %in% c(1, 5)) %>% 
-  mutate(prop = prop.table(n))
+cp_tbl
 ```
 
-Our CONSORT diagram shows the total number of women who were eligible to participate in the panel study at Phase 1, after excluding women who:
+Next, we'll plot `cp_tbl` with `pma_bars`.
+
+```{r}
+cp_tbl %>% 
+  ggplot(aes(x = coef, y = FPSTATUS_2)) + 
+  facet_grid(cols = vars(FPSTATUS_1), rows = vars(POP)) + 
+  pma_bars(
+    "CHANGE IN CONTRACEPTIVE USE OR NON-USE",
+    "Percent women age 15-49 who changed contraceptive use status",
+    xaxis = "Phase 1 Status",
+    yaxis = "Phase 2 Status"
+  )
+```
+
+To reiterate: comparing the error bars within each of these 18 panels gives us a informal, but conservative test for significant difference. We'll say that a significant difference occurs where two pairs of error bars **do not overlap** (but additional testing may be necessary to determine whether a significant difference occurs where error bars overlap only slightly). A few observations: 
+
+   * For women who were pregnant at Phase 1, there is usually no apparent difference between using and not using family planning at Phase 2. Kenya and Nigeria - Kano are the exception: in Kenya, pregnant women at Phase 1 were appear more likely to be using FP at Phase 2, while the opposite is true in Kano.  
+  * Overall, non-pregnant women at Phase 1 appeared more likely to maintain the same status (use or non-use) at Phase 2 than they were to switch or become pregnant. 
   
-<aside>
-Total number of eligible women, per sample, who completed all or part of the Phase 1 Female Questionnaire 
-</aside>
+## Contraceptive Method Type 
 
-  * were members of a household where no Phase 1 Household Questionnaire was administered
-  * were not eligible (aged 15-49)
-  * did not complete at least part of the Phase 1 Female Questionnaire 
+PMA surveys also ask contraceptive users to indicate which method they are currently using at each phase of the study. If a woman reports using more than one method, `r varlink(FPCURREFFMETH)` shows her most *effective* currently used method. These responses are combined with detailed information about use of the lactational amenorrhea method (LAM), emergency contraception, or injectable type in  `r varlink(FPCURREFFMETHRC)`. PMA reports use `r varlink(FPCURREFFMETHRC)` to determine whether each woman's most effective current method is a short-acting, long-acting, or traditional method. 
 
-```{r}
-dat %>% 
-  filter(RESULTFQ_1 %in% c(1, 5)) %>% 
-  count(POP)
-```
+Long-acting methods include:
 
-\newpage 
+  * IUDs
+  * implants
+  * male sterilization 
+  * female sterilization
+  
+Short-acting methods include: 
 
-Enumerators invited these women to participate in Phase 2 of the panel study one year later. Only women who agreed to participate at that time are considered panel members at Phase 2, as shown in [PANELWOMAN_2](https://pma.ipums.org/pma-action/variables/PANELWOMAN).^[Women who completed the Phase 1 Female Questionnaire but declined to participate in the panel were given an opportunity to join the panel again at Phase 2 (if eligible). They are not panel members as shown in [PANELWOMAN_2](https://pma.ipums.org/pma-action/variables/PANELWOMAN), but they may be listed as such in [PANELWOMAN_3](https://pma.ipums.org/pma-action/variables/PANELWOMAN) if they agree to participation in the panel going forward.] 
+  * injectables (intramuscular and subcutaneous) 
+  * the pill
+  * emergency contraception 
+  * male condoms
+  * female condoms
+  * LAM
+  * diaphragm
+  * foam/jelly
+  * standard days method
 
-<aside>
-Total number of women, per sample, who consented at Phase 1 to the Phase 2 follow-up
-</aside>
+Traditional methods include: 
 
-Their responses to the panel invitation are recorded in [SURVEYWILLING_1](https://pma.ipums.org/pma-action/variables/SURVEYWILLING). IPUMS PMA uses the **non-response code** "Not interviewed (female questionnaire)" to indicate women who were eligible, but not interviewed for the Female Questionnaire as shown in [RESULTLFQ_1](https://pma.ipums.org/pma-action/variables/RESULTLFQ). Additionally, "No response or missing" is used for women who did not respond to the panel invitation. 
-
-```{r}
-dat %>% 
-  filter(SURVEYWILLING_1 == 1) %>% 
-  count(POP)
-```
-
-<aside>
-Across samples, 95.4% of women who completed the Phase 1 Female Questionnaire agreed to participate in panel follow-ups one year later. 
-</aside>
-
-Make sure to include "No response or missing" cases in the denominator when calculating the proportion of Phase 1 female respondents who agreed to participate in the panel follow-up: 
-
-```{r}
-dat %>% 
-  filter(RESULTFQ_1 %in% c(1, 5)) %>% 
-  count(SURVEYWILLING_1) %>% 
-  mutate(prop = prop.table(n))
-```
-
-
-## Phase 2 
-
-Both questionnaires were administered again in Phase 2, approximately one year after Phase 1. Resident enumerators visited the same dwellings where Phase 1 interviews occurred; if the woman's household had moved elsewhere within the study area,^[The “study area” is area within which resident enumerators should attempt to find panel women that have moved out of their Phase 1 dwelling. This may extend beyond the woman’s original EA as determined by in-country administrators - see [PMA Phase 2 and Phase 3 Survey Protocol](https://www.pmadata.org/data/survey-methodology) for details.] enumerators used local contacts to find its new location. If found, they administered a Household Questionnaire including an updated household roster.
-
-As we've mentioned, any woman aged 15-49 listed on the Phase 2 household roster was eligible to complete a Phase 2 Female Questionnaire. However, only women who completed all or part of a Phase 1 Female Questionnaire are considered members of the panel in [PANELWOMAN_2](https://pma.ipums.org/pma-action/variables/PANELWOMAN). 
-
-### Household Questionnaire
-
-Several variables are available to describe the [status of households](https://pma.ipums.org/pma-action/variables/group?id=tech_panel) surveyed at Phase 2. As with Phase 1, [RESULTHQ_2](https://pma.ipums.org/pma-action/variables/RESULTHQ) describes the result of the Phase 2 Household Questionnaire. 
-
-```{r}
-dat %>% count(RESULTHQ_2)
-```
-
-[SAMEDWELLING_2](https://pma.ipums.org/pma-action/variables/SAMEDWELLING) indicates whether the Household Questionnaire was administered at the same physical dwelling from Phase 1, or whether the enumerator located the woman's household in a new dwelling. 
-
-```{r}
-dat %>% count(SAMEDWELLING_2)
-```
+   * rhythm 
+   * withdrawal 
+   * other traditional 
 
 \newpage 
 
-Each Phase 2 sample may also include new households that were not included in Phase 1, as indicated by [HHTYPE_2](https://pma.ipums.org/pma-action/variables/HHTYPE): these are replacement households drawn for enumeration areas where more than 10% of Phase 1 households were no longer present. They account for all of the **non-response code** shown in [SAMEDWELLING_2](https://pma.ipums.org/pma-action/variables/SAMEDWELLING), as no prior dwelling was sampled. 
-
-```{r, R.options = list(width = 100)}
-dat %>% count(SAMEDWELLING_2, HHTYPE_2)
-```
-
-As mentioned above, it is not possible to link Phase 1 and Phase 2 records for household members who were not women participating in the panel study. However, the variable [HHMEMSTAT_2](https://pma.ipums.org/pma-action/variables/HHMEMSTAT) does describe whether a Phase 1 household member was listed on the household roster for Phase 2; if not, PMA creates a Phase 2 record for that person indicating whether they moved or were deceased.
+These methods are coded sequentially by group in `r varlink(FPCURREFFMETHRC)`. Women who are "NIU (not in universe)" were using no method. 
 
 ```{r}
-dat %>% count(HHMEMSTAT_2)
+dat %>% count(FPCURREFFMETHRC_1)
 ```
 
-\newpage 
+We'll use [across](https://dplyr.tidyverse.org/reference/across.html) to recode the Phase 1 and Phase 2 versions of `r varlink(FPCURREFFMETHRC)` simultaneously. We'll also attach the prefix `CAT` to each variable, indicating that we've created "categorized" versions of each. 
 
-After excluding women who reached age 50 at Phase 2, our CONSORT diagram diverges to show whether panel members were found in their Phase 1 dwelling or a new one. Women whose household was not found in the study area are considered **lost to follow-up**, as are those where the Phase 2 Household Questionnaire was not completed. 
-
-The variable [HHPANELP2_2](https://pma.ipums.org/pma-action/variables/HHPANELP2) indicates whether any woman who completed the Phase 1 Female Questionnaire was living in the dwelling at Phase 2. Women who were no longer residents of the household are also considered **lost to follow-up**. 
+  * `CAT_FPSFPCURREFFMETHRC` - Contraceptive method type 
 
 ```{r}
-dat %>% count(HHPANELP2_2)
+dat <- dat %>% 
+  mutate(
+    across(
+      c(FPCURREFFMETHRC_1, FPCURREFFMETHRC_2),
+      ~case_when(
+        .x < 120 ~ "long-acting",
+        .x < 200 ~ "short-acting",
+        .x < 900 ~ "traditional",
+        TRUE ~ "none") %>% 
+        fct_relevel( "long-acting", "short-acting", "traditional", "none"),
+      .names = "CAT_{.col}"
+    )
+  ) 
 ```
 
-### Female Questionnaire 
+\newpage
 
-Finally, eligible women who were found in a household at Phase 2 were invited to complete a Female Questionnaire. [RESULTFQ_2](https://pma.ipums.org/pma-action/variables/RESULTFQ) indicates the result of the Phase 2 Female Questionnaire both for panel members and women who were otherwise eligible to participate. 
+Next, we'll generate population estimates for our derived variables, `CAT_FPCURREFFMETHRC_1` and `CAT_FPCURREFFMETHRC_2`. 
 
 ```{r}
-dat %>% count(RESULTFQ_2)
+meth_tbl <- dat %>% 
+  group_by(POP) %>% 
+  summarise(
+    .groups = "keep",
+    cur_data() %>% 
+      as_survey_design(weight = PANELWEIGHT, id = EAID_1, strata = STRATA_RECODE) %>% 
+      group_by(CAT_FPCURREFFMETHRC_1, CAT_FPCURREFFMETHRC_2) %>% 
+      summarise(survey_mean(vartype = "ci", prop = TRUE, prop_method = "logit"))
+  )
+
+meth_tbl
 ```
 
-<aside>
-Across samples, Phase 1 data are available for 73.4% of women who completed the Phase 2 Female Questionnaire. 
-
-26.6% of these women are newcomers at Phase 2.
-</aside>
-
-You can find the proportion of women who completed the Phase 2 Female Questionnaire that were also available at Phase 1 (i.e. panel members) like so:
+And, we'll again use `pma_bars` to plot the results. 
 
 ```{r}
-dat %>% 
-  filter(RESULTFQ_2 == 1) %>% 
-  count(PANELWOMAN_2) %>% 
-  mutate(prop = prop.table(n))
+meth_tbl %>% 
+  ggplot(aes(x = coef, y = CAT_FPCURREFFMETHRC_2)) + 
+  facet_grid(cols = vars(CAT_FPCURREFFMETHRC_1), rows = vars(POP)) + 
+  pma_bars(
+    "CHANGE IN CONTRACEPTIVE METHOD TYPE",
+    "Percent of women age 15-49 who changed contraceptive method or use status",
+    xaxis = "Phase 1 Method",
+    yaxis = "Phase 2 Method"
+  )
 ```
 
-**Wide** data extracts make it particularly easy to combine Phase 1 and Phase 2 variables for the same woman. Note that potential panel members were identified at Phase 1: they are women who agreed to participate in [SURVEYWILLING_1](https://pma.ipums.org/pma-action/variables/SURVEYWILLING) and were under age 49 in [AGE_1](https://pma.ipums.org/pma-action/variables/AGE). In order to calculate the proportion of potential panel members who ultimately completed the Female Questionnaire at Phase 2, you must include Phase 1 female respondents for whom no Phase 2 data exists. 
+What do we learn from this plot? Let's consider each column in turn:
 
-\newpage 
+  * Users of "long-acting" methods at Phase 1 appear more likely to have used "long-acting" methods at Phase 2 than to have changed status (except perhaps in Kano, where the intervals for "long-acting" and "none" overlap at Phase 2). 
+  * Users of "short-acting" methods at Phase 1 appeared generally likely to use them again at Phase 2, but some samples show that women are equally likely to be using "none" at Phase 2. A difference between these two outcomes is visually apparent only in Kinshasa, Kenya, and Lagos (where women were more likely to be using "short-acting" methods than "none"). 
+  * The status of Phase 1 "traditional" users is generally unclear at Phase 2. In Kinshasa, Kongo Central, and Lagos, these women seem most likely to remain "traditional" users at Phase 2. Elsewhere, there are no clear trends. 
+  * Users of "none" at Phase 1 were clearly most likely to remain as such at Phase 2.
+  
+## Contraceptive Dynamics by Subgroup
 
-<aside>
-Across samples, 81.7% of potential panel members completed the Phase 2 Female Questionnaire. 
-</aside>
+We can also use `r varlink(FPCURREFFMETHRC)` to see whether women switched methods, stopped using any method, started using any method, or made no changes. Let's summarize this information as `CHG_FPCURR`:
 
-These cases are marked `NA` in [RESULTFQ_2](https://pma.ipums.org/pma-action/variables/RESULTFQ), so they are easily included like so:
+  * `CHG_FPCURR` - Change in contraceptive use between Phase 1 and Phase 2
 
 ```{r}
-dat %>% 
-  filter(SURVEYWILLING_1 == 1 & AGE_1 < 49) %>% 
-  count(RESULTFQ_2 == 1) %>% 
-  mutate(prop = prop.table(n))
+dat <- dat %>% 
+  mutate(
+    CHG_FPCURR = case_when(
+      FPCURREFFMETHRC_1 > 900 & FPCURREFFMETHRC_2 > 900 ~ "Continued non-use",
+      FPCURREFFMETHRC_1 > 900 ~ "Started using",
+      FPCURREFFMETHRC_2 > 900 ~ "Stopped using",
+      FPCURREFFMETHRC_1 != FPCURREFFMETHRC_2 ~ "Changed methods",
+      FPCURREFFMETHRC_1 == FPCURREFFMETHRC_2 ~ "Continued method"
+    )
+  ) 
 ```
 
-<aside>
-Total number and proportion of potential panel members, per Phase 1 sample, that ultimately completed a Phase 2 Female Questionnaire
-</aside>
+PMA reports disaggregate the outcomes captured in `CHG_FPCURR` by age, marital status, education level, and parity (number of live childbirths). 
 
-The final row of our CONSORT diagram shows the total number of completed Phase 2 Female Questionnaires for each sample. The totals below match the results reported in each of the PMA User Guides published for individual samples.
+### Age
+
+We'll use PMA's categorization of `AGE_2` to examine differences between women in three categories. 
+
+  * `CAT_AGE_2` - Phase 2 age (3 categories)
+
+```{r}
+dat <- dat %>% 
+  mutate(
+    CAT_AGE_2 = case_when(
+      AGE_2 < 20 ~ "15-19",
+      AGE_2 < 25 ~ "20-24",
+      TRUE ~ "25-49"
+    )
+  ) 
+```
+
+Plotting `CAT_AGE_2` on the y-axis allows us to compare confidence intervals across age groups. For example, notice that women aged 15-19 in every population seem more likely to continue non-use than women who are aged 20-24 or 25-49 (column 3). 
 
 ```{r}
 dat %>% 
   group_by(POP) %>% 
-  filter(SURVEYWILLING_1 == 1 & AGE_1 < 49) %>% 
-  count(final = RESULTFQ_2 == 1) %>% 
-  mutate(prop = prop.table(n)) %>% 
-  filter(final) %>% 
-  select(-final)
+  summarise(
+    .groups = "keep",
+    cur_data() %>% 
+      as_survey_design(weight = PANELWEIGHT, id = EAID_1, strata = STRATA_RECODE) %>% 
+      group_by(CAT_AGE_2, CHG_FPCURR) %>% 
+      summarise(survey_mean(vartype = "ci", prop = TRUE, prop_method = "logit"))
+  ) %>% 
+  ggplot(aes(x = coef, y = CAT_AGE_2)) + 
+  facet_grid(cols = vars(CHG_FPCURR), rows = vars(POP)) + 
+  pma_bars(
+    "CHANGE IN CONTRACEPTIVEUSE STATUS, BY AGE",
+    yaxis = "Phase 2 Age"
+  )
 ```
 
-## Summary 
+### Education level
 
-There are ultimately several causes of **loss to follow-up** that may occur at different time points throughout the panel study. An individual is considered **lost to follow-up** if: 
+The variable `r varlink(EDUCATTGEN)` standardizes educational categories across countries (see `r varlink(EDUCATT)` for country-specific codes). To match PMA reports, we'll recode `r varlink(EDUCATTGEN)` into just three groups: 
 
-  1. The household moved out of the Phase 1 dwelling, and the new dwelling could not be located within the study area 
-  2. The Phase 2 Household Questionnaire was not completed (a respondent refused, was not available, etc)
-  3. A panel member from the household was no longer a resident (deceased, moved, or status unknown)
-  4. A panel member did not complete a Phase 2 Household Questionnaire (she refused, was not available, etc)
+  * `CAT_EDUCATTGEN_2` - Phase 2 education level (3 categories)
   
-At the same time, the **open panel design** allows new participants to complete a Female Questionnaire at any phase. These women are not panel members at Phase 2, but they may become panel members at Phase 3 if they are eligible and agree to complete a forthcoming Phase 3 Female Questionnaire. Women can join the panel at Phase 2, for example, if they:
+```{r}
+dat <- dat %>% 
+  mutate(
+    CAT_EDUCATTGEN_2 = case_when(
+      EDUCATTGEN_2 < 3 ~ "None / Primary",
+      EDUCATTGEN_2 == 3 ~ "Secondary",
+      EDUCATTGEN_2 == 4 ~ "Tertiary"
+    )
+  ) 
+```
 
-  1. Reach age 15 only after Phase 1 interviews were completed 
-  2. Move into a household sampled at Phase 2
-  
-For more details on sample design, check out the IPUMS PMA [sample notes](https://pma.ipums.org/pma/sample_notes.shtml#long) and User Guides published for individual samples at [pmadata.org](https://www.pmadata.org/).
+As with age, we'll plot `CAT_EDUCATTGEN_2` on the y-axis. There aren't many clear takeaways here: confidence intervals overlap in each column for almost every education level, so visual inspection reveals no clear significant differences: 
+
+```{r}
+dat %>% 
+  filter(EDUCATTGEN_2 < 90) %>% # drop if missing 
+  group_by(POP) %>% 
+  summarise(
+    .groups = "keep",
+    cur_data() %>% 
+      as_survey_design(weight = PANELWEIGHT, id = EAID_1, strata = STRATA_RECODE) %>% 
+      group_by(CAT_EDUCATTGEN_2, CHG_FPCURR) %>% 
+      summarise(survey_mean(vartype = "ci", prop = TRUE, prop_method = "logit"))
+  ) %>% 
+  ggplot(aes(x = coef, y = CAT_EDUCATTGEN_2)) + 
+  facet_grid(cols = vars(CHG_FPCURR), rows = vars(POP)) + 
+  pma_bars(
+    "CHANGE IN CONTRACEPTIVEUSE STATUS, BY EDUCATION LEVEL",
+    yaxis = "Phase 2 Education Level"
+  )
+```
+
+### Marital status
+
+The variable `r varlink(MARSTAT)` indicates each woman's marital / partnership status. PMA considers women "in union" to be those who are currently married (code `21`) or currently living with their partner (code `22`). Otherwise, women who were never married, divorced / separated, or widowed are considered "not in union". 
+
+  * `CAT_MARSTAT_2` - Phase 2 marital status (2 categories)
+
+```{r}
+dat <- dat %>% 
+  mutate(
+    CAT_MARSTAT_2 = case_when(
+      MARSTAT_2 %in% 21:22 ~ "In union",
+      TRUE ~ "Not in union"
+    )
+  ) 
+```
+
+Here, we see that women who were *not* in a union at Phase 2 were significantly more likely to continue non-use of contraception compared to married / partnered women in each population. On the other hand, women who *were* in a union mainly appeared more likely to continue using the same method, or perhaps to change methods (most clearly in Kenya). 
+
+```{r}
+dat %>% 
+  group_by(POP) %>% 
+  summarise(
+    .groups = "keep",
+    cur_data() %>% 
+      as_survey_design(weight = PANELWEIGHT, id = EAID_1, strata = STRATA_RECODE) %>% 
+      group_by(CAT_MARSTAT_2, CHG_FPCURR) %>% 
+      summarise(survey_mean(vartype = "ci", prop = TRUE, prop_method = "logit"))
+  ) %>% 
+  ggplot(aes(x = coef, y = CAT_MARSTAT_2)) + 
+  facet_grid(cols = vars(CHG_FPCURR), rows = vars(POP)) + 
+  pma_bars(
+    "CHANGE IN CONTRACEPTIVE METHOD TYPE, BY MARITAL STATUS",
+    yaxis = "Phase 2 Marital Status"
+  )
+```
+
+### Parity
+
+Parity refers to the number of times a women has given live birth (excluding stillbirths). This information is recorded in the IPUMS variable `r varlink(BIRTHEVENT)`, in which the values `0` and `99` (not in universe) can both be interpreted as "none". 
+
+  * `CAT_BIRTHEVENT_2` - Phase 2 number of live births (4 categories)
+
+```{r}
+dat <- dat %>% 
+  mutate(
+    CAT_BIRTHEVENT_2 = case_when(
+      BIRTHEVENT_2 %in% c(0, 99) ~ "None",
+      BIRTHEVENT_2 %in% c(1, 2) ~ "One-two",
+      BIRTHEVENT_2 %in% c(3, 4) ~ "Three-four",
+      BIRTHEVENT_2 >= 5 ~ "Five +") %>% 
+      fct_relevel("None", "One-two", "Three-four", "Five +")
+  ) 
+```
+
+There are few clear patterns related to parity, except that women who have never given birth are also more likely to continue non-use of contraception between phases. 
+
+```{r}
+dat %>% 
+  filter(BIRTHEVENT_2 != 98) %>% # drops 2 missing cases (code 98)
+  group_by(POP) %>% 
+  summarise(
+    .groups = "keep",
+    cur_data() %>% 
+      as_survey_design(weight = PANELWEIGHT, id = EAID_1, strata = STRATA_RECODE) %>% 
+      group_by(CAT_BIRTHEVENT_2, CHG_FPCURR) %>% 
+      summarise(survey_mean(vartype = "ci", prop = TRUE, prop_method = "logit"))) %>% 
+  ggplot(aes(x = coef, y = CAT_BIRTHEVENT_2)) + 
+  facet_grid(cols = vars(CHG_FPCURR), rows = vars(POP)) + 
+  pma_bars(
+    "CHANGE IN CONTRACEPTIVE METHOD TYPE, BY PARITY",
+    yaxis = "Phase 2 Childbirths"
+  )
+```
+
+## Other Panel Dynamics
+
+The final page in each PMA report covers family planning dynamics related to unmet need, partner support, and plans for future use of family planning methods. In each case, we'll be focusing on women who were *not* using any method at Phase 1. We'll show how each of these dynamics impacts the likelihood that Phase 1 non-users would have adopted any family planning method at Phase 2. 
+
+```{r}
+dat <- dat %>% filter(CP_1 == 0)
+```
+
+### Unmet need 
+
+PMA defines unmet need for family planning according to each woman's fertility preferences, current use of family planning methods, and risk factors for pregnancy. Women may have "unmet need" for birth spacing (e.g. pregnant women whose pregnancy was mistimed) or for limiting births (e.g. pregnant women whose pregnancy was unwanted), while women are considered "not at risk" if they are not sexually active or cannot become pregnant. The variable `r varlink(UNMETNEED)` provides detailed information on types of need for each woman, and on related variables that were used to calculate unmet need. 
+
+The binary variable `r varlink(UNMETYN)` recodes `r varlink(UNMETNEED)` as either "Unmet need", or "No unmet need". We'll reword these labels only slightly to minimize the amount of repeated text on our plot: 
+
+```{r}
+dat %>% 
+  mutate(UNMETYN_1 = if_else(UNMETYN_1 == 1, "Yes", "No")) %>% 
+  group_by(POP) %>% 
+  summarise(
+    .groups = "keep",
+    cur_data() %>% 
+      as_survey_design(weight = PANELWEIGHT, id = EAID_1, strata = STRATA_RECODE) %>% 
+      group_by(UNMETYN_1, CP_2) %>% 
+      summarise(survey_mean(vartype = "ci", prop = TRUE, prop_method = "logit"))
+  ) %>% 
+  filter(CP_2 == 1) %>% 
+  ggplot(aes(x = coef, y = UNMETYN_1)) + 
+  facet_grid(rows = vars(POP)) + 
+  pma_bars(
+    "UNMET NEED FOR FAMILY PLANNING",
+    "Percent of women age 15-49 who were not using a method at Phase 1",
+    xaxis = "Phase 2: Adopted a method",
+    yaxis = "Phase 1: Unmet Need"
+  )
+```
+
+Overall, these results suggest that non-users with unmet need for family planning at Phase 1 were more likely to adopt a method at Phase 2 compared to non-users who had none (e.g. women who were not sexually active, could not become pregnant, etc.). However, formal testing is needed to determine whether these trends were statistically significant in Burkina Faso and Nigeria - Lagos. 
+
+### Partner support 
+
+Women who were not using family planning and not pregnant at Phase 1 were asked whether they thought their husband / partner would be supportive of use of family planning in the future. These results are recorded in `r varlink(FPPARTSUPPORT)`. We'll exclude non-partnered women here, as they are "NIU (not in universe)".  
+
+```{r}
+dat %>% 
+  filter(FPPARTSUPPORT_1 %in% c(0, 1, 97)) %>% 
+  mutate(FPPARTSUPPORT_1 = FPPARTSUPPORT_1 %>% as_factor) %>% 
+  group_by(POP) %>% 
+  summarise(
+    .groups = "keep",
+    cur_data() %>% 
+      as_survey_design(weight = PANELWEIGHT, id = EAID_1, strata = STRATA_RECODE) %>% 
+      group_by(FPPARTSUPPORT_1, CP_2) %>% 
+      summarise(survey_mean(vartype = "ci", prop = TRUE, prop_method = "logit"))
+  ) %>% 
+  filter(CP_2 == 1) %>% 
+  ggplot(aes(x = coef, y = FPPARTSUPPORT_1)) + 
+  facet_grid(rows = vars(POP)) + 
+  pma_bars(
+    "PARTNER SUPPORT FOR FAMILY PLANNING",
+    "Percent of women age 15-49 who were not using a method at Phase 1",
+    xaxis = "Phase 2: Adopted a method",
+    yaxis = "Phase 1: Partner would support FP"
+  )
+```
+
+We've included responses for women who were unsure whether their partner would or would not support future use of FP ("Dont know"), but Phase 2 outcomes for these women were usually not visually distinct from those who answered "Yes" or "No". Formal testing is needed to determine whether any significant differences exist.
+
+Meanwhile, women with Phase 1 partner support in DRC - Kongo Central and Kenya were more likely to adopt a method than not. Outcomes for women in other populations are not visibly different based on partner support, one way or the other (again, formal testing may prove otherwise). 
+
+### Intentions
+
+Lastly, we'll demonstrate the impact of women's plans for future family planning use at Phase 1. The variable `r varlink(FPUSPLAN)` indicates whether women had plans for future use *at any point* in the future, but here we'll consider whether women had plans to adopt a method *within the next year* to correspond with the timing of Phase 2 surveys. 
+
+There are two variables that describe the approximate time when women said they would adopt a family planning method (if at all). `r varlink(FPPLANVAL)` contains a raw number that should be matched with a *unit* of time (months, years) or a categorical response ("soon / now", "after the birth of this child") in `r varlink(FPPLANWHEN)`:
+
+```{r}
+dat %>% count(FPPLANWHEN_1)
+```
+
+We'll create `FPPLANYR_1` to indicate whether each woman planned to use family planning within a year's time at Phase 1. 
+
+  * `FPPLANYR_1` - Phase 1 plans to use FP within one year 
+
+```{r}
+dat <- dat %>% 
+  mutate(
+    FPPLANYR_1 = case_when(
+      FPPLANWHEN_1 == 1 & FPPLANVAL_1 <= 12 ~ "Yes", # Within 12 months 
+      FPPLANWHEN_1 == 2 & FPPLANVAL_1 == 1 ~ "Yes", # Within 1 year
+      FPPLANWHEN_1 %in% c(3, 4) ~ "Yes", # Soon / now or after current pregnancy
+      TRUE ~ "No" # Includes date unknown, no response, or no intention (FPUSPLAN)
+    )
+  )
+```
+
+Our final plot shows the difference in FP adoption between women who planned to do so within the year, compared with women with no such plans. 
+
+```{r}
+dat %>% 
+  group_by(POP) %>% 
+  summarise(
+    .groups = "keep",
+    cur_data() %>% 
+      as_survey_design(weight = PANELWEIGHT, id = EAID_1, strata = STRATA_RECODE) %>% 
+      group_by(FPPLANYR_1, CP_2) %>% 
+      summarise(survey_mean(vartype = "ci", prop = TRUE, prop_method = "logit"))
+  ) %>% 
+  filter(CP_2 == 1) %>% 
+  ggplot(aes(x = coef, y = FPPLANYR_1)) + 
+  facet_grid(rows = vars(POP)) + 
+  pma_bars(
+    "INTENTION TO USE FAMIILY PLANNING WITHIN ONE YEAR",
+    "Percent of women age 15-49 who were not using a method at Phase 1",
+    xaxis = "Phase 2: Adopted a method",
+    yaxis = "Phase 1: Plan to use FP"
+  )
+```
+
+In every population, Phase 1 non-users who planned to adopt a method by Phase 2 were significantly more likely to do so. However, a significant *majority* of Phase 1 non-users with plans to adopt a method actually did so only in Kenya, where the 95% confidence interval for "Yes" responses includes only proportions greater than the 50% threshold. In fact, women who adopted a method at Phase 2 represent a significant *minority* of Phase 1 non-users who planned to do so in Burkina Faso, DRC - Kongo Central, and Nigeria - Kano. 
+
+## Wrap-up 
+
+As we've seen, **grouped bar charts** give us a simple way to identify clear differences between Phase 2 outcomes for subgroups defined by baseline family planning conditions or key demographic features. Additionally, when we **facet** populations of interest on the same axis, we can easily compare differences between subgroups for many samples in a single figure. 
+
+One drawback to this approach is that it's more conservative than formal statistical tests. We are not able to easily spot differences near the conventional 95% certainty threshold. However, we demonstrated how you can adapt our code to conduct formal hypothesis tests like the [Rao-Scott chi-square test](https://rdrr.io/cran/survey/man/svychisq.html) for weighted proportions.
+
+Another drawback to this approach is that we've been unable to showcase estimates for the proportion of responses at any *one* phase of the study. For example, in our last figure, we estimated that about 35% of women who *planned to use* contraception within the year at Phase 1 did so at Phase 2; our figure does not show how many women planned to use contraception within the year *as a share of the Phase 1 population*. 
+
+To better understand the change over time relative to the size of each subgroup in our analysis, we'll turn to a slightly more complicated data visualization method. In our next post, we'll show how to create **alluvial plots**, like those shown in the first two pages of each PMA report. 
