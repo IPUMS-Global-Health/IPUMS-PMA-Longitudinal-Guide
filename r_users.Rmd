@@ -784,7 +784,7 @@ knitr::include_graphics("images/cart.png")
 
 ### Select a Fixed-width File
 
-Before you submit an extract request, you'll have the opportunity to choose a "Data Format". **R users should selected Fixed-width text (.dat)** - you'll notice that data formatted for Stata, SPSS, and SAS are also available. CSV files are provided, but not recommended. (If you wish to change Sample Members, you may do so again here.) 
+Before you submit an extract request, you'll have the opportunity to choose a "Data Format". **R users should select a Fixed-width text file (.dat)** - you'll notice that data formatted for Stata, SPSS, and SAS are also available. CSV files are provided, but not recommended. (If you wish to change Sample Members, you may do so again here.) 
 
 ```{r}
 knitr::include_graphics("images/checkout1.png")
@@ -868,7 +868,7 @@ long <- long %>%
   ungroup() 
 ```
 
-The [PMA Longitudinal Briefs](../2022-03-01-phase2-discovery/index.html#inclusion-criteria-for-analysis) published for each sample also include only members of the *de facto* population. These are women who slept in the household during the night prior to the interview for each Household Questionnaire, such that `r varlink(RESIDENT)` takes the value `11` or `22`. We'll use [group_by](https://dplyr.tidyverse.org/reference/group_by.html) again to include only *de facto* women from both phases. 
+The PMA Longitudinal Briefs published for each sample also include only members of the *de facto* population. These are women who slept in the household during the night prior to the interview for each Household Questionnaire, such that `r varlink(RESIDENT)` takes the value `11` or `22`. We'll use [group_by](https://dplyr.tidyverse.org/reference/group_by.html) again to include only *de facto* women from both phases. 
 
 ```{r}
 long <- long %>% 
@@ -939,7 +939,7 @@ Again: for most longitudinal analysis applications, you'll need to remove cases 
 wide <- wide %>% filter(RESULTFQ_2 == 1 & !is.na(RESULTFQ_1)) 
 ```
 
-The *de facto* population appearing in [PMA Longitudinal Briefs](../2022-03-01-phase2-discovery/index.html#inclusion-criteria-for-analysis) is defined in **wide** extracts by cases where the values `11` or `12` appear in *both* `RESIDENT_1` and `RESIDENT_2`:
+The *de facto* population appearing in PMA Longitudinal Briefs is defined in **wide** extracts by cases where the values `11` or `12` appear in *both* `RESIDENT_1` and `RESIDENT_2`:
 
 ```{r}
 wide <- wide %>% filter(RESIDENT_1 %in% c(11, 22) & RESIDENT_2 %in% c(11, 22))

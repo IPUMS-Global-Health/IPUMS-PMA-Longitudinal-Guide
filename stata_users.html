@@ -135,6 +135,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="#sample-strata-for-drc"><span class="toc-section-number">1.5.3</span> Sample strata for DRC</a></li>
 </ul></li>
 </ul></li>
+<li><a href="#longitudinal-data-extracts"><span class="toc-section-number">2</span> Longitudinal Data Extracts</a>
+<ul>
+<li><a href="#sample-selection"><span class="toc-section-number">2.1</span> Sample Selection</a></li>
+<li><a href="#variable-selection"><span class="toc-section-number">2.2</span> Variable Selection</a>
+<ul>
+<li><a href="#codes"><span class="toc-section-number">2.2.1</span> Codes</a></li>
+<li><a href="#variable-description"><span class="toc-section-number">2.2.2</span> Variable Description</a></li>
+<li><a href="#comparability-notes"><span class="toc-section-number">2.2.3</span> Comparability Notes</a></li>
+<li><a href="#sample-universe"><span class="toc-section-number">2.2.4</span> Sample Universe</a></li>
+<li><a href="#availability-across-samples"><span class="toc-section-number">2.2.5</span> Availability Across Samples</a></li>
+<li><a href="#questionnaire-text"><span class="toc-section-number">2.2.6</span> Questionnaire Text</a></li>
+<li><a href="#checkout"><span class="toc-section-number">2.2.7</span> Checkout</a></li>
+</ul></li>
+<li><a href="#data-for-stata-users"><span class="toc-section-number">2.3</span> Data for Stata Users</a></li>
+<li><a href="#long-data-structure"><span class="toc-section-number">2.4</span> Long Data Structure</a></li>
+<li><a href="#wide-data-structure"><span class="toc-section-number">2.5</span> Wide Data Structure</a></li>
+<li><a href="#which-format-is-best-for-me"><span class="toc-section-number">2.6</span> Which format is best for me?</a></li>
+</ul></li>
 </ul>
 </div>
 </div>
@@ -179,7 +197,7 @@ PMA has also published a guide to <strong>cross-sectional</strong> analysis in b
 <div id="pma-background" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> PMA Background</h2>
 <p>Dating back to 2013, the original PMA survey design included high-frequency, <strong>cross-sectional</strong> samples of women and service delivery points collected from eleven countries participating in <a href="http://progress.familyplanning2020.org/">Family Planning 2020</a> (FP2020) - a global partnership that supports the rights of women and girls to decide for themselves whether, when, and how many children they want to have. These surveys were designed to monitor annual progress towards <a href="http://progress.familyplanning2020.org/measurement">FP2020 goals</a> via population-level estimates for several <a href="http://www.track20.org/pages/data_analysis/core_indicators/overview.php">core indicators</a>.</p>
-<p>Beginning in 2019, PMA surveys were redesigned under a renewed partnership called <a href="https://fp2030.org/">Family Planning 2030</a> (FP2030). These new surveys have been refocused on reproductive and sexual health indicators, and they feature a <strong>longitudinal panel</strong> of women of childbearing age. This design will allow researchers to measure contraceptive dynamics and changes in women’s fertility intentions over a <strong>three year period</strong> via annual in-person interviews.<span id="fn1" class="footnote" data-pagedown-footnote-number="1" style="white-space: pre-line;">In addition to these three in-person surveys, PMA also conducted telephone interviews with panel members focused on emerging issues related to the COVID-19 pandemic in 2020. These telephone surveys are already available for several countries - the IPUMS PMA blog series on <a href="../../index.html#category:COVID-19">PMA COVID-19 surveys</a> covers this topic in detail.</span></p>
+<p>Beginning in 2019, PMA surveys were redesigned under a renewed partnership called <a href="https://fp2030.org/">Family Planning 2030</a> (FP2030). These new surveys have been refocused on reproductive and sexual health indicators, and they feature a <strong>longitudinal panel</strong> of women of childbearing age. This design will allow researchers to measure contraceptive dynamics and changes in women’s fertility intentions over a <strong>three year period</strong> via annual in-person interviews.<span id="fn1" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="1">In addition to these three in-person surveys, PMA also conducted telephone interviews with panel members focused on emerging issues related to the COVID-19 pandemic in 2020. These telephone surveys are already available for several countries - the IPUMS PMA blog series on <a href="../../index.html#category:COVID-19">PMA COVID-19 surveys</a> covers this topic in detail.</span></p>
 <p>Questions on the redesigned survey cover topics like:</p>
 <ul>
 <li>awareness, perception, knowledge, and use of contraceptive methods</li>
@@ -378,9 +396,9 @@ x
 <aside>
 <strong>Resident enumerators</strong> are women over age 21 living in (or near) each EA who hold at least a high school diploma.
 </aside>
-<p>PMA uses a multi-stage clustered sample design, with stratification at the urban-rural level or by sub-region. Sample clusters - called <a href="https://pma.ipums.org/pma-action/variables/EAID#description_section">enumeration areas</a> (EAs) – are provided by the national statistics agency in each country.<span id="fn2" class="footnote" data-pagedown-footnote-number="2" style="white-space: pre-line;"><a href="https://tech.popdata.org/pma-data-hub/posts/2021-10-15-nutrition-climate/PMA_displacement.pdf">Displaced GPS coordinates</a> for the centroid of each EA are available for most samples <a href="https://www.pmadata.org/data/request-access-datasets">by request</a> from PMA. IPUMS PMA provides shapefiles for PMA countries <a href="https://pma.ipums.org/pma/gis_boundary_files.shtml">here</a>.</span> These EAs are sampled using a <em>probability proportional to size</em> (PPS) method relative to the population distribution in each stratum.</p>
+<p>PMA uses a multi-stage clustered sample design, with stratification at the urban-rural level or by sub-region. Sample clusters - called <a href="https://pma.ipums.org/pma-action/variables/EAID#description_section">enumeration areas</a> (EAs) – are provided by the national statistics agency in each country.<span id="fn2" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="2"><a href="https://tech.popdata.org/pma-data-hub/posts/2021-10-15-nutrition-climate/PMA_displacement.pdf">Displaced GPS coordinates</a> for the centroid of each EA are available for most samples <a href="https://www.pmadata.org/data/request-access-datasets">by request</a> from PMA. IPUMS PMA provides shapefiles for PMA countries <a href="https://pma.ipums.org/pma/gis_boundary_files.shtml">here</a>.</span> These EAs are sampled using a <em>probability proportional to size</em> (PPS) method relative to the population distribution in each stratum.</p>
 <div class="page-break-after"></div>
-<p>At Phase 1, 35 household dwellings were selected at random within each EA. Resident enumerators visited each dwelling and invited one household member to complete a <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Household-Questionnaire-English-2019.10.09.pdf">Household Questionnaire</a><span id="fn3" class="footnote" data-pagedown-footnote-number="3" style="white-space: pre-line;">Questionnaires administered in each country may vary from this <strong>Core Household Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span> that includes a census of all household members and visitors who stayed there during the night before the interview. Female household members and visitors aged 15-49 were then invited to complete a subsequent Phase 1 <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Female-Questionnaire-English-2019.10.09.pdf">Female Questionnaire</a>.<span id="fn4" class="footnote" data-pagedown-footnote-number="4" style="white-space: pre-line;">Questionnaires administered in each country may vary from this <strong>Core Female Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span></p>
+<p>At Phase 1, 35 household dwellings were selected at random within each EA. Resident enumerators visited each dwelling and invited one household member to complete a <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Household-Questionnaire-English-2019.10.09.pdf">Household Questionnaire</a><span id="fn3" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="3">Questionnaires administered in each country may vary from this <strong>Core Household Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span> that includes a census of all household members and visitors who stayed there during the night before the interview. Female household members and visitors aged 15-49 were then invited to complete a subsequent Phase 1 <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Female-Questionnaire-English-2019.10.09.pdf">Female Questionnaire</a>.<span id="fn4" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="4">Questionnaires administered in each country may vary from this <strong>Core Female Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span></p>
 <aside>
 <p><a href="https://pma.ipums.org/pma-action/variables/SAMEDWELLING#codes_section">samedwelling</a> indicates whether a Phase 2 female respondent resided in her Phase 1 dwelling or a new one.</p>
 <a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN#codes_section">panelwoman</a> indicates whether a Phase 2 household member completed the Phase 1 Female Questionnaire.
@@ -388,7 +406,7 @@ x
 <p>One year later, resident enumerators visited the same dwellings and administered a Phase 2 Household Questionnaire. A panel member in Phase 2 is any woman still age 15-49 who could be reached for a second Female Questionnaire, either because:</p>
 <ul>
 <li>she still lived there, or</li>
-<li>she had moved elsewhere within the study area,<span id="fn5" class="footnote" data-pagedown-footnote-number="5" style="white-space: pre-line;">The “study area” is area within which resident enumerators should attempt to find panel women that have moved out of their Phase 1 dwelling. This may extend beyond the woman’s original EA as determined by in-country administrators - see <a href="https://www.pmadata.org/data/survey-methodology">PMA Phase 2 and Phase 3 Survey Protocol</a> for details.</span> but at least one member of the Phase 1 household remained and could help resident enumerators locate her new dwelling.<span id="fn6" class="footnote" data-pagedown-footnote-number="6" style="white-space: pre-line;">In cases where no Phase 1 household members remained in the dwelling at Phase 2, women from the household are considered lost to follow-up (LTFU). A panel member is also considered LTFU if a Phase 2 Household Questionnaire was not completed, if she declined to participate, or if she was deceased or otherwise unavailable.</span></li>
+<li>she had moved elsewhere within the study area,<span id="fn5" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="5">The “study area” is area within which resident enumerators should attempt to find panel women that have moved out of their Phase 1 dwelling. This may extend beyond the woman’s original EA as determined by in-country administrators - see <a href="https://www.pmadata.org/data/survey-methodology">PMA Phase 2 and Phase 3 Survey Protocol</a> for details.</span> but at least one member of the Phase 1 household remained and could help resident enumerators locate her new dwelling.<span id="fn6" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="6">In cases where no Phase 1 household members remained in the dwelling at Phase 2, women from the household are considered lost to follow-up (LTFU). A panel member is also considered LTFU if a Phase 2 Household Questionnaire was not completed, if she declined to participate, or if she was deceased or otherwise unavailable.</span></li>
 </ul>
 <p>Additionally, resident enumerators administered the Phase 2 Female Questionnaire to <em>new</em> women in sampled households who:</p>
 <ul>
@@ -548,10 +566,10 @@ not interviewed (household questionnair |        192        2.83       86.88
 <p>In subsequent analyses, we’ll use the remaining cases to show how PMA generates key indicators for <strong>contraceptive use status</strong> and <strong>family planning intentions and outcomes</strong>. The summary report for each country includes measures disaggregated by demographic variables like:</p>
 <ul>
 <li><a href="https://pma.ipums.org/pma-action/variables/MARSTAT#codes_section">marstat</a> - marital status</li>
-<li><a href="https://pma.ipums.org/pma-action/variables/EDUCATT#codes_section">educatt</a> and <a href="https://pma.ipums.org/pma-action/variables/EDUCATTGEN#codes_section">educattgen</a> - highest attended level of education<span id="fn7" class="footnote" data-pagedown-footnote-number="7" style="white-space: pre-line;">Levels in <a href="https://pma.ipums.org/pma-action/variables/EDUCATT#codes_section">educatt</a> may vary by country; <a href="https://pma.ipums.org/pma-action/variables/EDUCATTGEN#codes_section">educattgen</a> recodes country-specific levels in four general categories.</span></li>
+<li><a href="https://pma.ipums.org/pma-action/variables/EDUCATT#codes_section">educatt</a> and <a href="https://pma.ipums.org/pma-action/variables/EDUCATTGEN#codes_section">educattgen</a> - highest attended level of education<span id="fn7" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="7">Levels in <a href="https://pma.ipums.org/pma-action/variables/EDUCATT#codes_section">educatt</a> may vary by country; <a href="https://pma.ipums.org/pma-action/variables/EDUCATTGEN#codes_section">educattgen</a> recodes country-specific levels in four general categories.</span></li>
 <li><a href="https://pma.ipums.org/pma-action/variables/AGE#codes_section">age</a> - age</li>
-<li><a href="https://pma.ipums.org/pma-action/variables/WEALTHQ#codes_section">wealthq</a> and <a href="https://pma.ipums.org/pma-action/variables/WEALTHT#codes_section">wealtht</a> - household wealth quintile or tertile<span id="fn8" class="footnote" data-pagedown-footnote-number="8" style="white-space: pre-line;">Households are divided into quintiles/tertiles relative to the distribution of an asset <a href="https://pma.ipums.org/pma-action/variables/SCORE#description_section">score</a> weighted for all sampled households. For subnationally-representative samples (DRC and Nigeria), separate wealth distributions are calculated for each sampled region.</span></li>
-<li><a href="https://pma.ipums.org/pma-action/variables/URBAN#codes_section">urban</a> and <a href="https://pma.ipums.org/pma-action/variables/SUBNATIONAL#codes_section">subnational</a> - geographic location<span id="fn9" class="footnote" data-pagedown-footnote-number="9" style="white-space: pre-line;"><a href="https://pma.ipums.org/pma-action/variables/SUBNATIONAL#codes_section">subnational</a> includes subnational regions for all sampled countries; country-specific variables are also available on the <a href="https://pma.ipums.org/pma-action/variables/group?id=hh_geo">household - geography</a> page.</span></li>
+<li><a href="https://pma.ipums.org/pma-action/variables/WEALTHQ#codes_section">wealthq</a> and <a href="https://pma.ipums.org/pma-action/variables/WEALTHT#codes_section">wealtht</a> - household wealth quintile or tertile<span id="fn8" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="8">Households are divided into quintiles/tertiles relative to the distribution of an asset <a href="https://pma.ipums.org/pma-action/variables/SCORE#description_section">score</a> weighted for all sampled households. For subnationally-representative samples (DRC and Nigeria), separate wealth distributions are calculated for each sampled region.</span></li>
+<li><a href="https://pma.ipums.org/pma-action/variables/URBAN#codes_section">urban</a> and <a href="https://pma.ipums.org/pma-action/variables/SUBNATIONAL#codes_section">subnational</a> - geographic location<span id="fn9" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="9"><a href="https://pma.ipums.org/pma-action/variables/SUBNATIONAL#codes_section">subnational</a> includes subnational regions for all sampled countries; country-specific variables are also available on the <a href="https://pma.ipums.org/pma-action/variables/group?id=hh_geo">household - geography</a> page.</span></li>
 </ul>
 </div>
 <div id="survey-design-elements" class="section level2" number="1.5">
@@ -566,11 +584,11 @@ We will demonstrate how to request and download an IPUMS PMA data extract in Cha
 <pre><code>(1,578 observations deleted)</code></pre>
 <p>Whether you intend to work with a new <strong>Longitudinal</strong> or <strong>Cross-sectional</strong> data extract, you’ll find the same set of sampling weights available for all PMA Family Planning surveys dating back to 2013:</p>
 <aside>
-A fourth Family Planning survey weight, <a href="https://pma.ipums.org/pma-action/variables/POPWT#description_section">popwt</a>, is currently available only for <strong>Cross-sectional</strong> data extracts.<span id="fn10" class="footnote" data-pagedown-footnote-number="10" style="white-space: pre-line;"><code>POPWT</code> can be used to estimate population-level <em>counts</em> - <a href="https://pma.ipums.org/pma/population_weights.shtml">click here</a> or view <a href="https://www.youtube.com/watch?v=GnCq26t4zgM">this video</a> for details.</span>
+A fourth Family Planning survey weight, <a href="https://pma.ipums.org/pma-action/variables/POPWT#description_section">popwt</a>, is currently available only for <strong>Cross-sectional</strong> data extracts.<span id="fn10" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="10"><code>POPWT</code> can be used to estimate population-level <em>counts</em> - <a href="https://pma.ipums.org/pma/population_weights.shtml">click here</a> or view <a href="https://www.youtube.com/watch?v=GnCq26t4zgM">this video</a> for details.</span>
 </aside>
 <ul>
-<li><a href="https://pma.ipums.org/pma-action/variables/HQWEIGHT#description_section">hqweight</a> can be used to generate cross-sectional population estimates from questions on the Household Questionnaire.<span id="fn11" class="footnote" data-pagedown-footnote-number="11" style="white-space: pre-line;"><code>HQWEIGHT</code> reflects the <a href="https://pma.ipums.org/pma/resources/documentation/weighting_memo.pdf">calculated selection probability</a> for a household in an EA, normalized at the population-level. Users intending to estimate population-level indicators for <em>households</em> should restrict their sample to one person per household via <a href="https://pma.ipums.org/pma-action/variables/LINENO#description_section">lineno</a> - see <a href="https://pma.ipums.org/pma/weightguide.shtml#hh">household weighting guide</a> for details.</span></li>
-<li><a href="https://pma.ipums.org/pma-action/variables/FQWEIGHT#description_section">fqweight</a> can be used to to generate cross-sectional population estimates from questions on the Female Questionnaire.<span id="fn12" class="footnote" data-pagedown-footnote-number="12" style="white-space: pre-line;"><code>FQWEIGHT</code> adjusts <code>HQWEIGHT</code> for female non-response within the EA, normalized at the population-level - see <a href="https://pma.ipums.org/pma/weightguide.shtml#female">female weighting guide</a> for details.</span></li>
+<li><a href="https://pma.ipums.org/pma-action/variables/HQWEIGHT#description_section">hqweight</a> can be used to generate cross-sectional population estimates from questions on the Household Questionnaire.<span id="fn11" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="11"><code>HQWEIGHT</code> reflects the <a href="https://pma.ipums.org/pma/resources/documentation/weighting_memo.pdf">calculated selection probability</a> for a household in an EA, normalized at the population-level. Users intending to estimate population-level indicators for <em>households</em> should restrict their sample to one person per household via <a href="https://pma.ipums.org/pma-action/variables/LINENO#description_section">lineno</a> - see <a href="https://pma.ipums.org/pma/weightguide.shtml#hh">household weighting guide</a> for details.</span></li>
+<li><a href="https://pma.ipums.org/pma-action/variables/FQWEIGHT#description_section">fqweight</a> can be used to to generate cross-sectional population estimates from questions on the Female Questionnaire.<span id="fn12" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="12"><code>FQWEIGHT</code> adjusts <code>HQWEIGHT</code> for female non-response within the EA, normalized at the population-level - see <a href="https://pma.ipums.org/pma/weightguide.shtml#female">female weighting guide</a> for details.</span></li>
 <li><a href="https://pma.ipums.org/pma-action/variables/EAWEIGHT#description_section">eaweight</a> can be used to compare the selection probability of a particular household with that of its EA.</li>
 </ul>
 <p>Additionally, PMA created a new weight, <a href="https://pma.ipums.org/pma-action/variables/PANELWEIGHT#description_section">panelweight</a>,
@@ -593,7 +611,7 @@ Contraceptive user (Phase 1) |
 <aside>
 This is a lean <code>svyset</code> call. We recall that the default <code>vce</code> option is <code>vce(linearized)</code> and the default singleunit option is <code>(missing)</code>. Read the <code>svyset</code> documentation if you want to consider using other settings.
 </aside>
-<p>We use <a href="https://pma.ipums.org/pma-action/variables/eaid#codes_section">eaid_1</a> as the cluster ID<span id="fn13" class="footnote" data-pagedown-footnote-number="13" style="white-space: pre-line;">Because women are considered “lost to follow-up” if they moved outside the study area, <a href="https://pma.ipums.org/pma-action/variables/eaid#codes_section">eaid_1</a> and <a href="https://pma.ipums.org/pma-action/variables/eaid#codes_section">eaid_2</a> are identical for all panel members: you can use either one to identify sample clusters.</span> and <a href="https://pma.ipums.org/pma-action/variables/strata#codes_section">strata_1</a> as the stratum ID<span id="fn14" class="footnote" data-pagedown-footnote-number="14" style="white-space: pre-line;">As with <a href="https://pma.ipums.org/pma-action/variables/EAID#codes_section">eaid</a>, you may use either <a href="https://pma.ipums.org/pma-action/variables/STRATA#codes_section">strata_1</a> or <a href="https://pma.ipums.org/pma-action/variables/STRATA#codes_section">strata_2</a> if your analysis is restricted to panel members</span> and <a href="https://pma.ipums.org/pma-action/variables/panelweight#codes_section">panelweight</a> holds the survey weight. We also make a binary variable indicating which women were using contraception in both phases.</p>
+<p>We use <a href="https://pma.ipums.org/pma-action/variables/eaid#codes_section">eaid_1</a> as the cluster ID<span id="fn13" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="13">Because women are considered “lost to follow-up” if they moved outside the study area, <a href="https://pma.ipums.org/pma-action/variables/eaid#codes_section">eaid_1</a> and <a href="https://pma.ipums.org/pma-action/variables/eaid#codes_section">eaid_2</a> are identical for all panel members: you can use either one to identify sample clusters.</span> and <a href="https://pma.ipums.org/pma-action/variables/strata#codes_section">strata_1</a> as the stratum ID<span id="fn14" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="14">As with <a href="https://pma.ipums.org/pma-action/variables/EAID#codes_section">eaid</a>, you may use either <a href="https://pma.ipums.org/pma-action/variables/STRATA#codes_section">strata_1</a> or <a href="https://pma.ipums.org/pma-action/variables/STRATA#codes_section">strata_2</a> if your analysis is restricted to panel members</span> and <a href="https://pma.ipums.org/pma-action/variables/panelweight#codes_section">panelweight</a> holds the survey weight. We also make a binary variable indicating which women were using contraception in both phases.</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> cp_both = cp_1 == 1 &amp; cp_2 == 1 <span class="kw">if</span> cp_1 &lt; 90</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">variable</span> cp_both <span class="st">&quot;Contraceptive user (Phases 1 &amp; 2)&quot;</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">define</span> cp_both 1 <span class="st">&quot;Yes&quot;</span> 0 <span class="st">&quot;No&quot;</span>, <span class="kw">replace</span></span>
@@ -625,9 +643,9 @@ Number of PSUs   = 167            Population size = 5,215.6413
          No  |   .8122041    .012815      .7855839    .8362084
         Yes  |   .1877959    .012815      .1637916    .2144161
 --------------------------------------------------------------</code></pre>
-<p>This is our first look at Stata’s output for estimating proportions. The top of the output table lists the number of strata and PSUs in the dataset, along with the number of respondents in the sample and the sum of their weights (under the heading: Population size). The number of design degrees of freedom (df) is the number of PSUs minus the number of strata.<span id="fn15" class="footnote" data-pagedown-footnote-number="15" style="white-space: pre-line;">Some survey materials guide analysts to only report results for estimates or tests where the relative standard error (100 x standard error of the estimate / the estimate itself) is no greater than 30% or where there are at least twelve degrees of freedom. See the Centers for Disease Control and Prevention’s <a href="https://www.cdc.gov/nchs/tutorials/nhanes-cms/variance/variance.htm">NHANES CMS tutorial</a>.︎</span></p>
+<p>This is our first look at Stata’s output for estimating proportions. The top of the output table lists the number of strata and PSUs in the dataset, along with the number of respondents in the sample and the sum of their weights (under the heading: Population size). The number of design degrees of freedom (df) is the number of PSUs minus the number of strata.<span id="fn15" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="15">Some survey materials guide analysts to only report results for estimates or tests where the relative standard error (100 x standard error of the estimate / the estimate itself) is no greater than 30% or where there are at least twelve degrees of freedom. See the Centers for Disease Control and Prevention’s <a href="https://www.cdc.gov/nchs/tutorials/nhanes-cms/variance/variance.htm">NHANES CMS tutorial</a>.︎</span></p>
 <p>The lower portion of the table lists the values of the outcome variable, or in this case their value labels: No and Yes. It lists the proportion of the population that are estimated to have each outcome, that proportion’s standard error, and a two-sided survey-adjusted confidence interval for the proportion.</p>
-<p>Stata’s default confidence interval is the so-called “logit interval” which is one of several possibilities.<span id="fn16" class="footnote" data-pagedown-footnote-number="16" style="white-space: pre-line;">See Dean &amp; Pagano <span class="citation">[-@Dean-Pagano]</span> for discussion. If you estimate a proportion where the sample have either 0% or 100% of respondents with the outcome, then as of the time of this writing, neither Stata nor R’s <a href="http://r-survey.r-forge.r-project.org/survey/">survey</a> package will report a confidence interval. Here at Biostat Global Consulting, we have written programs in both Stata and R that yield meaningful confidence intervals for any proportion. Those programs are made freely available as part of software we have written for the World Health Organization. If you want to learn more about them, write to us at <a href="mailto:Dale.Rhoda@biostatglobal.com">Dale.Rhoda@biostatglobal.com</a> or <a href="mailto:Caitlin.Clary@biostatglobal.com">Caitlin.Clary@biostatglobal.com</a>.</span> For now we will simply say that the default logit interval is a fine choice for most circumstances. To request a different kind of confidence interval, read about the options and specify what you want using the <code>citype()</code> option to the <code>svy: proportion</code> command (e.g., <code>citype(wilson)</code> or <code>citype(exact)</code>).</p>
+<p>Stata’s default confidence interval is the so-called “logit interval” which is one of several possibilities.<span id="fn16" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="16">See Dean &amp; Pagano <span class="citation">[-@Dean-Pagano]</span> for discussion. If you estimate a proportion where the sample have either 0% or 100% of respondents with the outcome, then as of the time of this writing, neither Stata nor R’s <a href="http://r-survey.r-forge.r-project.org/survey/">survey</a> package will report a confidence interval. Here at Biostat Global Consulting, we have written programs in both Stata and R that yield meaningful confidence intervals for any proportion. Those programs are made freely available as part of software we have written for the World Health Organization. If you want to learn more about them, write to us at <a href="mailto:Dale.Rhoda@biostatglobal.com">Dale.Rhoda@biostatglobal.com</a> or <a href="mailto:Caitlin.Clary@biostatglobal.com">Caitlin.Clary@biostatglobal.com</a>.</span> For now we will simply say that the default logit interval is a fine choice for most circumstances. To request a different kind of confidence interval, read about the options and specify what you want using the <code>citype()</code> option to the <code>svy: proportion</code> command (e.g., <code>citype(wilson)</code> or <code>citype(exact)</code>).</p>
 <p>To describe this output in an English language sentence, we might say something like: “Based on this survey sample of 5,207 women from Burkina Faso, we estimate that if the surveys were free from bias then about 18.8% women who were eligible to be sampled in the PMA surveys would be self-reported users of contraception in both Phases 1 and 2 (95% CI: 16.4-21.4%).”</p>
 </div>
 <div id="design-effect" class="section level3" number="1.5.2">
@@ -937,6 +955,330 @@ Yes DRC-Kongo Central  |   .2681881   .0287314      .2156321    .3281938
     Yes Nigeria-Lagos  |   .2934544   .0176703      .2599901    .3293092
 ------------------------------------------------------------------------</code></pre>
 </div>
+</div>
+</div>
+<div id="longitudinal-data-extracts" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Longitudinal Data Extracts</h1>
+<p>This chapter provides a guided tour of the <a href="https://pma.ipums.org/pma/">IPUMS PMA data extract system</a>. While you may also access the original data directly from our partners at <a href="https://www.pmadata.org/">PMA</a>, harmonized data from IPUMS have a few additional features. For instance, you can request an extract that:</p>
+<aside>
+<a href="https://pma.ipums.org/pma/register.shtml">Register here</a> to access IPUMS PMA data <strong>at no cost.</strong> See our <a href="https://pma.ipums.org/pma/userguide.shtml">user guide</a> for details.
+</aside>
+<ul>
+<li>includes samples from multiple countries<br />
+</li>
+<li>includes samples from multiple rounds of data collection</li>
+<li>are formatted in either <strong>long</strong> or <strong>wide</strong> format</li>
+</ul>
+<p>IPUMS PMA also makes it easy to switch between multiple <a href="https://pma.ipums.org/pma-action/variables/group">units of analysis</a> covered in PMA surveys. In addition to the data featured in this guide, you’ll find surveys representing:</p>
+<aside>
+A video tour of the longitudinal extract system is available <a href="https://www.youtube.com/embed/VwjYHDvpHk0">here</a> on the IPUMS PMA Youtube channel.
+</aside>
+<ul>
+<li><a href="https://tech.popdata.org/pma-data-hub/#category:Service_Delivery_Points">Service Delivery Points (SDPs)</a></li>
+<li><a href="https://tech.popdata.org/pma-data-hub/#category:Client_Exit_Interviews">Client Exit Interviews conducted at SDPs</a></li>
+<li>Participants in special surveys covering topics like <a href="https://tech.popdata.org/pma-data-hub/#category:COVID-19">COVID-19</a>, <a href="https://tech.popdata.org/pma-data-hub/#category:Nutrition">nutrition</a>, and maternal &amp; newborn health</li>
+</ul>
+<p>To get started with a longitudinal data extract, you’ll need to select the <strong>Family Planning</strong> topic under the <strong>Person</strong> unit of analysis.</p>
+<p><img src="images/unit.png" width="85%" style="display: block; margin: auto;" /></p>
+<div id="sample-selection" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Sample Selection</h2>
+<p>Once you’ve selected the <strong>Family Planning</strong> option, you’ll next need to choose between cross-sectional or longitudinal samples. Cross-sectional samples are selected by default; these are nationally or sub-nationally representative samples collected each year dating backward as far as 2013.</p>
+<p><img src="images/cross-sectional.png" width="85%" style="display: block; margin: auto;" /></p>
+<aside>
+Annual cross-sectional samples are also available for each of the countries participating in the new PMA panel study. See our <a href="../2022-03-01-phase2-discovery/">last post</a> for details.
+</aside>
+<p>Longitudinal samples are only available from 2019 onward, and they include all of the available phases for each sampled country (sub-nationally representative samples for DRC and Nigeria are listed separately). You’ll only find longitudinal samples for countries where Phase 2 data has been made available; Phase 1 data for Cote d’Ivoire, India, and Uganda can currently be found under the Cross-sectional sample menu (Phase 2 data will be released soon!).</p>
+<div class="page-break-after"></div>
+<p>Clicking the Longitudinal button reveals options for either <strong>long</strong> or <strong>wide</strong> format. You’ll find the same samples available in either case.</p>
+<p><strong>Important:</strong> if you decide to change formats after selecting variables, your Data Cart will be emptied and you’ll need to begin again from scratch.</p>
+<p><img src="images/wide.png" width="85%" style="display: block; margin: auto;" /></p>
+<div class="page-break-after"></div>
+<p>After you’ve selected one of the available longitudinal formats, choose one or more samples listed below. There are also several Sample Members options listed.</p>
+<p><img src="images/cases.png" width="85%" style="display: block; margin: auto;" /></p>
+<aside>
+<p><a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN#codes_section">panelwoman</a> indicates whether an individual is a member of the panel study.</p>
+<a href="https://pma.ipums.org/pma-action/variables/ELIGIBLE#codes_section">eligible</a> indicates whether an individual was eligible for the female questionnaire.
+</aside>
+<p><strong>Female Respondents</strong> only includes women who completed <em>all or part</em> of a Female Questionnaire. <strong>This option selects all members of the panel study.</strong> In addition, it includes women who only participated in only one phase - we will demonstrate how to identify and drop these cases below.<span id="fn17" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="17">Women who completed all or part of the Female Questionnaire in <em>more than one phase</em> of the study are considered <strong>panel members</strong>. Women who completed it only at Phase 1 are included in a longitudinal extract, but they are not <strong>panel members</strong>. Likewise, women who completed it for the first time at Phase 2 are included, but are not <strong>panel members</strong> if they 1) will reach age 50 before Phase 3, or 2) declined the invitation to participate again in Phase 3.</span></p>
+<p><strong>Female Respondents and Female Non-respondents</strong> includes all women who were eligible to participate in a Female Questionnaire. Eligible women are those age 15-49 who were listed on the roster collected in a Household Questionnaire. If an eligible woman declined the Female Questionnaire or was not available, variables associated with that questionnaire will be coded “Not interviewed (female questionnaire)”.</p>
+<div class="page-break-after"></div>
+<aside>
+<p><a href="https://pma.ipums.org/pma-action/variables/RESULTFQ#codes_section">resultfq</a> indicates whether an individual completed the Female Questionnaire.</p>
+<a href="https://pma.ipums.org/pma-action/variables/RESULTHQ#codes_section">resulthq</a> indicates whether a member of the individual’s household completed the Household Questionnaire.
+</aside>
+<p><strong>Female Respondents and Household Members</strong> adds records for all other members of a Female Respondent’s household. These household members did not complete the Female Questionnaire, but were listed on the household roster provided by the respondent to a Household Questionnaire. Basic <a href="https://internal.pma.ipums.org/pma-action/variables/group?id=hh_roster">demographic</a> variables are available for each household member, as are common <a href="https://internal.pma.ipums.org/pma-action/variables/group?id=hh_wealth">wealth</a>, <a href="https://internal.pma.ipums.org/pma-action/variables/group?id=water_watersource">water</a>, <a href="https://internal.pma.ipums.org/pma-action/variables/group?id=water_wash">sanitation</a>, and other variables shared for all members of the same household.</p>
+<p><strong>All Cases</strong> includes all members listed on the household roster from a Household Questionnaire. If the Household Questionnaire was declined or if no respondent was available, any panel member appearing in other phases of the study will be coded “Not interviewed (household questionnaire)” for variables associated with the missing Household Questionnaire.</p>
+<p>After you’ve selected samples and sample members for your extract, click the “Submit Sample Selections” button to return to the main data browsing menu.</p>
+</div>
+<div id="variable-selection" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Variable Selection</h2>
+<p>You can browse IPUMS PMA variables by topic or alphabetically by name, or you can <a href="https://pma.ipums.org/pma-action/variables/search">search</a> for a particular term in a variable name, label, value labels, or description.</p>
+<p><img src="images/topics.png" width="85%" style="display: block; margin: auto;" /></p>
+<div class="page-break-after"></div>
+<p>In this example, we’ll select the <a href="https://pma.ipums.org/pma-action/variables/group?id=fem_fpst">Discontinuation of Family Planning</a> topic. The availability of each associated variable is shown in a table containing all of the samples we’ve selected.</p>
+<ul>
+<li><code>X</code> indicates that the variable is available for <em>all phases</em></li>
+<li><code>/</code> indicates that the variable is available for <em>one phase</em></li>
+<li><code>-</code> indicates that the variable is not available for <em>any phase</em></li>
+</ul>
+<p>You can click the <code>+</code> button to add a variable to your cart, or click a variable name to learn more.</p>
+<p><img src="images/table.png" width="85%" style="display: block; margin: auto;" /></p>
+<div id="codes" class="section level3" number="2.2.1">
+<h3><span class="header-section-number">2.2.1</span> Codes</h3>
+<aside>
+“Case-count view” is not available for longitudinal samples, where each sample includes data from multiple phases. For cross-sectional samples, this option shows the frequency of each response.
+</aside>
+<p>Let’s take a look at the variable <a href="https://pma.ipums.org/pma-action/variables/PREGNANT#codes_section">pregnant</a>. You’ll find the variable name and label shown at the top of the page. Below, you’ll see several tabs beginning with the <a href="https://pma.ipums.org/pma-action/variables/PREGNANT#codes_section">CODES</a> tab. For discrete variables, this tab shows all of the available codes and value labels associated with each response. You’ll also see the same <code>X</code>, <code>/</code>, and <code>-</code> symbols in a table indicating the availability of each response in each sample.</p>
+<p><img src="images/codes-fr.png" width="85%" style="display: block; margin: auto;" /></p>
+<div class="page-break-after"></div>
+<p>Above, there are no responses for “Not interviewed (female questionnaire)” and “Not interviewed (household questionnaire)”; this is because only samples members included in a “Female Respondents” extract are displayed by default. If we instead choose “All Cases”, this variable will include those response options because we’ll include every person listed on the household roster (even if the Household or Female Questionnaire was not completed).</p>
+<p><img src="images/codes-all.png" width="85%" style="display: block; margin: auto;" /></p>
+<div class="page-break-after"></div>
+<p>The symbol <code>/</code> again indicates that a particular response is available for some - but not all - phases of the study. For <code>PREGNANCY</code> it indicates that one of the options was either unavailable or was not selected by any sample respondents in a particular phase. If a variable was not included in all phases of the study, all response options will be marked with this symbol. For example, consider the variable <a href="https://pma.ipums.org/pma-action/variables/COVIDCONCERN#codes_section">covidconcern</a>, indicating the respondent’s level of concern about becoming infected with COVID-19.</p>
+<p><img src="images/covidconcern.png" width="85%" style="display: block; margin: auto;" /></p>
+<p>Because Phase 1 questionnaires were administered prior to the emergence of COVID-19, this variable only appeared on Phase 2 questionnaires. The symbol <code>/</code> indicates limited availability across phases.</p>
+</div>
+<div id="variable-description" class="section level3" number="2.2.2">
+<h3><span class="header-section-number">2.2.2</span> Variable Description</h3>
+<p>You’ll find a detailed description for each variable on the <a href="https://pma.ipums.org/pma-action/variables/PREGNANT#description_section">DESCRIPTION</a> tab. This tab also indicates whether a particular question appeared on the Household or Female Questionnaire.</p>
+<p><img src="images/desc.png" width="85%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="comparability-notes" class="section level3" number="2.2.3">
+<h3><span class="header-section-number">2.2.3</span> Comparability Notes</h3>
+<p>The <a href="https://pma.ipums.org/pma-action/variables/PREGNANT#comparability_section">COMPARABILITY</a> tab describes important differences between samples. Additionally, it may contain information about similar variables appearing in <a href="https://dhsprogram.com/">DHS</a> samples provided by <a href="https://www.idhsdata.org/idhs/">IPUMS DHS</a>.</p>
+<p><img src="images/comp.png" width="85%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="sample-universe" class="section level3" number="2.2.4">
+<h3><span class="header-section-number">2.2.4</span> Sample Universe</h3>
+<p>The <a href="https://pma.ipums.org/pma-action/variables/PREGNANT#universe_section">UNIVERSE</a> tab describes selection criteria for this question. In this case, there are some differences between samples:</p>
+<ul>
+<li>In DRC samples, all women aged 15-49 received this question.</li>
+<li>For all other samples, the question was skipped if any such woman previously indicated that she was menopausal or had a hysterectomy.</li>
+</ul>
+<p><img src="images/universe.png" width="85%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="availability-across-samples" class="section level3" number="2.2.5">
+<h3><span class="header-section-number">2.2.5</span> Availability Across Samples</h3>
+<p>The <a href="https://pma.ipums.org/pma-action/variables/PREGNANT#availability_section">AVAILABILITY</a> tab shows all other samples (including cross-sectional samples) where this variable is available.</p>
+<p><img src="images/avail.png" width="85%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="questionnaire-text" class="section level3" number="2.2.6">
+<h3><span class="header-section-number">2.2.6</span> Questionnaire Text</h3>
+<p>Finally, you’ll find the full text of each question on the <a href="https://pma.ipums.org/pma-action/variables/PREGNANT#questionnaire_text_section">QUESTIONNAIRE TEXT</a> tab. Each phase of the survey is shown separately, and you may click the “view entire document: text” link to view the complete questionnaire for a particular sample in any given phase.</p>
+<p><img src="images/question.png" width="85%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="checkout" class="section level3" number="2.2.7">
+<h3><span class="header-section-number">2.2.7</span> Checkout</h3>
+<p>Use the buttons at the top of this page to add the variable to your Data Cart, or to “VIEW CART” and begin checkout.</p>
+<img src="images/buttons.png" style="margin-top: 20px; margin-bottom: 25px; max-width: 100%; width: 1033px;"/>
+</div>
+</div>
+<div id="data-for-stata-users" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Data for Stata Users</h2>
+<p>Your Data Cart shows all of the variables you’ve selected, plus several “preselected” variables that will be automatically included in your extract. Click the “CREATE DATA EXTRACT” button to prepare your download.</p>
+<p><img src="images/cart.png" width="85%" style="display: block; margin: auto;" /></p>
+<div class="page-break-after"></div>
+<p>Before you submit an extract request, you’ll have the opportunity to choose a “Data Format”. <strong>Stata users should select a Stata file (.dta)</strong> - you’ll notice that data formatted for R, SPSS, and SAS are also available. CSV files are provided, but not recommended. (If you wish to change Sample Members, you may do so again here.)</p>
+<p><img src="images/stata_request.png" width="85%" style="display: block; margin: auto;" /></p>
+<p>Once the Stata option is selected, you may add a description and then proceed to the download page. After a few moments, you’ll receive an email indicating that your extract has been created. Click the green “Download Stata” button to download your extract.</p>
+<img src="images/download_stata.png" style="margin-top: 20px; margin-bottom: 25px;"/>
+<p>Place both files in a folder that R can use as its <a href="https://r4ds.had.co.nz/workflow-projects.html?q=working%20directory#where-does-your-analysis-live">working directory</a>. We <strong>strongly recommend</strong> using <a href="https://r4ds.had.co.nz/workflow-projects.html?q=working%20directory#rstudio-projects">RStudio projects</a> to manage all of the files and analysis scripts used for a particular research project. We’ll place our files in a subfolder called “data” within our own RStudio project folder.</p>
+</div>
+<div id="long-data-structure" class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> Long Data Structure</h2>
+<p>We’ve downloaded a <strong>long</strong> data extract (Female Respondents only), which we’ll now load into Stata as follows:</p>
+<div class="sourceCode" id="cb87"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">&quot;pma_00119.dta&quot;</span>, <span class="kw">clear</span></span></code></pre></div>
+<p>In a <strong>long</strong> extract, data from each phase will be organized in <em>separate rows</em>. Here, responses from three panel members are shown:</p>
+<div class="sourceCode" id="cb88"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sort</span> fqinstid phase</span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a><span class="ot">list</span> fqinstid phase age panelwoman <span class="co">///</span></span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a>     <span class="kw">if</span> <span class="fu">strmatch</span>(fqinstid, <span class="st">&quot;011*&quot;</span>) | <span class="co">///</span></span>
+<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">strmatch</span>(fqinstid, <span class="st">&quot;015*&quot;</span>), separator(8) <span class="kw">noobs</span></span></code></pre></div>
+<pre><code>  +-------------------------------------------------------+
+  |                  fqinstid      phase   age   panelw~n |
+  |-------------------------------------------------------|
+  | 011W5S0HN91I4H4I3T9JCMBHB   baseline    29          . |
+  | 011W5S0HN91I4H4I3T9JCMBHB   first fo    30        yes |
+  | 015NP6FJTIA98FYCBBBS1FOF7   baseline    47          . |
+  | 015NP6FJTIA98FYCBBBS1FOF7   first fo    48        yes |
+  | 015WYNNO2WXHH6JA4HA9PL1MR   baseline    20          . |
+  | 015WYNNO2WXHH6JA4HA9PL1MR   first fo    21        yes |
+  +-------------------------------------------------------+</code></pre>
+<p>Each panel member receives a unique ID shown in <a href="https://pma.ipums.org/pma-action/variables/FQINSTID#codes_section">fqinstid</a>. The variable <a href="https://pma.ipums.org/pma-action/variables/PHASE#codes_section">phase</a> shows that each woman’s responses to the Phase 1 Female Questionnaire appears in the first row, while her Phase 2 responses appear in the second. <a href="https://pma.ipums.org/pma-action/variables/AGE#codes_section">age</a> shows each woman’s age when she completed the Female Questionnaire for each phase.</p>
+<p><a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN#codes_section">panelwoman</a> indicates whether the woman completed all or part of the Female Questionnaire in a <em>prior</em> phase, and that she’d agreed to continue participating in the panel study at that time. The value <code>NA</code> appears in the rows for Phase 1, as <a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN#codes_section">panelwoman</a> was not included in Phase 1 surveys.</p>
+<div class="page-break-after"></div>
+<p>We mentioned above that you’ll also include responses from some non-panel members when you request an extract with Female Respondents. These include women who did not complete all or part the Female Questionnaire in a prior phase, as indicated by <a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN#codes_section">panelwoman</a>. These women are not assigned a value for <a href="https://pma.ipums.org/pma-action/variables/FQINSTID#codes_section">fqinstid</a> - instead, you’ll find an empty string:</p>
+<div class="sourceCode" id="cb90"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> non_panel = fqinstid == <span class="st">&quot;&quot;</span></span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">define</span> fqinstid_blank 0 <span class="st">&quot;fqinstid is not blank&quot;</span> 1 <span class="st">&quot;fqinstid is blank&quot;</span></span>
+<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">values</span> non_panel fqinstid_blank</span>
+<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">variable</span> panelwoman <span class="st">&quot;Woman in the panel&quot;</span></span>
+<span id="cb90-5"><a href="#cb90-5" aria-hidden="true" tabindex="-1"></a><span class="kw">table</span> (phase panelwoman) (non_panel), nototals <span class="fu">missing</span></span></code></pre></div>
+<pre><code>----------------------------------------------------------------------
+                          |                  non_panel                
+                          |  fqinstid is not blank   fqinstid is blank
+--------------------------+-------------------------------------------
+longitudinal survey phase |                                           
+  baseline                |                                           
+    Woman in the panel    |                                           
+      .                   |                 23,591                    
+  first follow up         |                                           
+    Woman in the panel    |                                           
+      no                  |                                      6,586
+      yes                 |                 18,194                    
+----------------------------------------------------------------------</code></pre>
+<p>For most longitudinal analysis applications, you’ll need to drop non-panel members together with any women who did not fully complete the Phase 2 Female Questionnaire. We’ll demonstrate using a combination of <code>bysort</code> and <code>egen</code> to ensure that there is one row for every <code>FQINSTID</code> where <code>PHASE == 1</code> and another row where <code>PHASE == 2 &amp; RESULTFQ == 1</code>.</p>
+<div class="sourceCode" id="cb92"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">keep</span> = 1 <span class="kw">if</span> phase == 1</span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> <span class="kw">keep</span> = 1 <span class="kw">if</span> phase == 2 &amp; resultfq == 1</span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a><span class="kw">bysort</span> fqinstid : <span class="kw">egen</span> keep_both = <span class="kw">sum</span>(<span class="kw">keep</span>)</span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> keep_both == 2</span>
+<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a><span class="kw">drop</span> <span class="kw">keep</span> keep_both</span></code></pre></div>
+<p>The PMA Longitudinal Briefs published for each sample also include only members of the <em>de facto</em> population. These are women who slept in the household during the night prior to the interview for each Household Questionnaire, such that <a href="https://pma.ipums.org/pma-action/variables/RESIDENT#codes_section">resident</a> takes the value <code>11</code> or <code>22</code>. We can use a similar strategy to keep only <em>de facto</em> members who appear in both phases.</p>
+<div class="sourceCode" id="cb93"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">keep</span> = 1 <span class="kw">if</span> phase == 1 &amp; (resident == 11 | resident == 22)</span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> <span class="kw">keep</span> = 2 <span class="kw">if</span> phase == 2 &amp; (resident == 11 | resident == 22)</span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a><span class="kw">bysort</span> fqinstid : <span class="kw">egen</span> keep_both = <span class="kw">sum</span>(<span class="kw">keep</span>)</span>
+<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> keep_both == 3</span>
+<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a><span class="kw">drop</span> <span class="kw">keep</span> keep_both</span></code></pre></div>
+<p>Following these steps, you can check the size of each analytic sample like so:</p>
+<div class="sourceCode" id="cb94"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> pop_numeric = .</span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 1 <span class="kw">if</span> country == 1 <span class="co">// Burkina Faso</span></span>
+<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 2 <span class="kw">if</span> country == 2 &amp; geocd == 1 <span class="co">// Kinshasa</span></span>
+<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 3 <span class="kw">if</span> country == 2 &amp; geocd == 2 <span class="co">// Kongo Central</span></span>
+<span id="cb94-5"><a href="#cb94-5" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 4 <span class="kw">if</span> country == 7 <span class="co">// Kenya</span></span>
+<span id="cb94-6"><a href="#cb94-6" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 5 <span class="kw">if</span> country == 9 &amp; geong == 4 <span class="co">// Kano</span></span>
+<span id="cb94-7"><a href="#cb94-7" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 6 <span class="kw">if</span> country == 9 &amp; geong == 2 <span class="co">// Lagos</span></span>
+<span id="cb94-8"><a href="#cb94-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-9"><a href="#cb94-9" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">define</span> pop_numeric <span class="co">///</span></span>
+<span id="cb94-10"><a href="#cb94-10" aria-hidden="true" tabindex="-1"></a>           1 <span class="st">&quot;Burkina Faso&quot;</span> <span class="co">///</span></span>
+<span id="cb94-11"><a href="#cb94-11" aria-hidden="true" tabindex="-1"></a>           2 <span class="st">&quot;DRC-Kinshasa&quot;</span> <span class="co">///</span></span>
+<span id="cb94-12"><a href="#cb94-12" aria-hidden="true" tabindex="-1"></a>           3 <span class="st">&quot;DRC-Kongo Central&quot;</span> <span class="co">///</span></span>
+<span id="cb94-13"><a href="#cb94-13" aria-hidden="true" tabindex="-1"></a>           4 <span class="st">&quot;Kenya&quot;</span> <span class="co">///</span></span>
+<span id="cb94-14"><a href="#cb94-14" aria-hidden="true" tabindex="-1"></a>           5 <span class="st">&quot;Nigeria-Kano&quot;</span> <span class="co">///</span></span>
+<span id="cb94-15"><a href="#cb94-15" aria-hidden="true" tabindex="-1"></a>           6 <span class="st">&quot;Nigeria-Lagos&quot;</span>, <span class="kw">replace</span></span>
+<span id="cb94-16"><a href="#cb94-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-17"><a href="#cb94-17" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">values</span> pop_numeric pop_numeric</span>
+<span id="cb94-18"><a href="#cb94-18" aria-hidden="true" tabindex="-1"></a>           </span>
+<span id="cb94-19"><a href="#cb94-19" aria-hidden="true" tabindex="-1"></a><span class="kw">table</span> ( pop_numeric ) ( phase) ( ), nototals <span class="fu">missing</span></span></code></pre></div>
+<pre><code>--------------------------------------------------
+                    |   longitudinal survey phase 
+                    |   baseline   first follow up
+--------------------+-----------------------------
+pop_numeric         |                             
+  Burkina Faso      |      5,212             5,212
+  DRC-Kinshasa      |      1,973             1,973
+  DRC-Kongo Central |      1,514             1,514
+  Kenya             |      6,939             6,939
+  Nigeria-Kano      |        998               998
+  Nigeria-Lagos     |      1,089             1,089
+--------------------------------------------------</code></pre>
+</div>
+<div id="wide-data-structure" class="section level2" number="2.5">
+<h2><span class="header-section-number">2.5</span> Wide Data Structure</h2>
+<p>We’ve also downloaded a <strong>wide</strong> data extract (Female Respondents only), which we’ll load into Stata like so:</p>
+<div class="sourceCode" id="cb96"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">&quot;pma_00116.dta&quot;</span>, <span class="kw">clear</span></span></code></pre></div>
+<p>In a <strong>wide</strong> extract, all of the responses from one woman appear in the <em>same row</em>. The IPUMS extract system appends a numeric suffix to each variable name corresponding with the phase from which it was drawn. Consider our three example panel members again:</p>
+<div class="sourceCode" id="cb97"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sort</span> fqinstid</span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb97-3"><a href="#cb97-3" aria-hidden="true" tabindex="-1"></a><span class="ot">list</span> fqinstid age_1 age_2 panelwoman_1 panelwoman_2 <span class="co">///</span></span>
+<span id="cb97-4"><a href="#cb97-4" aria-hidden="true" tabindex="-1"></a>     <span class="kw">if</span> <span class="fu">strmatch</span>(fqinstid, <span class="st">&quot;011*&quot;</span>) | <span class="co">///</span></span>
+<span id="cb97-5"><a href="#cb97-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">strmatch</span>(fqinstid, <span class="st">&quot;015*&quot;</span>), separator(8) <span class="kw">noobs</span></span></code></pre></div>
+<pre><code>  +-----------------------------------------------------------------+
+  |                  fqinstid   age_1   age_2   panelw~1   panelw~2 |
+  |-----------------------------------------------------------------|
+  | 011W5S0HN91I4H4I3T9JCMBHB      29      30          .        yes |
+  | 015NP6FJTIA98FYCBBBS1FOF7      47      48          .        yes |
+  | 015WYNNO2WXHH6JA4HA9PL1MR      20      21          .        yes |
+  +-----------------------------------------------------------------+</code></pre>
+<p>Each panel member has one unique ID shown in <a href="https://pma.ipums.org/pma-action/variables/FQINSTID#codes_section">fqinstid</a>. However, <a href="https://pma.ipums.org/pma-action/variables/AGE#codes_section">age</a> is parsed into two columns: <code>AGE_1</code> shows each woman’s age at Phase 1, and <code>AGE_2</code> shows her age at Phase 2.</p>
+<p>As we’ve discussed, <a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN#codes_section">panelwoman</a> is not available for Phase 1, as it indicates whether the woman completed all or part of the Female Questionnaire in a <em>prior</em> phase. For this reason, all values in <code>PANELWOMAN_1</code> are blank. Most variables are copied once for each phase, even if they - like <code>PANELWOMAN_1</code> - are not available for all phases.</p>
+<p>You might expect the total length of a <strong>wide</strong> extract to be half the length of a corresponding <strong>long</strong> extract. This is not the case! A <strong>wide</strong> extract includes one row for each woman who completed all or part of the Female Questionnaire <em>for any phase</em> - you’ll find placeholder columns for phases where the interview was not conducted.</p>
+<div class="sourceCode" id="cb99"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="ot">list</span> resultfq_1 age_1 resultfq_2 age_2 <span class="co">///</span></span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>     <span class="kw">if</span> fqinstid == <span class="st">&quot;0C8VQU6B03BXLAVVZ8SB90EKQ&quot;</span>, <span class="kw">noobs</span></span></code></pre></div>
+<pre><code>  +----------------------------------------+
+  | res~fq_1   age_1   res~fq_2      age_2 |
+  |----------------------------------------|
+  | complete      31   not at h   not inte |
+  +----------------------------------------+</code></pre>
+<p>In a <strong>long</strong> extract, rows for the missing phase are dropped. In this example, the woman was “not at home” for the Phase 2 Female Questionnaire. When we select a <strong>long</strong> extract containing only Female Respondents, her Phase 2 row is excluded automatically (it will be included if you request an extract containing Female Respondents and Female Non-respondents).</p>
+<div class="sourceCode" id="cb101"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">&quot;pma_00119.dta&quot;</span>, <span class="kw">clear</span></span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a><span class="ot">list</span> phase age resultfq <span class="co">///</span></span>
+<span id="cb101-3"><a href="#cb101-3" aria-hidden="true" tabindex="-1"></a>     <span class="kw">if</span> fqinstid == <span class="st">&quot;0C8VQU6B03BXLAVVZ8SB90EKQ&quot;</span>, <span class="kw">noobs</span></span></code></pre></div>
+<pre><code>  +---------------------------+
+  |    phase   age   resultfq |
+  |---------------------------|
+  | baseline    31   complete |
+  +---------------------------+</code></pre>
+<p>Again: for most longitudinal analysis applications, you’ll need to remove cases where women were not interviewed for Phase 1 or where the Phase 2 Female Questionnaire was not completed:</p>
+<div class="sourceCode" id="cb103"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">&quot;pma_00116.dta&quot;</span>, <span class="kw">clear</span></span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> resultfq_2 == 1 &amp; resultfq_1 != .</span></code></pre></div>
+<p>The <em>de facto</em> population appearing in PMA Longitudinal Briefs is defined in <strong>wide</strong> extracts by cases where the values <code>11</code> or <code>12</code> appear in <em>both</em> <code>RESIDENT_1</code> and <code>RESIDENT_2</code>:</p>
+<div class="sourceCode" id="cb104"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> <span class="fu">inlist</span>(resident_1, 11, 22)</span>
+<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> <span class="fu">inlist</span>(resident_2, 11, 22)</span></code></pre></div>
+<div class="page-break-after"></div>
+<p>Following these steps, each analytic sample contains the same number of cases shown in the final <strong>long</strong> format extract above.</p>
+<div class="sourceCode" id="cb105"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> pop_numeric = .</span>
+<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 1 <span class="kw">if</span> country == 1 <span class="co">// Burkina Faso</span></span>
+<span id="cb105-3"><a href="#cb105-3" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 2 <span class="kw">if</span> country == 2 &amp; geocd == 1 <span class="co">// Kinshasa</span></span>
+<span id="cb105-4"><a href="#cb105-4" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 3 <span class="kw">if</span> country == 2 &amp; geocd == 2 <span class="co">// Kongo Central</span></span>
+<span id="cb105-5"><a href="#cb105-5" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 4 <span class="kw">if</span> country == 7 <span class="co">// Kenya</span></span>
+<span id="cb105-6"><a href="#cb105-6" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 5 <span class="kw">if</span> country == 9 &amp; geong == 4 <span class="co">// Kano</span></span>
+<span id="cb105-7"><a href="#cb105-7" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> pop_numeric = 6 <span class="kw">if</span> country == 9 &amp; geong == 2 <span class="co">// Lagos</span></span>
+<span id="cb105-8"><a href="#cb105-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb105-9"><a href="#cb105-9" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">define</span> pop_numeric <span class="co">///</span></span>
+<span id="cb105-10"><a href="#cb105-10" aria-hidden="true" tabindex="-1"></a>           1 <span class="st">&quot;Burkina Faso&quot;</span> <span class="co">///</span></span>
+<span id="cb105-11"><a href="#cb105-11" aria-hidden="true" tabindex="-1"></a>           2 <span class="st">&quot;DRC-Kinshasa&quot;</span> <span class="co">///</span></span>
+<span id="cb105-12"><a href="#cb105-12" aria-hidden="true" tabindex="-1"></a>           3 <span class="st">&quot;DRC-Kongo Central&quot;</span> <span class="co">///</span></span>
+<span id="cb105-13"><a href="#cb105-13" aria-hidden="true" tabindex="-1"></a>           4 <span class="st">&quot;Kenya&quot;</span> <span class="co">///</span></span>
+<span id="cb105-14"><a href="#cb105-14" aria-hidden="true" tabindex="-1"></a>           5 <span class="st">&quot;Nigeria-Kano&quot;</span> <span class="co">///</span></span>
+<span id="cb105-15"><a href="#cb105-15" aria-hidden="true" tabindex="-1"></a>           6 <span class="st">&quot;Nigeria-Lagos&quot;</span>, <span class="kw">replace</span></span>
+<span id="cb105-16"><a href="#cb105-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb105-17"><a href="#cb105-17" aria-hidden="true" tabindex="-1"></a><span class="kw">label</span> <span class="kw">values</span> pop_numeric pop_numeric</span>
+<span id="cb105-18"><a href="#cb105-18" aria-hidden="true" tabindex="-1"></a>           </span>
+<span id="cb105-19"><a href="#cb105-19" aria-hidden="true" tabindex="-1"></a><span class="kw">table</span> ( pop_numeric ) ( ), nototals <span class="fu">missing</span></span></code></pre></div>
+<pre><code>--------------------------------
+                    |  Frequency
+--------------------+-----------
+pop_numeric         |           
+  Burkina Faso      |      5,212
+  DRC-Kinshasa      |      1,973
+  DRC-Kongo Central |      1,514
+  Kenya             |      6,939
+  Nigeria-Kano      |        998
+  Nigeria-Lagos     |      1,089
+--------------------------------</code></pre>
+</div>
+<div id="which-format-is-best-for-me" class="section level2" number="2.6">
+<h2><span class="header-section-number">2.6</span> Which format is best for me?</h2>
+<p>The choice between <strong>long</strong> and <strong>wide</strong> formats ultimately depends on your research objectives.</p>
+<p>Many data manipulation tasks, for example, are faster and easier to perform in the <strong>wide</strong> format. In the example above, we needed to identify women who completed a Female Questionnaire and were members of the <em>de facto</em> population in both phases. In the long format, we first had to use <code>bysort</code> and <code>egen</code> and <code>keep</code> to pare the dataset down to women with good data for both phases.</p>
+<p>On the other hand, some of the longitudinal analysis commands require data to be in a long format - this includes both the suite of so-called <code>st</code> <a href="https://www.stata.com/manuals/st.pdf">commands for time-to-event or survival analysis</a> and the suite of so-called <code>xt</code> commands for <a href="https://www.stata.com/manuals/xt.pdf">analyzing panel data</a>. Users who prefer the wide format for data cleaning and exploration can manually switch to long format with help from Stata’s <code>reshape</code> command, for example:</p>
+<aside>
+We will revisit <code>reshape</code> when analyzing PMA contraceptive calendar data in Chapter 6.
+</aside>
+<div class="sourceCode" id="cb107"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">&quot;pma_00116.dta&quot;</span>, <span class="kw">clear</span></span>
+<span id="cb107-2"><a href="#cb107-2" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> resultfq_2 == 1 &amp; resultfq_1 != .</span>
+<span id="cb107-3"><a href="#cb107-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb107-4"><a href="#cb107-4" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> <span class="fu">inlist</span>(resident_1, 11, 22)</span>
+<span id="cb107-5"><a href="#cb107-5" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> <span class="fu">inlist</span>(resident_2, 11, 22)</span>
+<span id="cb107-6"><a href="#cb107-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb107-7"><a href="#cb107-7" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> fqinstid age_1 pregnant_1 age_2 pregnant_2</span>
+<span id="cb107-8"><a href="#cb107-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb107-9"><a href="#cb107-9" aria-hidden="true" tabindex="-1"></a><span class="kw">reshape</span> <span class="kw">long</span> age_ pregnant_ , i(fqinstid) j(phase)</span></code></pre></div>
+<pre><code>(j = 1 2)
+
+Data                               Wide   -&gt;   Long
+-----------------------------------------------------------------------------
+Number of observations           17,725   -&gt;   35,450      
+Number of variables                   5   -&gt;   4           
+j variable (2 values)                     -&gt;   phase
+xij variables:
+                            age_1 age_2   -&gt;   age_
+                  pregnant_1 pregnant_2   -&gt;   pregnant_
+-----------------------------------------------------------------------------</code></pre>
+<div class="sourceCode" id="cb109"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="kw">rename</span> age_ age</span>
+<span id="cb109-2"><a href="#cb109-2" aria-hidden="true" tabindex="-1"></a><span class="kw">rename</span> pregnant_ pregnant</span></code></pre></div>
+<div class="page-break-after"></div>
+<p>Executing the <code>reshape</code> command with more variables takes practice, and we imagine many users will find it easier to simply work with data in the long format from the beginning. If you want to become adept at converting between long and wide formats, consult the <a href="https://www.stata.com/manuals/dreshape.pdf">Stata documentation</a> or watch some of the numerous tutorials on the <code>reshape</code> command available on YouTube.</p>
+<p>Fortunately, the updated IPUMS PMA extract system makes it easy to select the samples, sample members, and variables that matter to your particular research question. New choices for <strong>long</strong> and <strong>wide</strong> data formats save an additional data cleaning step, allowing you to jump into longitudinal analysis as quickly as possible.</p>
 </div>
 </div>
 </div>
