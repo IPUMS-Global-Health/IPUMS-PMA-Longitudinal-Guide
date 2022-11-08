@@ -1359,7 +1359,7 @@ dat <- read_ipums_micro(
 In Chapter 4, we'll demonstrate how to calculate key family planning indicators appearing in the **PMA Longitudinal Brief** for each of the longitudinal samples currently available from IPUMS PMA. The brief for each sample is linked below.
 
 <aside>
-Chapter 5 includes R code you can use to reproduce the **alluvial plots** seen in these briefs.
+Chapter 5 includes code you can use to reproduce the **alluvial plots** seen in these briefs.
 </aside>
 
   * [Burkina Faso](https://www.pmadata.org/sites/default/files/data_product_results/Burkina%20National_Phase%202_Panel_Results%20Brief_English_Final.pdf)
@@ -1395,7 +1395,7 @@ install.packages("tidyverse")
 
 ## Chapter Setup 
 
-Chapter 4 features a **wide** longitudinal extract with all 6 of the available samples. Unlike Chapter 3, the data extract used in this chapter includes **only Female Respondents**. 
+Chapter 4 features a **wide** longitudinal extract with all six of the available samples. Unlike Chapter 3, the data extract used in this chapter includes **only Female Respondents**. 
 
 ```{r, echo = FALSE, out.width="85%"}
 knitr::include_graphics("images/samples.png")
@@ -2069,7 +2069,7 @@ dat %>%
   )
 ```
 
-Overall, these results suggest that non-users with unmet need for family planning at Phase 1 were more likely to adopt a method at Phase 2 compared to non-users who had none (e.g. women who were not sexually active, could not become pregnant, etc.). However, formal testing is needed to determine whether these trends were statistically significant in Burkina Faso and Nigeria - Lagos. 
+Overall, these results suggest that non-users with unmet need for family planning at Phase 1 were more likely to adopt a method at Phase 2 compared to non-users who had none (e.g. women who were not sexually active, could not become pregnant, etc.). However, formal testing is needed to determine whether these trends were statistically significant in Burkina Faso and Nigeria - Kano. 
 
 ### Partner support 
 
@@ -2098,9 +2098,9 @@ dat %>%
   )
 ```
 
-We've included responses for women who were unsure whether their partner would or would not support future use of FP ("Dont know"), but Phase 2 outcomes for these women were usually not visually distinct from those who answered "Yes" or "No". Formal testing is needed to determine whether any significant differences exist.
+We've included responses for women who were unsure whether their partner would or would not support future use of FP ("Don't know"), but Phase 2 outcomes for these women were usually not visually distinct from those who answered "Yes" or "No". Formal testing is needed to determine whether any significant differences exist.
 
-Meanwhile, women with Phase 1 partner support in DRC - Kongo Central and Kenya were more likely to adopt a method than not. Outcomes for women in other populations are not visibly different based on partner support, one way or the other (again, formal testing may prove otherwise). 
+Setting aside women who answered "Don't know", women with Phase 1 partner support in DRC - Kongo Central and Kenya ("Yes") were more likely to adopt a method than those without ("No"). Outcomes for women in other populations are not visibly different based on partner support, one way or the other (again, formal testing may prove otherwise). 
 
 ### Intentions
 
@@ -2151,20 +2151,19 @@ dat %>%
   )
 ```
 
-In every population, Phase 1 non-users who planned to adopt a method by Phase 2 were significantly more likely to do so. However, a significant *majority* of Phase 1 non-users with plans to adopt a method actually did so only in Kenya, where the 95% confidence interval for "Yes" responses includes only proportions greater than the 50% threshold. In fact, women who adopted a method at Phase 2 represent a significant *minority* of Phase 1 non-users who planned to do so in Burkina Faso, DRC - Kongo Central, and Nigeria - Kano. 
+In every population, Phase 1 non-users who planned to adopt a method by Phase 2 were significantly more likely to do so. However, a significant *majority* of Phase 1 non-users with plans to adopt a method actually did so only in Kenya, where the 95% confidence interval for "Yes" responses includes only proportions greater than the 50% threshold. In fact, women who adopted a method at Phase 2 represent a significant *minority* of Phase 1 non-users who planned to do so in Burkina Faso, DRC - Kongo Central, and Nigeria - Kano; in those populations, the entire 95% confidence interval falls below the 50% mark.
 
 ## Wrap-up 
 
 As we've seen, **grouped bar charts** give us a simple way to identify clear differences between Phase 2 outcomes for subgroups defined by baseline family planning conditions or key demographic features. Additionally, when we **facet** populations of interest on the same axis, we can easily compare differences between subgroups for many samples in a single figure. 
 
-One drawback to this approach is that it's more conservative than formal statistical tests. We are not able to easily spot differences near the conventional 95% certainty threshold. However, we demonstrated how you can adapt our code to conduct formal hypothesis tests like the [Rao-Scott chi-square test](https://rdrr.io/cran/survey/man/svychisq.html) for weighted proportions.
+One drawback to this approach is that it's more conservative than formal statistical tests. We are not able to easily spot differences near the conventional 95% certainty threshold. However, we demonstrated how you can adapt our code to conduct formal hypothesis tests like the [Rao-Scott chi-square test](https://rdrr.io/cran/survey/man/svychisq.html) for proportions in a complex survey sample.
 
 Another drawback to this approach is that we've been unable to showcase estimates for the proportion of responses at any *one* phase of the study. For example, in our last figure, we estimated that about 35% of women who *planned to use* contraception within the year at Phase 1 did so at Phase 2; our figure does not show how many women planned to use contraception within the year *as a share of the Phase 1 population*. 
 
 To better understand the change over time relative to the size of each subgroup in our analysis, we'll turn to a slightly more complicated data visualization method. In Chapter 5, we'll show how to create **alluvial plots**, like those shown in the first two pages of each PMA report. 
 
-# Post 5 
-
+# Advanced Data Visualization
 
 ```{r, echo=FALSE}
 # knitr options 
@@ -2181,30 +2180,24 @@ knitr::opts_chunk$set(
 options(tibble.print_min = 10)
 ```
 
-In our last post, we demonstrated [how to calculate](../2022-04-15-phase2-indicators/) key indicators for women's family planning status with new [panel surveys](../2022-03-01-phase2-discovery/index.html) from our partners at [PMA](https://www.pmadata.org/). When you download PMA data from [IPUMS PMA](https://pma.ipums.org/), you can include multiple samples together in the same data extract. Currently, Phase 1 and Phase 2 data are available for six samples, and we've devoted much of [this series](../../index.html#category:Panel_Data) to reproducing and synthesizing the major findings published in individual [PMA reports](https://www.pmadata.org/data/survey-results-summaries) for each sample: 
+In Chapter 4, we demonstrated how to calculate key family planning indicators for PMA panel surveys. We also created simple bar charts to help readers compare confidence intervals for each population estimate. 
 
-  * [Burkina Faso](https://www.pmadata.org/sites/default/files/data_product_results/Burkina%20National_Phase%202_Panel_Results%20Brief_English_Final.pdf)
-  * [DRC - Kinshasa](https://www.pmadata.org/sites/default/files/data_product_results/DRC%20Kinshasa_%20Phase%202%20Panel%20Results%20Brief_English_Final.pdf)
-  * [DRC - Kongo Central](https://www.pmadata.org/sites/default/files/data_product_results/DRC%20Kongo%20Central_%20Phase%202%20Panel%20Results%20Brief_English_Final.pdf)
-  * [Kenya](https://www.pmadata.org/sites/default/files/data_product_results/Kenya%20National_Phase%202_Panel%20Results%20Brief_Final.pdf)
-  * [Nigeria - Kano](https://www.pmadata.org/sites/default/files/data_product_results/Nigeria%20KANO_Phase%202_Panel_Results%20Brief_Final.pdf)
-  * [Nigeria - Lagos](https://www.pmadata.org/sites/default/files/data_product_results/Nigeria%20LAGOS_Phase%202_Panel_Results%20Brief_Final.pdf) 
+Chapter 5 digs into  some of the other data visualization tools that are commonly used for two-phase panel data: this will include color-coded crosstabs - or **heatmaps** - and **alluvial plots** resembling those shown in the PMA Longitudinal Brief for each survey. 
 
-Now that we've learned how to compare population-level estimates for indicators in each population with [grouped bar charts](../2022-04-15-phase2-indicators/#visualization), we'd like to dig into some of the other data visualization tools that are commonly used for two-phase panel data. We'll quickly recap our approach to building bar charts, and then we'll explore color-coded crosstabs - or **heatmaps** - followed by **alluvial plots** built with [ggalluvial](https://corybrunson.github.io/ggalluvial), an extension to the [ggplot2](https://ggplot2.tidyverse.org) package for R. 
+R users can build heatmaps with the same [ggplot2](https://ggplot2.tidyverse.org) package featured in Chapter 4, but alluvial plots are a bit more challenging. To make things easier, we'll build ours with [ggalluvial](https://corybrunson.github.io/ggalluvial), an extension package for [ggplot2](https://ggplot2.tidyverse.org) that includes tools designed specifically for alluvial plots.^[© Cory Brunson et al. (GPL-3)]  
 
-## Setup 
+## Chapter Setup 
 
-In addition to [ggalluvial](https://corybrunson.github.io/ggalluvial), we'll also showcase just a few of the helpful functions in [scales](https://scales.r-lib.org/), a package devoted to making axes, labels, and legends easier to read (in particular, we'll use [percent](https://scales.r-lib.org/reference/label_percent.html) to transform proportions into percentages labeled with the `%` symbol). You'll need those two packages, plus the three packages we've already used at length in this series: [tidyverse](https://tidyverse.tidyverse.org/), [ipumsr](https://tech.popdata.org/ipumsr/), and [srvyr](http://gdfe.co/srvyr).
+In addition to [ggalluvial](https://corybrunson.github.io/ggalluvial), we'll also load three packages featured throughout this manual: [tidyverse](https://tidyverse.tidyverse.org/), [ipumsr](https://tech.popdata.org/ipumsr/), and [srvyr](http://gdfe.co/srvyr).
 
 ```{r}
 library(tidyverse)
 library(ipumsr)
 library(srvyr)
 library(ggalluvial)
-library(scales)
 ```
 
-As a reminder, our last post featured a [wide format](../2022-03-15-phase2-formats/) data extract with "Female Respondents" only (other household members not participating in the panel study are excluded). If you're following along with this series, you can use the same extract again in this post; if not, you'll need to build a new extract that contains all of the variables we'll use here ([preselected](https://pma.ipums.org/pma-action/faq#ques28) variables are added automatically): 
+This chapter features the same data extract showcased in Chapter 4, which includes all six of the available samples. It is organized in **wide format** with only **Female Respondents** selected. This chapter focuses on the following variables included in that extract:
 
   * `r varlink(RESULTFQ)` - Result of female questionnaire
   * `r varlink(PANELWEIGHT)` - Phase 2 female panel weight
@@ -2216,15 +2209,9 @@ As a reminder, our last post featured a [wide format](../2022-03-15-phase2-forma
   * `r varlink(COUNTRY)` - PMA country (preselected)
   * `r varlink(EAID)` - Enumeration area (preselected)
 
-Today's analysis will focus on three **recoded** variables we derived in our last post: 
+Recall that our analysis in Chapter 4 concerned only *de facto* panel members who completed all or part of the Female Questionnaire in both Phase 1 and Phase 2. We also excluded women who are marked "NIU (not in universe)" for a key question concerning current contraceptive use (`r varlink(CP)`). As a reminder, you can load the extract into R and select relevant cases like so:  
 
-  * `POP` - Population of interest 
-  * `FPSTATUS_1` - Pregnant, using contraception, or using no contraception at Phase 1
-  * `FPSTATUS_2` - Pregnant, using contraception, or using no contraception at Phase 2
-
-Finally, our analysis dropped cases for women who only completed one of the two Female Questionnaires, were not members of the *de facto* population, or skipped critical questions regarding current use of family planning. If you'd like a refresher on the steps we took to load, filter, and recode data from our previous post, click the button below:
-
-```{r, code_folding="Remind me about our data cleaning steps", results='hide'}
+```{r, results='hide'}
 # import the data extract and metadata files
 dat <- read_ipums_micro(
   ddi = "data/pma_00106.xml",
@@ -2239,7 +2226,20 @@ dat <- dat %>%
       RESIDENT_2 %in% c(11, 22),
     CP_1 < 90 & CP_2 < 90 # must answer "current FP use" question (both phases)
   ) 
+```
 
+\newpage 
+
+Additionally, we will reference four variables created in Chapter 4:
+
+  * `POP` - Population of interest 
+  * `STRATA_RECODE` - Sample strata (adjusted to include DRC samples)
+  * `FPSTATUS_1` - Pregnant, using contraception, or using no contraception at Phase 1
+  * `FPSTATUS_2` - Pregnant, using contraception, or using no contraception at Phase 2
+
+These variables were created like so: 
+
+```{r}
 # custom variables: `POP` and `FPSTATUS`
 dat <- dat %>% 
   mutate(
@@ -2276,35 +2276,9 @@ dat <- dat %>%
 
 ```
 
-One more thing: our blog uses a particular font, layout, and color scheme that we've incorporated into a [custom theme](https://ggplot2.tidyverse.org/reference/index.html#themes) we call `theme_pma`. Feel free to use our theme, tweak it, or create your own. In case you're interested, we've included the code necessary to create our theme below (you'll need the [showtext](https://cran.rstudio.com/web/packages/showtext/vignettes/introduction.html) package to load a custom font). 
-
-```{r, code_folding = "Remind me how we built `theme_pma`"}
-# Custom font 
-library(showtext)
-sysfonts::font_add(
-  family = "cabrito", 
-  regular = "../../fonts/cabritosansnormregular-webfont.ttf"
-)
-showtext::showtext_auto()
-update_geom_defaults("text", list(family = "cabrito", size = 4))
-
-# Theme 
-theme_pma <- theme_minimal() %+replace% 
-  theme(
-    text = element_text(family = "cabrito", size = 13),
-    plot.title = element_text(size = 22, color = "#00263A",
-    hjust = 0, margin = margin(b = 5)),
-    plot.subtitle = element_text(hjust = 0, margin = margin(b = 10)),
-    strip.background = element_blank(),
-    strip.text.y = element_text(size = 16, angle = 0),
-    panel.spacing = unit(1, "lines"),
-    axis.title.y = element_text(angle = 0, margin = margin(r = 10))
-  )
-```
-
 ## Grouped Bar Charts
 
-Now let's revisit the **grouped bar chart** we made to compare `FPSTATUS_1` and `FPSTATUS_2` for each population `POP`. We made this chart in basically two steps. 
+Now let's revisit the **grouped bar chart** we made to compare `FPSTATUS_1` and `FPSTATUS_2` for each population `POP` in Chapter 4. We made this chart in basically two steps. 
 
 First, we used [srvyr](http://gdfe.co/srvyr/index.html) to build a summary table that incorporates survey weights from `r varlink(PANELWEIGHT)` and generates a 95% confidence interval for each estimate. We used [EAID_1](https://pma.ipums.org/pma-action/variables/EAID#codes_section) to generate the cluster-robust standard errors underlying each confidence interval, and we stratified standard error estimation by `STRATA_RECODE`.
 
@@ -2324,9 +2298,20 @@ status_tbl <- dat %>%
 status_tbl
 ```
 
-As a second step, we plotted each conditional distribution as a series of grouped bar charts arranged in [facets](https://ggplot2.tidyverse.org/reference/index.html#facetting) by `POP`. Because we wanted to recycle the same layout for several similar variables, we wrapped all of the necessary [ggplot2](https://ggplot2.tidyverse.org) tools together in a custom function called `pma_bars`.
+\newpage 
 
-```{r, code_folding = "Remind me how we built `pma_bars`"}
+The **grouped bar chart** made in Chapter 4 plots the estimated values in `coef` together with the confidence interval represented by `_low` and `_upp`. This chart is useful because it packs a lot of information into a single, reader-friendly graphic. However, we also mentioned at the end of Chapter 4 that it has some considerable drawbacks. Most importantly, we weren't able to include information from the **marginal distribution** in each phase. 
+
+```{r, echo = FALSE,  fig.height=8}
+# Custom font 
+library(showtext)
+sysfonts::font_add(
+  family = "cabrito", 
+  regular = "../../fonts/cabritosansnormregular-webfont.ttf"
+)
+showtext::showtext_auto()
+update_geom_defaults("text", list(family = "cabrito", size = 4))
+
 pma_bars <- function(
   title = NULL,     # an optional title 
   subtitle = NULL,  # an optional subtitle 
@@ -2334,13 +2319,19 @@ pma_bars <- function(
   yaxis = NULL      # an optional label for the y-axis (displayed left)
 ){
   components <- list(
-    theme_pma,
+    theme_minimal() %+replace% theme(
+      text = element_text(family = "cabrito", size = 13),
+      plot.title = element_text(size = 22, color = "#00263A",
+                                hjust = 0, margin = margin(b = 5)),
+      plot.subtitle = element_text(hjust = 0, margin = margin(b = 10)),
+      strip.background = element_blank(),
+      strip.text.y = element_text(size = 16, angle = 0),
+      panel.spacing = unit(1, "lines"),
+      axis.title.y = element_text(angle = 0, margin = margin(r = 10))
+    ),
     labs(
-      title = title,
-      subtitle = subtitle,
-      y = str_wrap(yaxis, 10),
-      x = NULL,
-      fill = NULL
+      title = title, subtitle = subtitle, y = str_wrap(yaxis, 10),
+      x = NULL, fill = NULL
     ),
     scale_x_continuous(
       position = 'bottom',
@@ -2356,9 +2347,7 @@ pma_bars <- function(
     )
   )
 }
-```
 
-```{r, fig.height=8}
 status_tbl %>% 
   ggplot(aes(x = coef, y = FPSTATUS_2)) + 
   facet_grid(cols = vars(FPSTATUS_1), rows = vars(POP)) + 
@@ -2370,19 +2359,17 @@ status_tbl %>%
   )
 ```
 
+A **marginal distribution** for `FPSTATUS_1` would indicate the likelihood that a woman began the survey period pregnant, using family planning, or not using family planning. Likewise the marginal distribution for `FPSTATUS_2` estimates the likelihood that a woman would hold any such status at Phase 2, *independently of* her status at Phase 1. We call these distributions "marginal" because they're usually included in the row or column margins of a crosstab. 
+
 ## Heatmaps
-
-We love this bar chart because it packs a lot of information into a single, reader-friendly graphic. However, we mentioned that it has some considerable drawbacks. Most importantly, we weren't able to include information from the **marginal distribution** in each phase. 
-
-A marginal distribution for `FPSTATUS_1` would indicate the likelihood that a woman began the survey period pregnant, using family planning, or not using family planning. Likewise the marginal distribution for `FPSTATUS_2` estimates the likelihood that a woman would hold any such status at Phase 2, *independently of* her status at Phase 1. We call these distributions "marginal" because they're usually included in the row or column margins of a crosstab. 
-
-Let's return to `status_tbl`, but this time we'll plot it as a crosstab with `color` and `alpha` (transparency) aesthetics. This type of crosstab is usually called a **heatmap**. First, we'll again wrap a few cosmetic layout options into a custom function we'll call `pma_heatmap`.
 
 <aside>
 For consistency, `pma_heatmap` uses the same color scheme shown in the first figure of each PMA report. 
 </aside>
 
-```{r, code_folding="Show me how `pma_heatmap` controls layout options"}
+Let's return to `status_tbl`, but this time we'll plot it as a crosstab with `color` and `alpha` (transparency) aesthetics. This type of crosstab is usually called a **heatmap**. First, we'll wrap a few cosmetic layout options into a custom function we'll call `pma_heatmap`. Feel free to create your own theme, but we include the code used to produce ours below (you'll need the `r funlink(showtext)` package to load a custom font like "cabrito", or you can omit that part to use the R default font).  
+
+```{r}
 pma_heatmap <- function(
     title = NULL,     # an optional title 
     subtitle = NULL,  # an optional subtitle 
@@ -2390,25 +2377,25 @@ pma_heatmap <- function(
     yaxis = NULL      # an optional label for the y-axis (displayed right)
 ){
   components <- list(
-    theme_pma %+replace% theme(
+    theme_minimal() %+replace% theme(
+      text = element_text(family = "cabrito", size = 13),
       axis.text = element_text(size = 10),
-      strip.text.x = element_text(size = 16,
-                                  margin = margin(t = 10, b = 10)),
+      strip.text.x = element_text(size = 16, margin = margin(t = 10, b = 10)),
+      strip.text.y = element_text(size = 16, angle = 0),
+      strip.background = element_blank(),
+      axis.title.y = element_text(angle = 0, margin = margin(r = 10)),
       axis.title.y.right = element_text(angle = 0, margin = margin(l = 10)),
       axis.title.x.bottom = element_text(margin = margin(t = 20)),
+      plot.title = element_text(size = 22, color = "#00263A", 
+                                hjust = 0, margin = margin(b = 5)),  
+      plot.subtitle = element_text(hjust = 0, margin = margin(b = 10)),
       panel.grid = element_blank(),
+      panel.spacing = unit(1, "lines"),
       legend.position = "none"
     ),
-    labs(
-      title = title,
-      subtitle = subtitle,
-      x = xaxis,
-      y = str_wrap(yaxis, 10),
-    ),
+    labs(title = title, subtitle = subtitle, x = xaxis, y = str_wrap(yaxis, 10)),
     scale_fill_manual(values = c(
-      "Pregnant" = "#B4B3B3",
-      "Not Using FP" = "#4E4F71",
-      "Using FP" = "#EFD372"
+      "Pregnant" = "#B4B3B3", "Not Using FP" = "#4E4F71", "Using FP" = "#EFD372"
     )),
     scale_color_manual(values = c("black", "white")),
     scale_y_discrete(position = "right", limits = rev)
@@ -2416,13 +2403,9 @@ pma_heatmap <- function(
 }
 ```
 
-The plot, itself, is built with rectangles from [geom_tile](https://ggplot2.tidyverse.org/reference/geom_tile.html) and text labels from [geom_text](https://ggplot2.tidyverse.org/reference/geom_text.html). Both of these require a pair of x and y-coordinates, so we'll specify them globally in a [ggplot](https://ggplot2.tidyverse.org/reference/ggplot.html) function. 
+The plot is built with rectangles from [geom_tile](https://ggplot2.tidyverse.org/reference/geom_tile.html) and text labels from [geom_text](https://ggplot2.tidyverse.org/reference/geom_text.html). Then, we tell [geom_tile](https://ggplot2.tidyverse.org/reference/geom_tile.html) to use one `fill` color for each type of response in `FPSTATUS_1`: this makes it easy for the reader to see that the totals in each tile sum to 100% in columns (not rows). The `alpha` aesthetic uses the value in `coef` to control the transparency of each color.
 
-Then, we tell [geom_tile](https://ggplot2.tidyverse.org/reference/geom_tile.html) to use one `fill` color for each type of response in `FPSTATUS_1`: this makes it easy for the reader to see that the totals in each tile sum to 100% in columns (not rows). The `alpha` aesthetic uses the value in `coef` to control the transparency of each color (by default, our minimum value `0` would be 100% transparent). 
-
-The aesthetics in [geom_text](https://ggplot2.tidyverse.org/reference/geom_text.html) include `label` and `color`. Only `label` is really necessary: it tells the function to use the value in `coef` as a text label, except that we use [percent](https://scales.r-lib.org/) to stylize each number as a percentage rounded to the nearest integer. We're also including `color` to switch the font color from black to white for purple tiles where `coef` is higher than `0.5`: black text would be too hard to read here. 
-
-Finally, [facet_wrap](https://ggplot2.tidyverse.org/reference/facet_wrap.html) plots each `POP` separately. We use `nrow = 3` to specify three rows, and we use `scales = "fixed"` to save a bit of space: the labels for `FPSTATUS_1` and `FPSTATUS_2` are printed only once in the row and column margins for the entire plot. 
+\newpage 
 
 ```{r}
 status_tbl %>% 
@@ -2441,37 +2424,51 @@ status_tbl %>%
   ) 
 ```
 
-The nice thing about this heatmap layout is that we *can* easily include data from the marginal distribution of `FPSTATUS_1` and `FPSTATUS_2`. To do so, we'll first need to add them to `status_tbl`. Note: because our heatmap is not well-suited for comparing confidence intervals, we'll omit them in [survey_mean](http://gdfe.co/srvyr/reference/survey_mean.html) with the argument `vartype = NULL`.
+The nice thing about this heatmap layout is that - compared with our bar chart - it's much easier to include data from the marginal distribution of `FPSTATUS_1` and `FPSTATUS_2`. To do so, we'll first need to add them to `status_tbl`. 
 
-```{r}
-col_margins <- dat %>% 
+\newpage 
+
+<aside>
+We use `r funlink(dplyr::full_join)`, but both `r funlink(dplyr::left_join)` and `r funlink(dplyr::right_join)` would work equally well in this case.
+</aside>
+
+First, we use `group_by(FPSTATUS_1)` to make the column margins and `r funlink(dplyr::join)` them to `status_tbl`. (Note that we set `vartype = NULL` because we won't be able to include confidence intervals on our heatmap.)  
+
+```{r, message=FALSE}
+status_tbl <- dat %>% 
   group_by(POP) %>% 
   summarise(
-    .groups = "keep",
     cur_data() %>% 
       as_survey_design(weight = PANELWEIGHT, id = EAID_1, strata = STRATA_RECODE) %>%
       group_by(FPSTATUS_1) %>% 
       summarise(cols = survey_mean(prop = TRUE, prop_method = "logit", vartype = NULL))
-  )
-  
-row_margins <- dat %>% 
+  ) %>% 
+  full_join(status_tbl, ., by = c("POP", "FPSTATUS_1"))
+```
+
+Next, we use `group_by(FPSTATUS_2)` to add row margins to `status_tbl`. 
+
+```{r, message=FALSE}
+status_tbl <- dat %>% 
   group_by(POP) %>% 
   summarise(
-    .groups = "keep",
     cur_data() %>% 
       as_survey_design(weight = PANELWEIGHT, id = EAID_1, strata = STRATA_RECODE) %>%
       group_by(FPSTATUS_2) %>% 
       summarise(rows = survey_mean(prop = TRUE, prop_method = "logit", vartype = NULL))
-  )
+  ) %>% 
+  full_join(status_tbl, ., by = c("POP", "FPSTATUS_2"))
+```
 
-status_tbl <- status_tbl %>% right_join(col_margins) %>% right_join(row_margins)
+The column margins now appear in `cols`, while the row margins appear in `rows`.
 
+```{r}
 status_tbl
 ```
 
-To keep things simple, we've named the marginal distribution for `FPSTATUS_1` "cols", and the marginal distribution for `FPSTATUS_2` "rows". Ultimately, we think it's clearest to [paste](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/paste) these values (as percentages) together with the original labels from `FPSTATUS_1` and `FPSTATUS_2` (the symbol `\n` represents a line break). We'll also transform each character string into a [factor](https://forcats.tidyverse.org/reference/as_factor.html), which ensures that the values will be plotted in the same order that they appear in our table. 
+\newpage 
 
-Finally, we switch from `scales = "fixed"` to `scales = "free"`. This time, we'll want to print the row and column margins for each `POP` separately. 
+Now, we can simply [paste](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/paste) these values together with the original labels from `FPSTATUS_1` and `FPSTATUS_2`.
 
 ```{r, fig.height=9}
 status_tbl %>% 
@@ -2493,6 +2490,8 @@ status_tbl %>%
   )
 ```
 
+\newpage 
+
 The information contained in our heatmap is similar to what we saw in our bar chart, except for two things:
 
   1. There are no error bars on our heatmap. If we wanted to include information about the confidence interval for each estimation, we would have to include [text symbols](https://search.r-project.org/CRAN/refmans/gtools/html/stars.pval.html).
@@ -2503,17 +2502,13 @@ The marginal distribution may provide crucial information about the conditional 
 In certain contexts, you may want to combine information from the Phase 1 marginal distribution together with the conditional distribution of outcomes at Phase 2. To continue with our example from Burkina Faso, you might report that - because
 non-users represent about 62% of the population, only about 11% of the population adopted family planning at Phase 2 following non-use at Phase 1. That is: 18% of 62% is 11%. 
 
-In contrast with the conditional distribution, this type of distribution describes the share of the population that experiences some combination of Phase 1 and Phase 2 outcomes *without* assuming a particular starting point at Phase 1. It's known as a **joint distribution** because it gives the probability that two events will happen together (in sequence). Let's return to our summary table, `status_tbl`: 
-
-```{r}
-status_tbl
-```
-
-To find the estimated joint distribution for each combination of `FPSTATUS_1` and `FPSTATUS_2`, you could simply multiply each value in `cols` by the value in `coef`: 
+In contrast with the conditional distribution, this type of distribution describes the share of the population that experiences some combination of Phase 1 and Phase 2 outcomes *without* assuming a particular starting point at Phase 1. It's known as a **joint distribution** because it gives the probability that two events will happen together (in sequence). Let's return to our summary table, `status_tbl`: to find the estimated joint distribution for each combination of `FPSTATUS_1` and `FPSTATUS_2`, you could simply multiply each value in `cols` by the value in `coef`: 
 
 ```{r, R.options = list(width = 100)}
 status_tbl %>% mutate(joint = cols * coef)
 ```
+
+\newpage 
 
 In practice, you'll usually want to let [srvyr](http://gdfe.co/srvyr) calculate a confidence interval for each joint probability. To do so, we'll add an [interact](http://gdfe.co/srvyr/reference/interact.html) function listing the variables in [group_by](http://gdfe.co/srvyr/reference/group_by.html) that we want to model jointly. 
 
@@ -2527,11 +2522,11 @@ joint_tbl <- dat %>%
       group_by(interact(FPSTATUS_1, FPSTATUS_2)) %>% 
       summarise(joint = survey_mean(prop = TRUE, prop_method = "logit", vartype = "ci"))
   )
-  
+
 joint_tbl
 ```
 
-Now, the values in `joint` sum to `1.0` for each `POP`. Returning to our heatmap, we'll want to use the same color for every column, indicating that the percentages sum for 100% for each population. 
+Now, the values in `joint` sum to `1.0` for each `POP`. Returning to our heatmap, we'll want to use the same color for all columns, indicating that the percentages sum for 100% for each population. 
 
 ```{r}
 joint_tbl %>% 
@@ -2567,11 +2562,7 @@ To begin, let's revisit `joint_tbl`, which only contains the joint distribution 
 ```{r, R.options = list(width = 100)}
 joint_tbl <- joint_tbl %>% 
   rowid_to_column("alluvium") %>% 
-  pivot_longer(
-    c(FPSTATUS_1, FPSTATUS_2), 
-    names_to = "x", 
-    values_to = "stratum"
-  ) %>% 
+  pivot_longer(c(FPSTATUS_1, FPSTATUS_2), names_to = "x", values_to = "stratum") %>% 
   mutate(x = ifelse(x == "FPSTATUS_1", "Phase 1", "Phase 2")) %>% 
   arrange(x, alluvium)
 
@@ -2580,13 +2571,13 @@ joint_tbl
 
 Here, we create the column `alluvium` to hold the original row number for each of the 56 combinations of `POP`, `FPSTATUS_1`, and `FPSTATUS_2`. When we [pivot_longer](https://tidyr.tidyverse.org/reference/pivot_longer.html), we repeat the value in `joint` once for each end of the same `alluvium`. The values in `stratum` describe the strata to to which each alluvium is attached, and `x` indicates whether the stratum is located in the Phase 1 or Phase 2 stack. 
 
-As with our heatmap, we'll want to define some custom fonts, color, and layout options adapted from `theme_pma`. We'll bundle these together in a function called `pma_alluvial` - feel free to use, adjust, or omit this function for your own purposes. 
-
 <aside>
 For consistency, `pma_alluvial` uses the same color scheme shown in the first alluvial plot in each PMA report.
 </aside>
 
-```{r, code_folding="Show me how `pma_alluvial` controls layout options"}
+As with our heatmap, we'll want to define some custom fonts, color, and layout options in a function we'll call `pma_alluvial`: 
+
+```{r}
 pma_alluvial <- function(
     title = NULL,     # an optional title 
     subtitle = NULL,  # an optional subtitle 
@@ -2594,19 +2585,21 @@ pma_alluvial <- function(
     yaxis = NULL      # an optional label for the y-axis (displayed left)
 ){
   components <- list(
-    theme_pma %+replace% theme(
+    theme_minimal() %+replace% theme(
+      text = element_text(family = "cabrito", size = 13),
       plot.title = element_text(size = 22, color = "#541E5A", 
                                 hjust = 0.5, mar = margin(b = 5)),
       plot.subtitle = element_text(hjust = 0.5, margin = margin(b = 20)),
-      axis.text.x = element_text(color = "#541E5A", 
-                                 margin = margin(t = 5, b = 10)),
+      strip.background = element_blank(),
       strip.text.x = element_text(size = 13, margin = margin(b = 5)),
+      axis.text.x = element_text(color = "#541E5A", margin = margin(t = 5, b = 10)),
+      axis.text.y = element_blank(),
+      panel.spacing = unit(1, "lines"),
       plot.margin = margin(0, 100, 0, 100),
       legend.position = "bottom",
       legend.title = element_blank(),
       legend.spacing.x = unit(10, "pt"),
-      panel.grid = element_blank(),
-      axis.text.y = element_blank()
+      panel.grid = element_blank()
     ),
     labs(
       title = title,
@@ -2624,11 +2617,13 @@ pma_alluvial <- function(
 }
 ```
 
+\newpage 
+
 We'll start by mapping common aesthetics in a [ggplot](https://ggplot2.tidyverse.org/reference/ggplot.html) function. We'll map the values in `x` onto our x-axis, and we'll map the values in `joint` onto the y-axis. The remaining aesthetics are specific to the functions from [ggalluvial](https://corybrunson.github.io/ggalluvial/index.html): we'll use `stratum` to build vertical strata and to define colors mapped with "fill". We also use the identifying numbers in `alluvium` to organize responses into alluvia.
 
 The remaining functions are straightforward, since they mainly use information passed from [ggplot](https://ggplot2.tidyverse.org/reference/ggplot.html). We make only one small modification to [geom_stratum](https://corybrunson.github.io/ggalluvial/reference/geom_stratum.html): setting `size = 0` removes border lines that appear around each stratum, by default. 
 
-```{r, layout = "l-screen", fig.width=18, fig.height=8, message=FALSE}
+```{r, fig.width=18, fig.height=10, message=FALSE, warning=FALSE}
 status_alluvial <- joint_tbl %>% 
   ggplot(aes(
     x = x, 
@@ -2648,15 +2643,17 @@ status_alluvial <- joint_tbl %>%
 status_alluvial
 ```
 
-Of course, you should always include either y-axis gridlines or text labels for the probabilities shown on a plot like this one. We find it clearer to include the latter, which we'll build with [geom_text](https://ggplot2.tidyverse.org/reference/geom_text.html). 
+\newpage 
 
-These labels are a bit tricky, but the basic idea is that you use `stat = "stratum"` to label strata, and `stat = "flow"` to label alluvia. Then, you use [after_stat](https://ggplot2.tidyverse.org/reference/aes_eval.html) to build labels from statistics that [ggalluvial](https://corybrunson.github.io/ggalluvial/index.html) uses to construct the plot - check out [this list](https://corybrunson.github.io/ggalluvial/reference/stat_stratum.html#computed-variables) of available statistics for details. We'll use the `prop` statistic to obtain *both* the marginal and joint probabilities for each outcome (we'll leave the conditional probabilities unlabeled, but you could adjust this code to include them here).
+Of course, you should always include either y-axis gridlines or text labels for the probabilities shown on a plot like this one. We find it clearer to include the latter, which we'll build with [geom_text](https://ggplot2.tidyverse.org/reference/geom_text.html). 
 
 <aside>
 Values may not add to 100% due to rounding (values rounded to 0% are not labelled).
 </aside>
 
-```{r, layout = "l-screen", fig.width=18, fig.height=8}
+These labels are a bit tricky, but the basic idea is that you use `stat = "stratum"` to label strata, and `stat = "flow"` to label alluvia. Then, you use [after_stat](https://ggplot2.tidyverse.org/reference/aes_eval.html) to build labels from statistics that [ggalluvial](https://corybrunson.github.io/ggalluvial/index.html) uses to construct the plot - check out [this list](https://corybrunson.github.io/ggalluvial/reference/stat_stratum.html#computed-variables) of available statistics for details. We'll use the `prop` statistic to obtain *both* the marginal and joint probabilities.
+
+```{r, eval = FALSE}
 status_alluvial +
   geom_text(
     stat = "stratum",   # label strata
@@ -2692,22 +2689,15 @@ status_alluvial +
   ) 
 ```
 
-Now, it's easy to identify the proportion of women at each phase *and* the proportion who switched or maintained their status between phases. If possible, we recommend aligning alluvial plots for every sample in a single row as shown: this allows the readers to visually compare the relative size of strata and alluvia across samples. 
+Now, it's easy to identify the proportion of women at each phase *and* the proportion who switched or maintained their status between phases. 
 
-## Next Steps 
+\newpage 
 
-So far in [this series](../../index.html#category:Panel_Data), we've covered topics related to: 
-
-  * [Data availability](../2022-03-01-phase2-discovery/)
-  * [Instructions of obtaining data](../2022-03-15-phase2-formats/) 
-  * [Sample design](../2022-04-01-phase2-members/) 
-  * [Key family planning indicators](../2022-04-15-phase2-indicators/) 
-  * [Data Visualization](../2022-05-01-phase2-alluvial/) 
-  
-In two weeks, we'll be wrapping up this introduction to PMA Panel Data with an update on a topic we first covered last year: the [contraceptive calendar](https://tech.popdata.org/pma-data-hub/posts/2021-05-15-paa-2021/) section of the Female Questionnaire. As we'll see, the calendar adds a different temporal dimension to the panel study: it represents the contraceptive use, non-use, and pregnancy status of women recalled on a *monthly basis* for several months prior the interview. We'll show how to parse these data from string-format, and how to merge responses obtained at Phase 1 and Phase 2 for each woman. 
+```{r, echo=FALSE, out.width="90%"}
+knitr::include_graphics("images/alluvial.png")
+```
 
 # Post 6
-
 
 ```{r, echo=FALSE}
 # knitr options 
