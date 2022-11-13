@@ -1,4 +1,4 @@
-source(here::here("r/utilities.r"))
+source("utilities.r")
 
 pagedown::chrome_print(
   here("r_users.Rmd"),
