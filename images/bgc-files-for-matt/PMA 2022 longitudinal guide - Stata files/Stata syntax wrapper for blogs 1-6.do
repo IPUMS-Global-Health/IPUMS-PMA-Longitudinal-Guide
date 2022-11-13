@@ -1,0 +1,6 @@
+do "Q:/BMGF - PMA IPUMS FP Blog Posts/PMA 2022 longitudinal guide - Stata files/Stata syntax for blog 1.do"
+do "Q:/BMGF - PMA IPUMS FP Blog Posts/PMA 2022 longitudinal guide - Stata files/Stata syntax for blog 2.do"
+do "Q:/BMGF - PMA IPUMS FP Blog Posts/PMA 2022 longitudinal guide - Stata files/Stata syntax for blog 3.do"
+do "Q:/BMGF - PMA IPUMS FP Blog Posts/PMA 2022 longitudinal guide - Stata files/Stata syntax for blog 4.do"
+do "Q:/BMGF - PMA IPUMS FP Blog Posts/PMA 2022 longitudinal guide - Stata files/Stata syntax for blog 5.do"
+do "Q:/BMGF - PMA IPUMS FP Blog Posts/PMA 2022 longitudinal guide - Stata files/Stata syntax for blog 6.do"

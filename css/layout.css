@@ -77,9 +77,14 @@ aside {
   left: 6.75in;
   padding: 1em;
   margin-left: 1em;
-  margin-bottom: 0.5em;
+  margin-top: 0em;
+  margin-bottom: 1em;
   background-color: cornsilk;
   border-radius: 1em;
+}
+
+aside.nudge_down {
+  margin-top: 1em !important;
 }
 
 aside.hex {

@@ -1,0 +1,2099 @@
+--------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  Q:\BMGF - PMA IPUMS FP Blog Posts\PMA 2022 longitudinal guide - Sta
+> ta files\Blog4_log.txt
+  log type:  text
+ opened on:   8 Nov 2022, 04:32:59
+
+. 
+. use pma_00121, clear
+
+. 
+. ******************************************************************************
+> **
+. 
+. *keep de facto in both phases data only
+. *changes made: use inlist
+. *keep if (resident_1 == 11 | resident_1 == 22) & (resident_2 == 11 | resident_
+> 2 == 22)
+. keep if inlist(resident_1,11,22) & inlist(resident_2,11,22)
+(10,097 observations deleted)
+
+. ******************************************************************************
+> **
+. 
+. *keep only who complete phase 2
+. keep if resultfq_2 == 1
+(2,355 observations deleted)
+
+. 
+. ******************************************************************************
+> **
+. 
+. *only keep those who response to the question about contraceptives
+. keep if cp_1 < 90 & cp_2 <90
+(20 observations deleted)
+
+. 
+. ******************************************************************************
+> **
+. 
+. * Make a new variable named strata_recode that is defined everywhere
+. *
+. * We will use it when we svyset this dataset.
+. 
+. * So make a new variable named strata_recode and set it to strata_1 
+. * everywhere except DRC and set it to geocd in DRC
+. clonevar strata_recode = strata_1 
+(3,478 missing values generated)
+
+. replace  strata_recode = geocd if country == 2
+(3,478 real changes made)
+
+. 
+. * Now copy the value label from strata_1 into a new label named strata_recode
+. * and update it with the labels from geocd
+. 
+. label copy STRATA_1 strata_recode, replace
+
+. label define strata_recode 1 "Kinshasa, DRC" 2 "Kongo Central, DRC", modify
+
+. 
+. * Use the new value label with the new variable
+. label values strata_recode strata_recode
+
+. 
+. gen pop = .
+(17,705 missing values generated)
+
+. replace pop = 1 if country == 1 // Burkina Faso
+(5,207 real changes made)
+
+. replace pop = 2 if country == 2 & geocd == 1 // Kinshasa
+(1,967 real changes made)
+
+. replace pop = 3 if country == 2 & geocd == 2 // Kongo Central
+(1,511 real changes made)
+
+. replace pop = 4 if country == 7 // Kenya
+(6,934 real changes made)
+
+. replace pop = 5 if country == 9 & geong == 4 // Kano
+(998 real changes made)
+
+. replace pop = 6 if country == 9 & geong == 2 // Lagos
+(1,088 real changes made)
+
+. 
+. label define pop ///
+>            1 "Burkina Faso" ///
+>            2 "DRC-Kinshasa" ///
+>            3 "DRC-Kongo Central" ///
+>            4 "Kenya" ///
+>            5 "Nigeria-Kano" ///
+>            6 "Nigeria-Lagos", replace
+
+. 
+. label values pop pop
+
+.            
+. table ( pop ) ( ) ( ), nototals missing            
+
+--------------------------------
+                    |  Frequency
+--------------------+-----------
+pop                 |           
+  Burkina Faso      |      5,207
+  DRC-Kinshasa      |      1,967
+  DRC-Kongo Central |      1,511
+  Kenya             |      6,934
+  Nigeria-Kano      |        998
+  Nigeria-Lagos     |      1,088
+--------------------------------
+
+. 
+. ******************************************************************************
+> **
+. 
+. svyset eaid_1, strata(strata_recode) weight(panelweight) 
+
+Sampling weights: <none>
+             VCE: linearized
+     Single unit: missing
+        Strata 1: strata_recode
+ Sampling unit 1: eaid_1
+           FPC 1: <zero>
+        Weight 1: panelweight
+
+. 
+. label variable cp_1    "Contraceptive user (Phase 1)"
+
+. label variable cp_2    "Contraceptive user (Phase 2)"
+
+. 
+. // Phase 2 status among women not using contraceptives in Phase 1
+. svy: proportion cp_2 if cp_1 == 0 , over(pop) 
+(running proportion on estimation sample)
+
+Survey: Proportion estimation
+
+Number of strata =  28                      Number of obs   =     10,573
+Number of PSUs   = 664                      Population size = 11,093.988
+                                            Design df       =        636
+
+------------------------------------------------------------------------
+                       |             Linearized            Logit
+                       | Proportion   std. err.     [95% conf. interval]
+-----------------------+------------------------------------------------
+              cp_2@pop |
+      no Burkina Faso  |   .7898736   .0132094      .7627611    .8146404
+      no DRC-Kinshasa  |   .7392914    .025396      .6864437    .7860087
+ no DRC-Kongo Central  |   .7361748   .0243823       .685607    .7812047
+             no Kenya  |   .6966579   .0105455      .6755599    .7169587
+      no Nigeria-Kano  |   .9456453   .0136329      .9117752    .9669834
+     no Nigeria-Lagos  |   .7570627   .0205668      .7144408     .795147
+     yes Burkina Faso  |   .2101264   .0132094      .1853596    .2372389
+     yes DRC-Kinshasa  |   .2607086    .025396      .2139913    .3135563
+yes DRC-Kongo Central  |   .2638252   .0243823      .2187953     .314393
+            yes Kenya  |   .3033421   .0105455      .2830413    .3244401
+     yes Nigeria-Kano  |   .0543547   .0136329      .0330166    .0882248
+    yes Nigeria-Lagos  |   .2429373   .0205668       .204853    .2855592
+------------------------------------------------------------------------
+
+. 
+. // Phase 2 status among women using contraceptives in Phase 1
+. svy: proportion cp_2 if cp_1 == 1 , over(pop)
+(running proportion on estimation sample)
+
+Survey: Proportion estimation
+
+Number of strata =  28                      Number of obs   =      7,132
+Number of PSUs   = 654                      Population size = 6,597.2713
+                                            Design df       =        626
+
+------------------------------------------------------------------------
+                       |             Linearized            Logit
+                       | Proportion   std. err.     [95% conf. interval]
+-----------------------+------------------------------------------------
+              cp_2@pop |
+      no Burkina Faso  |   .3473058   .0216696      .3060553    .3909836
+      no DRC-Kinshasa  |   .2747554   .0188858      .2392587    .3133493
+ no DRC-Kongo Central  |   .2696023   .0342418      .2078195    .3418269
+             no Kenya  |   .1996438   .0086716      .1831582    .2172186
+      no Nigeria-Kano  |   .4399902   .0683821      .3129859    .5753696
+     no Nigeria-Lagos  |   .2397128   .0233586      .1968744    .2885238
+     yes Burkina Faso  |   .6526942   .0216696      .6090164    .6939447
+     yes DRC-Kinshasa  |   .7252446   .0188858      .6866507    .7607413
+yes DRC-Kongo Central  |   .7303977   .0342418      .6581731    .7921805
+            yes Kenya  |   .8003562   .0086716      .7827814    .8168418
+     yes Nigeria-Kano  |   .5600098   .0683821      .4246304    .6870141
+    yes Nigeria-Lagos  |   .7602872   .0233586      .7114762    .8031256
+------------------------------------------------------------------------
+
+. 
+. svy: proportion cp_2, over(pop cp_1)
+(running proportion on estimation sample)
+
+Survey: Proportion estimation
+
+Number of strata =  28                           Number of obs   =    17,705
+Number of PSUs   = 665                           Population size = 17,691.26
+                                                 Design df       =       637
+
+----------------------------------------------------------------------------
+                           |             Linearized            Logit
+                           | Proportion   std. err.     [95% conf. interval]
+---------------------------+------------------------------------------------
+             cp_2@pop#cp_1 |
+       no Burkina Faso#no  |   .7898736   .0132094      .7627612    .8146404
+      no Burkina Faso#yes  |   .3473058   .0216696      .3060566    .3909821
+       no DRC-Kinshasa#no  |   .7392914    .025396      .6864439    .7860086
+      no DRC-Kinshasa#yes  |   .2747554   .0188858      .2392598    .3133479
+  no DRC-Kongo Central#no  |   .7361748   .0243823      .6856072    .7812046
+ no DRC-Kongo Central#yes  |   .2696023   .0342364      .2078303    .3418121
+              no Kenya#no  |   .6966579   .0105452      .6755606    .7169581
+             no Kenya#yes  |   .1996438   .0086794      .1831444    .2172343
+       no Nigeria-Kano#no  |   .9456453   .0136329      .9117753    .9669833
+      no Nigeria-Kano#yes  |   .4399902   .0677866      .3140113     .574205
+      no Nigeria-Lagos#no  |   .7570627   .0205668       .714441    .7951469
+     no Nigeria-Lagos#yes  |   .2397128   .0233586      .1968758    .2885221
+      yes Burkina Faso#no  |   .2101264   .0132094      .1853596    .2372388
+     yes Burkina Faso#yes  |   .6526942   .0216696      .6090179    .6939434
+      yes DRC-Kinshasa#no  |   .2607086    .025396      .2139914    .3135561
+     yes DRC-Kinshasa#yes  |   .7252446   .0188858      .6866521    .7607402
+ yes DRC-Kongo Central#no  |   .2638252   .0243823      .2187954    .3143928
+yes DRC-Kongo Central#yes  |   .7303977   .0342364      .6581879    .7921697
+             yes Kenya#no  |   .3033421   .0105452      .2830419    .3244394
+            yes Kenya#yes  |   .8003562   .0086794      .7827657    .8168556
+      yes Nigeria-Kano#no  |   .0543547   .0136329      .0330167    .0882247
+     yes Nigeria-Kano#yes  |   .5600098   .0677866       .425795    .6859887
+     yes Nigeria-Lagos#no  |   .2429373   .0205668      .2048531     .285559
+    yes Nigeria-Lagos#yes  |   .7602872   .0233586      .7114779    .8031242
+----------------------------------------------------------------------------
+
+. 
+. svy, subpop(if pop == 1): proportion cp_2 if cp_1 == 0
+(running proportion on estimation sample)
+
+Survey: Proportion estimation
+
+Number of strata =   2            Number of obs   =      3,410
+Number of PSUs   = 167            Population size = 3,714.9751
+                                  Subpop. no. obs =      3,410
+                                  Subpop. size    = 3,714.9751
+                                  Design df       =        165
+
+--------------------------------------------------------------
+             |             Linearized            Logit
+             | Proportion   std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+        cp_2 |
+         no  |   .7898736   .0132094      .7626064    .8147695
+        yes  |   .2101264   .0132094      .1852305    .2373936
+--------------------------------------------------------------
+Note: 26 strata omitted because they contain no subpopulation
+      members.
+
+. svy, subpop(if pop == 1): proportion cp_2 if cp_1 == 1
+(running proportion on estimation sample)
+
+Survey: Proportion estimation
+
+Number of strata =   2            Number of obs   =      1,797
+Number of PSUs   = 167            Population size = 1,500.6663
+                                  Subpop. no. obs =      1,797
+                                  Subpop. size    = 1,500.6663
+                                  Design df       =        165
+
+--------------------------------------------------------------
+             |             Linearized            Logit
+             | Proportion   std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+        cp_2 |
+         no  |   .3473058   .0216696      .3058384    .3912268
+        yes  |   .6526942   .0216696      .6087732    .6941616
+--------------------------------------------------------------
+Note: 26 strata omitted because they contain no subpopulation
+      members.
+
+. 
+. di "Study Population: Burkina Faso"
+Study Population: Burkina Faso
+
+. svy, subpop(if pop == 1): tab cp_1 cp_2 , row ci nomarginals pearson null
+(running tabulate on estimation sample)
+
+Number of strata =   2                            Number of obs   =      5,207
+Number of PSUs   = 167                            Population size = 5,215.6413
+                                                  Subpop. no. obs =      5,207
+                                                  Subpop. size    = 5,215.6413
+                                                  Design df       =        165
+
+----------------------------------------
+Contracep |
+tive user | Contraceptive user (Phase 2)
+(Phase 1) |            no            yes
+----------+-----------------------------
+       no |         .7899          .2101
+          | [.7626,.8148]  [.1852,.2374]
+          | 
+      yes |         .3473          .6527
+          | [.3058,.3912]  [.6088,.6942]
+----------------------------------------
+Key: Row proportion
+     [95% confidence interval for row proportion]
+
+  Pearson:
+    Uncorrected   chi2(1)         =  934.8348
+    D-B (null)    F(1, 165)       =  309.7156     P = 0.0000
+    Design-based  F(1, 165)       =  468.3324     P = 0.0000
+
+Note: 26 strata omitted because they contain no subpopulation members.
+
+. 
+. forvalues i = 1/6 {
+  2.         di "Study Population: `: label pop `i''"
+  3.         svy, subpop(if pop == `i'): tab cp_1 cp_2 , row ci nomarginals pear
+> son null
+  4. }
+Study Population: Burkina Faso
+(running tabulate on estimation sample)
+
+Number of strata =   2                            Number of obs   =      5,207
+Number of PSUs   = 167                            Population size = 5,215.6413
+                                                  Subpop. no. obs =      5,207
+                                                  Subpop. size    = 5,215.6413
+                                                  Design df       =        165
+
+----------------------------------------
+Contracep |
+tive user | Contraceptive user (Phase 2)
+(Phase 1) |            no            yes
+----------+-----------------------------
+       no |         .7899          .2101
+          | [.7626,.8148]  [.1852,.2374]
+          | 
+      yes |         .3473          .6527
+          | [.3058,.3912]  [.6088,.6942]
+----------------------------------------
+Key: Row proportion
+     [95% confidence interval for row proportion]
+
+  Pearson:
+    Uncorrected   chi2(1)         =  934.8348
+    D-B (null)    F(1, 165)       =  309.7156     P = 0.0000
+    Design-based  F(1, 165)       =  468.3324     P = 0.0000
+
+Note: 26 strata omitted because they contain no subpopulation members.
+Study Population: DRC-Kinshasa
+(running tabulate on estimation sample)
+
+Number of strata =  1                             Number of obs   =      1,967
+Number of PSUs   = 58                             Population size = 1,959.7259
+                                                  Subpop. no. obs =      1,967
+                                                  Subpop. size    = 1,959.7259
+                                                  Design df       =         57
+
+----------------------------------------
+Contracep |
+tive user | Contraceptive user (Phase 2)
+(Phase 1) |            no            yes
+----------+-----------------------------
+       no |         .7393          .2607
+          | [.6853,.7869]  [.2131,.3147]
+          | 
+      yes |         .2748          .7252
+          | [.2386,.3141]  [.6859,.7614]
+----------------------------------------
+Key: Row proportion
+     [95% confidence interval for row proportion]
+
+  Pearson:
+    Uncorrected   chi2(1)         =  420.5331
+    D-B (null)    F(1, 57)        =  337.4693     P = 0.0000
+    Design-based  F(1, 57)        =  216.0415     P = 0.0000
+
+Note: 27 strata omitted because they contain no subpopulation members.
+Study Population: DRC-Kongo Central
+(running tabulate on estimation sample)
+
+Number of strata =  1                             Number of obs   =      1,511
+Number of PSUs   = 57                             Population size = 1,509.1075
+                                                  Subpop. no. obs =      1,511
+                                                  Subpop. size    = 1,509.1075
+                                                  Design df       =         56
+
+----------------------------------------
+Contracep |
+tive user | Contraceptive user (Phase 2)
+(Phase 1) |            no            yes
+----------+-----------------------------
+       no |         .7362          .2638
+          | [.6845,.7821]  [.2179,.3155]
+          | 
+      yes |         .2696          .7304
+          | [.2067,.3434]  [.6566,.7933]
+----------------------------------------
+Key: Row proportion
+     [95% confidence interval for row proportion]
+
+  Pearson:
+    Uncorrected   chi2(1)         =  310.9512
+    D-B (null)    F(1, 56)        =  128.6112     P = 0.0000
+    Design-based  F(1, 56)        =  122.9873     P = 0.0000
+
+Note: 27 strata omitted because they contain no subpopulation members.
+Study Population: Kenya
+(running tabulate on estimation sample)
+
+Number of strata =  21                            Number of obs   =      6,934
+Number of PSUs   = 307                            Population size = 6,919.3398
+                                                  Subpop. no. obs =      6,934
+                                                  Subpop. size    = 6,919.3398
+                                                  Design df       =        286
+
+----------------------------------------
+Contracep |
+tive user | Contraceptive user (Phase 2)
+(Phase 1) |            no            yes
+----------+-----------------------------
+       no |         .6967          .3033
+          |  [.6755,.717]   [.283,.3245]
+          | 
+      yes |         .1996          .8004
+          | [.1831,.2173]  [.7827,.8169]
+----------------------------------------
+Key: Row proportion
+     [95% confidence interval for row proportion]
+
+  Pearson:
+    Uncorrected   chi2(1)         = 1706.5371
+    D-B (null)    F(1, 286)       = 1494.9498     P = 0.0000
+    Design-based  F(1, 286)       = 1140.2170     P = 0.0000
+
+Note: 7 strata omitted because they contain no subpopulation members.
+Study Population: Nigeria-Kano
+(running tabulate on estimation sample)
+
+Number of strata =  2                             Number of obs   =        998
+Number of PSUs   = 25                             Population size = 997.486827
+                                                  Subpop. no. obs =        998
+                                                  Subpop. size    = 997.486827
+                                                  Design df       =         23
+
+----------------------------------------
+Contracep |
+tive user | Contraceptive user (Phase 2)
+(Phase 1) |            no            yes
+----------+-----------------------------
+       no |         .9456          .0544
+          | [.9095,.9679]  [.0321,.0905]
+          | 
+      yes |           .44            .56
+          | [.3078,.5812]  [.4188,.6922]
+----------------------------------------
+Key: Row proportion
+     [95% confidence interval for row proportion]
+
+  Pearson:
+    Uncorrected   chi2(1)         =  239.6813
+    D-B (null)    F(1, 23)        =   20.9674     P = 0.0001
+    Design-based  F(1, 23)        =   89.1519     P = 0.0000
+
+Note: 26 strata omitted because they contain no subpopulation members.
+Study Population: Nigeria-Lagos
+(running tabulate on estimation sample)
+
+Number of strata =  1                             Number of obs   =      1,088
+Number of PSUs   = 51                             Population size = 1,089.9582
+                                                  Subpop. no. obs =      1,088
+                                                  Subpop. size    = 1,089.9582
+                                                  Design df       =         50
+
+--------------------------------------
+Contracep | Contraceptive user (Phase 
+tive user |             2)            
+(Phase 1) |           no           yes
+----------+---------------------------
+       no |        .7571         .2429
+          | [.7134,.796]  [.204,.2866]
+          | 
+      yes |        .2397         .7603
+          | [.196,.2897]  [.7103,.804]
+--------------------------------------
+Key: Row proportion
+     [95% confidence interval for row proportion]
+
+  Pearson:
+    Uncorrected   chi2(1)         =  279.7443
+    D-B (null)    F(1, 50)        =  240.5165     P = 0.0000
+    Design-based  F(1, 50)        =  203.8706     P = 0.0000
+
+Note: 27 strata omitted because they contain no subpopulation members.
+
+. 
+. ******************************************************************************
+> **
+. 
+. * Not included in chapter because it will not include confidence intervals
+. 
+. graph hbar (percent) [aweight=panelweight], ///
+>     by(pop cp_1, cols(2) note("Bars in each subplot of the figure sum to 100%.
+> " ///
+>           "Graphs by country and Phase 1 contraceptive use status.", ///
+>           size(vsmall)) ///
+>           title(Phase 2 Contraceptive Use Status, size(medium)) ) ///
+>     over(cp_2) ///
+>         ytitle(Percent, size(small)) ///
+>         name(f4_00, replace)
+
+.         
+. * graph export f4_00.png, width(2000) replace
+. 
+. ******************************************************************************
+> **
+. 
+. save post4_prepped, replace
+(file post4_prepped.dta not found)
+file post4_prepped.dta saved
+
+. 
+. ******************************************************************************
+> **
+. 
+. clear 
+
+. use post4_prepped, clear
+
+. 
+. ******************************************************************************
+> **
+. 
+. * Prepare to post data to a new dataset
+. capture postclose toplot
+
+. tempfile postout
+
+. postfile toplot cp_1 cp_2 pop estimate lcb ucb using `postout', replace
+(file C:\Users\DaleR\AppData\Local\Temp\ST_910_000001.tmp not found)
+
+. 
+. forvalues i = 0/1 {
+  2.         forvalues j = 1/6 {
+  3.                 quietly svy, subpop(if cp_1 == `i' & pop == `j') : proporti
+> on cp_2 
+  4.                 * We extract the estimates from column 2 of r(table) becaus
+> e we are 
+.                 * summarizing the proportion who were using contraception in p
+> hase 2,
+.                 * which means we want to know the proportion of 1's or yes res
+> ponses.
+.                 post toplot (`i') (1) (`j') ///
+>                             (`=100*r(table)[1,2]') /// // the estimate
+>                                         (`=100*r(table)[5,2]') /// // the LCB
+>                                         (`=100*r(table)[6,2]')     // the UCB
+  5.         }
+  6. }
+
+. capture postclose toplot
+
+. use `postout', clear
+
+. 
+. label define yesno 0 "No" 1 "Yes", replace
+
+. label define pop ///
+>            1 "Burkina Faso" ///
+>            2 "DRC-Kinshasa" ///
+>            3 "DRC-Kongo Central" ///
+>            4 "Kenya" ///
+>            5 "Nigeria-Kano" ///
+>            6 "Nigeria-Lagos", replace
+
+. label values cp_1 yesno
+
+. label values cp_2 yesno
+
+. label values pop pop
+
+. label variable cp_1 "Contraceptive user (Phase 1)"
+
+. label variable cp_2 "Contraceptive user (Phase 2)"
+
+. 
+. * Basic graph 
+. twoway (bar estimate cp_1, horizontal  ///
+>                 ylabel(0(1)1, valuelabel ) ///
+>                 xlabel(0(20)100)) ///
+>                 (rcap lcb ucb cp_1 , horizontal ) ///
+>                 ,  by(pop, legend(off) ) ///
+>                    xtitle(Contraceptive user (Phase 2) (%)) ///
+>                    name(f4_01, replace)
+
+. graph export f4_01.png, width(2000) replace
+file f4_01.png saved as PNG format
+
+. 
+. * Additional aesthetic options             
+. twoway (bar estimate cp_1 if cp_2 == 1 , ///
+>            color(blue*.5) horizontal barwidth(0.9) ///
+>            ylabel(0(1)1,valuelabel angle(0) nogrid) ///
+>            xlabel(0(20)100)) ///
+>                 (rcap lcb ucb cp_1 if cp_2 == 1, horizontal lcolor(black)) ///
+>                 ,  by(pop, graphregion(color(white)) legend(off) note("")) ///
+>                    subtitle(,lcolor(white) fcolor(white)) ///
+>                    xtitle(Contraceptive user (Phase 2) (%)) ///
+>                    xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
+>                    name(f4_02, replace)
+
+.                    
+. graph export f4_02.png, width(2000) replace
+file f4_02.png saved as PNG format
+
+.                    
+. ******************************************************************************
+> **
+. 
+.                 * The code in this block is not in the book chapter, but prese
+> nts another
+.                 * way of capturing the values of estimate, lcb, and ucb with a
+>  single
+.                 * estimation command, but then several blocks of data manageme
+> nt afterward.
+.                 *
+.                 * I find the method of the loop with the post commands to be e
+> asiest to
+.                 * remember, but the two methods result in the same dataset.
+.                                    
+.                 use post4_prepped, clear
+
+. 
+.                 * Generate all the estimates and lcbs and ucbs at once
+.                 svy: proportion cp_2, over(pop cp_1)
+(running proportion on estimation sample)
+
+Survey: Proportion estimation
+
+Number of strata =  28                           Number of obs   =    17,705
+Number of PSUs   = 665                           Population size = 17,691.26
+                                                 Design df       =       637
+
+----------------------------------------------------------------------------
+                           |             Linearized            Logit
+                           | Proportion   std. err.     [95% conf. interval]
+---------------------------+------------------------------------------------
+             cp_2@pop#cp_1 |
+       no Burkina Faso#no  |   .7898736   .0132094      .7627612    .8146404
+      no Burkina Faso#yes  |   .3473058   .0216696      .3060566    .3909821
+       no DRC-Kinshasa#no  |   .7392914    .025396      .6864439    .7860086
+      no DRC-Kinshasa#yes  |   .2747554   .0188858      .2392598    .3133479
+  no DRC-Kongo Central#no  |   .7361748   .0243823      .6856072    .7812046
+ no DRC-Kongo Central#yes  |   .2696023   .0342364      .2078303    .3418121
+              no Kenya#no  |   .6966579   .0105452      .6755606    .7169581
+             no Kenya#yes  |   .1996438   .0086794      .1831444    .2172343
+       no Nigeria-Kano#no  |   .9456453   .0136329      .9117753    .9669833
+      no Nigeria-Kano#yes  |   .4399902   .0677866      .3140113     .574205
+      no Nigeria-Lagos#no  |   .7570627   .0205668       .714441    .7951469
+     no Nigeria-Lagos#yes  |   .2397128   .0233586      .1968758    .2885221
+      yes Burkina Faso#no  |   .2101264   .0132094      .1853596    .2372388
+     yes Burkina Faso#yes  |   .6526942   .0216696      .6090179    .6939434
+      yes DRC-Kinshasa#no  |   .2607086    .025396      .2139914    .3135561
+     yes DRC-Kinshasa#yes  |   .7252446   .0188858      .6866521    .7607402
+ yes DRC-Kongo Central#no  |   .2638252   .0243823      .2187954    .3143928
+yes DRC-Kongo Central#yes  |   .7303977   .0342364      .6581879    .7921697
+             yes Kenya#no  |   .3033421   .0105452      .2830419    .3244394
+            yes Kenya#yes  |   .8003562   .0086794      .7827657    .8168556
+      yes Nigeria-Kano#no  |   .0543547   .0136329      .0330167    .0882247
+     yes Nigeria-Kano#yes  |   .5600098   .0677866       .425795    .6859887
+     yes Nigeria-Lagos#no  |   .2429373   .0205668      .2048531     .285559
+    yes Nigeria-Lagos#yes  |   .7602872   .0233586      .7114779    .8031242
+----------------------------------------------------------------------------
+
+. 
+.                 * Steps to pull them into memory and prepare to plot
+.                 matrix out = r(table)
+
+.                 clear
+
+.                 svmat out
+number of observations will be reset to 9
+Press any key to continue, or Break to abort
+Number of observations (_N) was 0, now 9.
+
+.                 xpose, clear
+
+.                 keep v1 v5 v6
+
+.                 rename v1 estimate
+
+.                 rename v5 lcb
+
+.                 rename v6 ucb
+
+.                 replace estimate = estimate * 100
+(24 real changes made)
+
+.                 replace lcb = lcb * 100
+(24 real changes made)
+
+.                 replace ucb = ucb * 100
+(24 real changes made)
+
+. 
+.                 * Add cp_1 and cp_2 and pop values back into the dataset
+.                 gen cp_1 = 0
+
+.                 replace cp_1 = 1 if mod(_n,2) == 0
+(12 real changes made)
+
+. 
+.                 gen cp_2 = 0
+
+.                 replace cp_2 = 1 in 13/24
+(12 real changes made)
+
+. 
+.                 gen pop = .
+(24 missing values generated)
+
+.                 local row 1
+
+.                 forvalues i = 1/2 {
+  2.                         forvalues j = 1/6 {
+  3.                                 forvalues k = 1/2 {     
+  4.                                         replace pop = `j' in `row'
+  5.                                         local ++row
+  6.                                 }
+  7.                         }
+  8.                 }
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+
+. 
+.                 * Add value labels
+.                 label define yesno 0 "No" 1 "Yes", replace
+
+.                 label define pop ///
+>                                    1 "Burkina Faso" ///
+>                                    2 "DRC-Kinshasa" ///
+>                                    3 "DRC-Kongo Central" ///
+>                                    4 "Kenya" ///
+>                                    5 "Nigeria-Kano" ///
+>                                    6 "Nigeria-Lagos", replace
+
+.                 label values cp_1 yesno
+
+.                 label values cp_2 yesno
+
+.                 label values pop pop
+
+. 
+.                 label variable cp_1    "Contraceptive user (Phase 1)"
+
+.                 label variable cp_2    "Contraceptive user (Phase 2)"
+
+. 
+.                 * Plot with updated aesthetic options              
+.                 twoway (bar estimate cp_1 if cp_2 == 1 , ///
+>                                    color(blue*.5) horizontal barwidth(0.9) ///
+>                                    ylabel(0(1)1,valuelabel angle(0) nogrid) //
+> /
+>                                    xlabel(0(20)100)) ///
+>                                 (rcap lcb ucb cp_1 if cp_2 == 1, horizontal lc
+> olor(black)) ///
+>                                 ,  by(pop, graphregion(color(white)) legend(of
+> f) note("")) ///
+>                                    subtitle(,lcolor(white) fcolor(white)) ///
+>                                    xtitle(Contraceptive user (Phase 2) (%)) //
+> /
+>                                    xline(20 40 60 80 100, lcolor(gs15) lwidth(
+> vthin)) ///
+>                                    name(f4_03, replace)
+
+.                                    
+.                 graph export f4_03.png, width(2000) replace
+file f4_03.png saved as PNG format
+
+. 
+. ******************************************************************************
+> **
+. use post4_prepped, clear
+
+. 
+. svy, subpop(if cp_1 == 1 & pop == 1): proportion cp_2  // top row for Burkina 
+> Faso
+(running proportion on estimation sample)
+
+Survey: Proportion estimation
+
+Number of strata =   2            Number of obs   =      5,207
+Number of PSUs   = 167            Population size = 5,215.6413
+                                  Subpop. no. obs =      1,797
+                                  Subpop. size    = 1,500.6663
+                                  Design df       =        165
+
+--------------------------------------------------------------
+             |             Linearized            Logit
+             | Proportion   std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+        cp_2 |
+         no  |   .3473058   .0216696      .3058384    .3912268
+        yes  |   .6526942   .0216696      .6087732    .6941616
+--------------------------------------------------------------
+Note: 26 strata omitted because they contain no subpopulation
+      members.
+
+. svy, subpop(if cp_1 == 1 & pop == 3): proportion cp_2  // top row for DRC-Kong
+> o Central
+(running proportion on estimation sample)
+
+Survey: Proportion estimation
+
+Number of strata =  1             Number of obs   =      1,511
+Number of PSUs   = 57             Population size = 1,509.1075
+                                  Subpop. no. obs =        615
+                                  Subpop. size    = 554.115494
+                                  Design df       =         56
+
+--------------------------------------------------------------
+             |             Linearized            Logit
+             | Proportion   std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+        cp_2 |
+         no  |   .2696023   .0342364      .2067006    .3433606
+        yes  |   .7303977   .0342364      .6566394    .7932994
+--------------------------------------------------------------
+Note: 27 strata omitted because they contain no subpopulation
+      members.
+
+. * Check Rao-Scott
+. svy, subpop(if inlist(pop,1,3) & cp_1 == 1): tab cp_2 pop , null pearson col
+(running tabulate on estimation sample)
+
+Number of strata =   3                            Number of obs   =      6,718
+Number of PSUs   = 224                            Population size = 6,724.7488
+                                                  Subpop. no. obs =      2,412
+                                                  Subpop. size    = 2,054.7818
+                                                  Design df       =        221
+
+----------------------------------------
+Contracep |
+tive user |             pop             
+(Phase 2) |  Burkina  DRC-Kong     Total
+----------+-----------------------------
+       no |    .3473     .2696     .3264
+      yes |    .6527     .7304     .6736
+          | 
+    Total |        1         1         1
+----------------------------------------
+Key: Column proportion
+
+  Pearson:
+    Uncorrected   chi2(1)         =   36.3375
+    D-B (null)    F(1, 221)       =    3.3221     P = 0.0697
+    Design-based  F(1, 221)       =    3.4174     P = 0.0658
+
+Note: 25 strata omitted because they contain no subpopulation members.
+
+. 
+. ******************************************************************************
+> **
+. 
+. * Generate new vars to show the status of female in both phases
+. gen fpstatus_1 = 1 if pregnant_1 == 1
+(16,519 missing values generated)
+
+. replace fpstatus_1 = 3 if pregnant_1 != 1 & cp_1 == 1
+(7,109 real changes made)
+
+. replace fpstatus_1 = 2 if pregnant_1 != 1 & cp_1 == 0
+(9,410 real changes made)
+
+. 
+. gen fpstatus_2 = 1 if pregnant_2 == 1
+(16,638 missing values generated)
+
+. replace fpstatus_2 = 3 if pregnant_2 != 1 & cp_2 == 1
+(8,081 real changes made)
+
+. replace fpstatus_2 = 2 if pregnant_2 != 1 & cp_2 == 0
+(8,557 real changes made)
+
+. 
+. label define status 1 "Pregnant" 3 "Using FP" 2 "Not Using FP"
+
+. label values fpstatus_1 status
+
+. label values fpstatus_2 status
+
+. 
+. label variable fpstatus_1 "Family planning status at Phase 1"
+
+. label variable fpstatus_2 "Family planning status at Phase 2"
+
+. 
+. ******************************************************************************
+> **
+. 
+. list pregnant_1 cp_1 fpstatus_1 pregnant_2 cp_2 fpstatus_2 in 1/12, noobs sep(
+> 12)
+
+  +-----------------------------------------------------------------+
+  | pregna~1   cp_1     fpstatus_1   pregna~2   cp_2     fpstatus_2 |
+  |-----------------------------------------------------------------|
+  |       no     no   Not Using FP         no    yes       Using FP |
+  |      yes     no       Pregnant         no    yes       Using FP |
+  |       no     no   Not Using FP         no     no   Not Using FP |
+  |       no    yes       Using FP         no     no   Not Using FP |
+  |       no     no   Not Using FP         no     no   Not Using FP |
+  |       no     no   Not Using FP         no     no   Not Using FP |
+  |       no     no   Not Using FP         no     no   Not Using FP |
+  |       no     no   Not Using FP         no     no   Not Using FP |
+  |       no    yes       Using FP         no    yes       Using FP |
+  |       no     no   Not Using FP         no    yes       Using FP |
+  |       no    yes       Using FP         no    yes       Using FP |
+  |       no    yes       Using FP         no     no   Not Using FP |
+  +-----------------------------------------------------------------+
+
+. 
+. ******************************************************************************
+> **
+. 
+. save post4_prepped, replace
+file post4_prepped.dta saved
+
+. 
+. use post4_prepped, clear
+
+. 
+. * Prepare to post data to a new dataset
+. capture postclose toplot
+
+. tempfile postout
+
+. postfile toplot fpstatus_1 fpstatus_2 pop estimate lcb ucb using `postout', re
+> place
+(file C:\Users\DaleR\AppData\Local\Temp\ST_910_000002.tmp not found)
+
+. 
+. forvalues i = 1/3 {
+  2.         forvalues k = 1/3 {
+  3.                 forvalues j = 1/6 {
+  4.                         capture drop y
+  5.                         gen y = fpstatus_2 == `k'
+  6.                         quietly svy, subpop(if fpstatus_1 == `i' & pop == `
+> j'): proportion y 
+  7.                         post toplot (`i') (`k') (`j') ///
+>                                                 (`=100*r(table)[1,2]') /// // 
+> the estimate
+>                                                 (`=100*r(table)[5,2]') /// // 
+> the LCB
+>                                                 (`=100*r(table)[6,2]')     // 
+> the UCB
+  8.                 }
+  9.         }
+ 10. }
+
+. capture postclose toplot
+
+. use `postout', clear
+
+. 
+. label define status 1 "Pregnant" 3 "Using FP" 2 "Not Using FP"
+
+. label values fpstatus_1 status
+
+. label values fpstatus_2 status
+
+. label define pop ///
+>            1 "Burkina Faso" ///
+>            2 "DRC-Kinshasa" ///
+>            3 "DRC-Kongo Central" ///
+>            4 "Kenya" ///
+>            5 "Nigeria-Kano" ///
+>            6 "Nigeria-Lagos", replace
+
+. label values pop pop
+
+. 
+. label variable fpstatus_1 "Family Planning Status (Phase 1)"
+
+. label variable fpstatus_2 "Family Planning Status (Phase 2)"
+
+.            
+. label define status2 1 "Pregnant in Phase 1" 3 "Using FP in Phase 1" 2 "Not Us
+> ing FP in Phase 1", replace
+
+. label values fpstatus_1 status2
+
+. 
+. * Plot with updated aesthetic options              
+. twoway (bar estimate fpstatus_2 if fpstatus_2 == fpstatus_1, ///
+>            color(blue*.5) horizontal barwidth(0.9) ///
+>            ylabel(1(1)3,valuelabel angle(0) nogrid) ///
+>            xlabel(0(20)100)) ///
+>                 (bar estimate fpstatus_2 if fpstatus_2 != fpstatus_1, ///
+>            color(orange*.5) horizontal barwidth(0.9)) ///
+>                 (rcap lcb ucb fpstatus_2 , horizontal lcolor(black)) ///
+>                 ,  by(pop fpstatus_1, graphregion(color(white)) ///
+>                       note("Estimates within each subplot sum to 100%.", size(
+> vsmall)) col(3)  ) ///
+>                    subtitle(,lcolor(white) fcolor(white)) ///
+>                    xtitle(Family Planning Status (Phase 2)) ///
+>                    xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
+>                    legend(order(1 "No change" 2 "Status changed") size(vsmall)
+>  ///
+>                           region(lcolor(white)) symxsize(small) symysize(small
+> )) ///
+>                    ytitle("") ///
+>                    name(f4_04, replace)            
+
+. graph export f4_04.png, width(2000) replace
+file f4_04.png saved as PNG format
+
+. 
+. ******************************************************************************
+> **
+. use post4_prepped, clear
+
+. 
+. * Table of methods
+. table ( fpcurreffmethrc_1 ) ( ) ( ), nototals missing
+
+----------------------------------------------------------------
+                                                    |  Frequency
+----------------------------------------------------+-----------
+most effective current fp method (numeric, recoded) |           
+  female sterilization                              |        198
+  male sterilization                                |          1
+  implants                                          |      2,248
+  iud                                               |        226
+  injectables (3 months)                            |      1,412
+  injectables (sayana press)                        |        296
+  pill                                              |        547
+  emergency contraception                           |        243
+  male condom                                       |        791
+  female condom                                     |          1
+  diaphragm                                         |          1
+  foam                                              |          1
+  standard days/cycle beads method                  |         70
+  lactational amenorrhea method (lam)               |         24
+  rhythm                                            |        569
+  withdrawal                                        |        351
+  other traditional                                 |        153
+  no response or missing                            |          1
+  niu (not in universe)                             |     10,572
+----------------------------------------------------------------
+
+. 
+. * Generate new variables to recode the methods to 3 categories 
+. label define fpmethod 4 "Long-acting" 3 "Short-acting" 2 "Traditional" 1 "None
+> ", replace
+
+. 
+. foreach v in fpcurreffmethrc_1 fpcurreffmethrc_2 {
+  2.         gen cat_`v' = 4 if `v' < 120
+  3.         replace cat_`v' = 3 if `v' >= 120 & `v' < 200
+  4.         replace cat_`v' = 2 if `v' >= 200 & `v' < 900
+  5.         replace cat_`v' = 1 if cat_`v' == .
+  6.         
+.         label values cat_`v' fpmethod
+  7. }
+(15,032 missing values generated)
+(3,386 real changes made)
+(1,073 real changes made)
+(10,573 real changes made)
+(14,966 missing values generated)
+(4,037 real changes made)
+(1,317 real changes made)
+(9,612 real changes made)
+
+. 
+. save post4_prepped, replace
+file post4_prepped.dta saved
+
+. 
+. ******************************************************************************
+> **
+. 
+. use post4_prepped, clear
+
+. 
+. * Prepare to post data to a new dataset
+. capture postclose toplot
+
+. tempfile postout
+
+. postfile toplot methcat_1 methcat_2 pop estimate lcb ucb using `postout', repl
+> ace
+(file C:\Users\DaleR\AppData\Local\Temp\ST_910_000003.tmp not found)
+
+. 
+. forvalues i = 1/4 {
+  2.         forvalues k = 1/4 {
+  3.                 forvalues j = 1/6 {
+  4.                         capture drop y
+  5.                         gen y = cat_fpcurreffmethrc_2 == `k'
+  6.                         quietly svy, subpop(if cat_fpcurreffmethrc_1 == `i'
+>  & pop == `j'): proportion y 
+  7.                         post toplot (`i') (`k') (`j') ///
+>                                                 (`=100*r(table)[1,2]') /// // 
+> the estimate
+>                                                 (`=100*r(table)[5,2]') /// // 
+> the LCB
+>                                                 (`=100*r(table)[6,2]')     // 
+> the UCB
+  8.                 }
+  9.         }
+ 10. }
+
+. capture postclose toplot
+
+. use `postout', clear
+
+. 
+. label define fpmethod 4 "Long-acting" 3 "Short-acting" 2 "Traditional" 1 "None
+> ", replace
+
+. label values methcat_1 fpmethod
+
+. label values methcat_2 fpmethod
+
+. label define pop ///
+>            1 "Burkina Faso" ///
+>            2 "DRC-Kinshasa" ///
+>            3 "DRC-Kongo Central" ///
+>            4 "Kenya" ///
+>            5 "Nigeria-Kano" ///
+>            6 "Nigeria-Lagos", replace
+
+. label values pop pop
+
+. 
+. label variable methcat_1 "Family Planning Method (Phase 1)"
+
+. label variable methcat_2 "Family Planning Method (Phase 2)"
+
+.            
+. * Plot with updated aesthetic options              
+. twoway (bar estimate methcat_2 if methcat_1 == methcat_2, ///
+>            color(blue*.5) horizontal barwidth(0.9) ///
+>            ylabel(1(1)4,valuelabel angle(0) nogrid labsize(small)) ///
+>            xlabel(0(20)100)) ///
+>                 (bar estimate methcat_2 if methcat_1 != methcat_2, ///
+>            color(orange*.5) horizontal barwidth(0.9)) ///
+>                 (rcap lcb ucb methcat_2 , horizontal lcolor(black)) ///
+>                 ,  by(pop (methcat_1), graphregion(color(white)) ///
+>                       note("Estimates within each subplot sum to 100%." "Graph
+> s by population and Phase 1 method.", size(vsmall)) col(4)  ) ///
+>                    subtitle(,size(small) lcolor(white) fcolor(white)) ///
+>                    xtitle(Family Planning Method (Phase 2), size(small)) ///
+>                    xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
+>                    legend(order(1 "No change" 2 "Method changed") size(vsmall)
+>  ///
+>                           region(lcolor(white)) symxsize(small) symysize(small
+> )) ///
+>                    ytitle("") ///
+>                    name(f4_05, replace)         
+
+.                    
+. graph export f4_05.png, width(2000) replace
+file f4_05.png saved as PNG format
+
+. 
+. 
+. ******************************************************************************
+> **
+. 
+. use post4_prepped, clear
+
+. 
+. 
+. *gen CHG_FPCURR - Change in contraceptive use between Phase 1 and Phase 2
+. 
+. ******************************************************************************
+> **
+. 
+. gen chg_fpcurr = .
+(17,705 missing values generated)
+
+. replace chg_fpcurr = 1 if fpcurreffmethrc_1 < 900 & fpcurreffmethrc_2 < 900 & 
+> fpcurreffmethrc_1 != fpcurreffmethrc_2
+(1,544 real changes made)
+
+. replace chg_fpcurr = 2 if fpcurreffmethrc_1 < 900 & fpcurreffmethrc_2 < 900 & 
+> fpcurreffmethrc_1 == fpcurreffmethrc_2
+(3,850 real changes made)
+
+. replace chg_fpcurr = 3 if fpcurreffmethrc_1 > 900 & fpcurreffmethrc_2 > 900
+(7,874 real changes made)
+
+. replace chg_fpcurr = 4 if fpcurreffmethrc_1 > 900 & fpcurreffmethrc_2 < 900
+(2,699 real changes made)
+
+. replace chg_fpcurr = 5 if fpcurreffmethrc_1 < 900 & fpcurreffmethrc_2 > 900
+(1,738 real changes made)
+
+. 
+. label define chg_fpcurr 1 "Changed methods" 2 "Continued method" 3 "Continued 
+> non-use" 4 "Started using" 5 "Stopped using", replace
+
+. label values chg_fpcurr chg_fpcurr
+
+. label var chg_fpcurr "Phase 1 to 2 Family Planning Change Status"
+
+. 
+. * Generate age categories
+. gen cat_age_2 = .
+(17,705 missing values generated)
+
+. replace cat_age_2 = 1 if age_2 < 20
+(2,880 real changes made)
+
+. replace cat_age_2 = 2 if age_2 >= 20 & age_2 < 25
+(3,124 real changes made)
+
+. replace cat_age_2 = 3 if age_2 >= 25 
+(11,701 real changes made)
+
+. 
+. label define cat_age_2 1 "15-19" 2 "20-24" 3 "25-49", replace
+
+. label values cat_age_2 cat_age_2
+
+. label var cat_age_2 "Age category at Phase 2"
+
+. 
+. save post4_prepped, replace
+file post4_prepped.dta saved
+
+. 
+. ******************************************************************************
+> **
+. 
+. use post4_prepped, clear
+
+. 
+. * Prepare to post data to a new dataset
+. capture postclose toplot
+
+. tempfile postout
+
+. postfile toplot cat_age_2 chg_fpcurr pop estimate lcb ucb using `postout', rep
+> lace
+(file C:\Users\DaleR\AppData\Local\Temp\ST_910_000004.tmp not found)
+
+. 
+. forvalues i = 1/3 {
+  2.         forvalues k = 1/5 {
+  3.                 forvalues j = 1/6 {
+  4.                         capture drop y
+  5.                         gen y = chg_fpcurr == `k'
+  6.                         quietly svy, subpop(if cat_age_2 == `i' & pop == `j
+> '): proportion y 
+  7.                         post toplot (`i') (`k') (`j') ///
+>                                                 (`=100*r(table)[1,2]') /// // 
+> the estimate
+>                                                 (`=100*r(table)[5,2]') /// // 
+> the LCB
+>                                                 (`=100*r(table)[6,2]')     // 
+> the UCB
+  8.                 }
+  9.         }
+ 10. }
+
+. capture postclose toplot
+
+. use `postout', clear
+
+. 
+. label define cat_age_2 1 "15-19" 2 "20-24" 3 "25-49", replace
+
+. label define chg_fpcurr 1 "Changed methods" 2 "Continued method" 3 "Continued 
+> non-use" 4 "Started using" 5 "Stopped using", replace
+
+. 
+. label values cat_age_2 cat_age_2
+
+. label values chg_fpcurr chg_fpcurr
+
+. 
+. label define pop ///
+>            1 "Burkina Faso" ///
+>            2 "DRC-Kinshasa" ///
+>            3 "DRC-Kongo Central" ///
+>            4 "Kenya" ///
+>            5 "Nigeria-Kano" ///
+>            6 "Nigeria-Lagos", replace
+
+. label values pop pop
+
+. 
+. label var chg_fpcurr  "Phase 1 to 2 Family Planning Change Status"
+
+.            
+. twoway (bar estimate cat_age_2 , ///
+>            color(blue*.5) horizontal barwidth(0.9) ///
+>            ylabel(1(1)3,valuelabel angle(0) nogrid labsize(small)) ///
+>            xlabel(0(20)100)) ///
+>                 (rcap lcb ucb cat_age_2 , horizontal lcolor(black)) ///
+>                 ,  by(pop chg_fpcurr, graphregion(color(white)) ///
+>                       note("Estimates across each row of the figure sum to 100
+> %.", size(vsmall)) col(5) legend(off) ) ///
+>                    subtitle(,size(small) lcolor(white) fcolor(white)) ///
+>                    xtitle("Changes in Family Planning Status, Phase 1 to Phase
+>  2", size(small)) ///
+>                    xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
+>                    ytitle("") ///
+>                    name(f4_06, replace)
+
+.                    
+. graph export f4_06.png, width(2000) replace
+file f4_06.png saved as PNG format
+
+. 
+. ******************************************************************************
+> **
+. 
+. 
+. ******************************************************************************
+> **
+. 
+. use post4_prepped, clear
+
+. 
+. gen cat_educattgen_2 = .
+(17,705 missing values generated)
+
+. replace cat_educattgen_2 = 1 if educattgen_2 < 3
+(8,251 real changes made)
+
+. replace cat_educattgen_2 = 2 if educattgen_2 == 3
+(7,398 real changes made)
+
+. replace cat_educattgen_2 = 3 if educattgen_2 == 4
+(2,054 real changes made)
+
+. 
+. label define cat_educattgen_2 1 "None/Primary" 2 "Secondary" 3 "Tertiary", rep
+> lace
+
+. label values cat_educattgen_2 cat_educattgen_2
+
+. label var cat_educattgen_2 "Education Category at Phase 2"
+
+. 
+. save post4_prepped, replace
+file post4_prepped.dta saved
+
+. 
+. ******************************************************************************
+> **
+. 
+. ******************************************************************************
+> **
+. 
+. use post4_prepped, clear
+
+. 
+. * Prepare to post data to a new dataset
+. capture postclose toplot
+
+. tempfile postout
+
+. postfile toplot cat_educattgen_2 chg_fpcurr pop estimate lcb ucb using `postou
+> t', replace
+(file C:\Users\DaleR\AppData\Local\Temp\ST_910_000005.tmp not found)
+
+. 
+. forvalues i = 1/3 {
+  2.         forvalues k = 1/5 {
+  3.                 forvalues j = 1/6 {
+  4.                         capture drop y
+  5.                         gen y = chg_fpcurr == `k'
+  6.                         quietly svy, subpop(if cat_educattgen_2 == `i' & po
+> p == `j'): proportion y 
+  7.                         post toplot (`i') (`k') (`j') ///
+>                                                 (`=100*r(table)[1,2]') /// // 
+> the estimate
+>                                                 (`=100*r(table)[5,2]') /// // 
+> the LCB
+>                                                 (`=100*r(table)[6,2]')     // 
+> the UCB
+  8.                 }
+  9.         }
+ 10. }
+
+. capture postclose toplot
+
+. use `postout', clear
+
+. 
+. label define cat_educattgen_2 1 "None/Primary" 2 "Secondary" 3 "Tertiary", rep
+> lace
+
+. label define chg_fpcurr 1 "Changed methods" 2 "Continued method" 3 "Continued 
+> non-use" 4 "Started using" 5 "Stopped using", replace
+
+. 
+. label values cat_educattgen_2 cat_educattgen_2
+
+. label values chg_fpcurr chg_fpcurr
+
+. 
+. label define pop ///
+>            1 "Burkina Faso" ///
+>            2 "DRC-Kinshasa" ///
+>            3 "DRC-Kongo Central" ///
+>            4 "Kenya" ///
+>            5 "Nigeria-Kano" ///
+>            6 "Nigeria-Lagos", replace
+
+. label values pop pop
+
+. 
+. label var chg_fpcurr "Phase 1 to 2 Family Planning Change Status"
+
+.            
+. * Plot with updated aesthetic options              
+. twoway (bar estimate cat_educattgen_2 , ///
+>            color(blue*.5) horizontal barwidth(0.9) ///
+>                    ylabel(1(1)3,valuelabel angle(0) nogrid labsize(small)) ///
+>                    xlabel(0(20)100)) ///
+>                 (rcap lcb ucb cat_educattgen_2 , horizontal lcolor(black)) ///
+>                 ,  by(pop chg_fpcurr, graphregion(color(white)) ///
+>                       note("Estimates across each row of the figure sum to 100
+> %.", size(vsmall)) col(5) legend(off) ) ///
+>                    subtitle(,size(small) lcolor(white) fcolor(white)) ///
+>                    xtitle("Changes in Family Planning Status, Phase 1 to Phase
+>  2", size(small)) ///
+>                    xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
+>                    ytitle("") ///
+>                    name(f4_07, replace)
+
+.                    
+. graph export f4_07.png, width(2000) replace
+file f4_07.png saved as PNG format
+
+. 
+. 
+. ******************************************************************************
+> **
+. 
+. use post4_prepped, clear
+
+. 
+. capture drop y
+
+. gen y = chg_fpcurr == 3
+
+. 
+. svy, subpop(if inlist(cat_educattgen_2,2,3) & pop == 6): ///
+>      tab cat_educattgen_2 y if cat_educattgen_2 > 1 , row pearson null ci
+(running tabulate on estimation sample)
+
+Number of strata =  1                             Number of obs   =        970
+Number of PSUs   = 51                             Population size = 957.828852
+                                                  Subpop. no. obs =        970
+                                                  Subpop. size    = 957.828852
+                                                  Design df       =         50
+
+-------------------------------------------------------
+Education |
+Category  |
+at Phase  |                      y                     
+2         |             0              1          Total
+----------+--------------------------------------------
+ Secondar |         .5088          .4912              1
+          | [.4601,.5573]  [.4427,.5399]               
+          | 
+ Tertiary |         .5892          .4108              1
+          | [.5331,.6431]  [.3569,.4669]               
+          | 
+    Total |         .5434          .4566              1
+          | [.5058,.5805]  [.4195,.4942]               
+-------------------------------------------------------
+Key: Row proportion
+     [95% confidence interval for row proportion]
+
+  Pearson:
+    Uncorrected   chi2(1)         =    6.1953
+    D-B (null)    F(1, 50)        =    5.3040     P = 0.0255
+    Design-based  F(1, 50)        =    5.3259     P = 0.0252
+
+Note: 27 strata omitted because they contain no subpopulation members.
+
+. 
+. ******************************************************************************
+> **
+. 
+. use post4_prepped, clear
+
+. 
+. gen cat_marstat_2 = .
+(17,705 missing values generated)
+
+. replace cat_marstat_2 = 1 if marstat_2 == 21 | marstat_2 == 22
+(11,524 real changes made)
+
+. replace cat_marstat_2 = 2 if cat_marstat_2 != 1
+(6,181 real changes made)
+
+. 
+. label define cat_marstat_2 1 "In union" 2 "Not in union", replace
+
+. label values cat_marstat_2 cat_marstat_2
+
+. label variable cat_marstat_2 "Marital status at Phase 2"
+
+. 
+. save, replace
+file post4_prepped.dta saved
+
+. 
+. ******************************************************************************
+> **
+. 
+. use post4_prepped, clear
+
+. 
+. * Prepare to post data to a new dataset
+. capture postclose toplot
+
+. tempfile postout
+
+. postfile toplot cat_marstat_2 chg_fpcurr pop estimate lcb ucb using `postout',
+>  replace
+(file C:\Users\DaleR\AppData\Local\Temp\ST_910_000006.tmp not found)
+
+. 
+. forvalues i = 1/2 {
+  2.         forvalues k = 1/5 {
+  3.                 forvalues j = 1/6 {
+  4.                         capture drop y
+  5.                         gen y = chg_fpcurr == `k'
+  6.                         quietly svy, subpop(if cat_marstat_2 == `i' & pop =
+> = `j'): proportion y 
+  7.                         post toplot (`i') (`k') (`j') ///
+>                                                 (`=100*r(table)[1,2]') /// // 
+> the estimate
+>                                                 (`=100*r(table)[5,2]') /// // 
+> the LCB
+>                                                 (`=100*r(table)[6,2]')     // 
+> the UCB
+  8.                 }
+  9.         }
+ 10. }
+
+. capture postclose toplot
+
+. use `postout', clear
+
+. 
+. label define cat_marstat_2 1 "In union" 2 "Not in union", replace
+
+. label define chg_fpcurr 1 "Changed methods" 2 "Continued method" 3 "Continued 
+> non-use" 4 "Started using" 5 "Stopped using", replace
+
+. 
+. label values cat_marstat_2 cat_marstat_2
+
+. label values chg_fpcurr chg_fpcurr
+
+. 
+. label define pop ///
+>            1 "Burkina Faso" ///
+>            2 "DRC-Kinshasa" ///
+>            3 "DRC-Kongo Central" ///
+>            4 "Kenya" ///
+>            5 "Nigeria-Kano" ///
+>            6 "Nigeria-Lagos", replace
+
+. label values pop pop
+
+. 
+. label var chg_fpcurr "Phase 1 to 2 Family Planning Change Status"
+
+.            
+. * Plot with updated aesthetic options              
+. twoway (bar estimate cat_marstat_2 , ///
+>                    color(blue*.5) horizontal barwidth(0.9) ///
+>                    ylabel(1(1)2,valuelabel angle(0) nogrid labsize(small)) ///
+>                    xlabel(0(20)100)) ///
+>                 (rcap lcb ucb cat_marstat_2 , horizontal lcolor(black)) ///
+>                 ,  by(pop chg_fpcurr, graphregion(color(white)) ///
+>                       note("Estimates across each row of the figure sum to 100
+> %.", size(vsmall)) col(5) legend(off) ) ///
+>                    subtitle(,size(small) lcolor(white) fcolor(white)) ///
+>                    xtitle("Changes in Family Planning Status, Phase 1 to Phase
+>  2", size(small)) ///
+>                    xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
+>                    ytitle("") ///
+>                    name(f4_08, replace)
+
+.                    
+. graph export f4_08.png, width(2000) replace
+file f4_08.png saved as PNG format
+
+. 
+. ******************************************************************************
+> **
+. 
+. use post4_prepped, clear
+
+. 
+. gen cat_birthevent_2 = .
+(17,705 missing values generated)
+
+. replace cat_birthevent_2 = 1 if inlist(birthevent_2,0,99)
+(4,291 real changes made)
+
+. replace cat_birthevent_2 = 2 if inlist(birthevent_2,1,2)
+(5,144 real changes made)
+
+. replace cat_birthevent_2 = 3 if inlist(birthevent_2,3,4)
+(4,424 real changes made)
+
+. replace cat_birthevent_2 = 4 if birthevent_2 >= 5 & birthevent_2 < 90
+(3,844 real changes made)
+
+. 
+. label define cat_birthevent_2 1 "None" 2 "One-two" 3 "Three-four" 4 "Five +", 
+> replace
+
+. label values cat_birthevent_2 cat_birthevent_2
+
+. 
+. label var cat_birthevent_2 "Parity (number of live births) at Phase 2"
+
+. 
+. save, replace
+file post4_prepped.dta saved
+
+. 
+. ******************************************************************************
+> **
+. 
+. use post4_prepped, clear
+
+. 
+. * Prepare to post data to a new dataset
+. capture postclose toplot
+
+. tempfile postout
+
+. postfile toplot cat_birthevent_2 chg_fpcurr pop estimate lcb ucb using `postou
+> t', replace
+(file C:\Users\DaleR\AppData\Local\Temp\ST_910_000007.tmp not found)
+
+. 
+. forvalues i = 1/4 {
+  2.         forvalues k = 1/5 {
+  3.                 forvalues j = 1/6 {
+  4.                         capture drop y
+  5.                         gen y = chg_fpcurr == `k'
+  6.                         quietly svy, subpop(if cat_birthevent_2 == `i' & po
+> p == `j'): proportion y 
+  7.                         post toplot (`i') (`k') (`j') ///
+>                                                 (`=100*r(table)[1,2]') /// // 
+> the estimate
+>                                                 (`=100*r(table)[5,2]') /// // 
+> the LCB
+>                                                 (`=100*r(table)[6,2]')     // 
+> the UCB
+  8.                 }
+  9.         }
+ 10. }
+
+. capture postclose toplot
+
+. use `postout', clear
+
+. 
+. label define cat_birthevent_2 1 "None" 2 "One-two" 3 "Three-four" 4 "Five +", 
+> replace
+
+. label define chg_fpcurr 1 "Changed methods" 2 "Continued method" 3 "Continued 
+> non-use" 4 "Started using" 5 "Stopped using", replace
+
+. 
+. label values cat_birthevent_2 cat_birthevent_2
+
+. label values chg_fpcurr chg_fpcurr
+
+. 
+. label define pop ///
+>            1 "Burkina Faso" ///
+>            2 "DRC-Kinshasa" ///
+>            3 "DRC-Kongo Central" ///
+>            4 "Kenya" ///
+>            5 "Nigeria-Kano" ///
+>            6 "Nigeria-Lagos", replace
+
+. label values pop pop
+
+. 
+. label var chg_fpcurr "Phase 1 to 2 Family Planning Change Status"
+
+.            
+. * Plot with updated aesthetic options              
+. twoway (bar estimate cat_birthevent_2 , ///
+>                    color(blue*.5) horizontal barwidth(0.9) ///
+>                    ylabel(1(1)4,valuelabel angle(0) nogrid labsize(small)) ///
+>                    xlabel(0(20)100)) ///
+>                 (rcap lcb ucb cat_birthevent_2 , horizontal lcolor(black)) ///
+>                 ,  by(pop chg_fpcurr, graphregion(color(white)) ///
+>                       note("Estimates across each row of the figure sum to 100
+> %.", size(vsmall)) col(5) legend(off) ) ///
+>                    subtitle(,size(small) lcolor(white) fcolor(white)) ///
+>                    xtitle("Changes in Family Planning Status, Phase 1 to Phase
+>  2", size(small)) ///
+>                    xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
+>                    ytitle("") ///
+>                    name(f4_09, replace)
+
+.                    
+. graph export f4_09.png, width(2000) replace
+file f4_09.png saved as PNG format
+
+. 
+. ******************************************************************************
+> **
+. 
+. use post4_prepped, clear
+
+. 
+. * Women who didn't use any method at phase 1
+. keep if cp_1 == 0
+(7,132 observations deleted)
+
+. 
+. * Prepare to post data to a new dataset
+. capture postclose toplot
+
+. tempfile postout
+
+. postfile toplot unmetyn_1 pop estimate lcb ucb using `postout', replace
+(file C:\Users\DaleR\AppData\Local\Temp\ST_910_000008.tmp not found)
+
+. 
+. forvalues i = 0/1 {
+  2.         forvalues j = 1/6 {
+  3.                 capture drop y
+  4.                 gen y = cp_2 == 1
+  5.                 quietly svy, subpop(if unmetyn_1 == `i' & pop == `j'): prop
+> ortion y 
+  6.                 post toplot (`i') (`j') ///
+>                                         (`=100*r(table)[1,2]') /// // the esti
+> mate
+>                                         (`=100*r(table)[5,2]') /// // the LCB
+>                                         (`=100*r(table)[6,2]')     // the UCB
+  7.         }
+  8. }
+
+. capture postclose toplot
+
+. use `postout', clear
+
+. 
+. label define unmetyn_1 0 "No" 1 "Yes", replace
+
+. label values unmetyn_1 unmetyn_1
+
+. 
+. label define pop ///
+>            1 "Burkina Faso" ///
+>            2 "DRC-Kinshasa" ///
+>            3 "DRC-Kongo Central" ///
+>            4 "Kenya" ///
+>            5 "Nigeria-Kano" ///
+>            6 "Nigeria-Lagos", replace
+
+. label values pop pop
+
+. 
+. twoway (bar estimate unmetyn_1 , ///
+>                    color(blue*.5) horizontal barwidth(0.9) ///
+>                    ylabel(0(1)1,valuelabel angle(0) nogrid labsize(small)) ///
+>                    xlabel(0(20)100)) ///
+>                 (rcap lcb ucb unmetyn_1 , horizontal lcolor(black)) ///
+>                 ,  by(pop , graphregion(color(white)) ///
+>                       note("Among women who were not using family planning in 
+> Phase 1.", ///
+>                                size(vsmall)) col(1) legend(off) ) ///
+>                    subtitle(,size(small) lcolor(white) fcolor(white)) ///
+>                    xtitle("Had adopted a method of family planning in Phase 2"
+> , size(small)) ///
+>                    xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
+>                    ytitle("Had unmet need in Phase 1") ///
+>                    ysize(10) xsize(8) ///
+>                    name(f4_10, replace)
+
+.                    
+. graph export f4_10.png, width(2000) replace
+file f4_10.png saved as PNG format
+
+. 
+. ******************************************************************************
+> **
+. 
+. use post4_prepped, clear
+
+. 
+. * Women who didn't use any method at Phase 1
+. keep if cp_1 == 0 
+(7,132 observations deleted)
+
+. 
+. * Outcome is women using contraception in Phase 2
+. gen y = cp_2 == 1
+
+. label variable y "Using contraception in Phase 2"
+
+. label variable unmetyn_1 "Unmet Need in Phase 1"
+
+. 
+. * Test for difference in Burkina Faso
+. svy, subpop(if pop == 1 ): tab unmetyn_1 y, row pearson null ci
+(running tabulate on estimation sample)
+
+Number of strata =   2                            Number of obs   =      3,410
+Number of PSUs   = 167                            Population size = 3,714.9751
+                                                  Subpop. no. obs =      3,410
+                                                  Subpop. size    = 3,714.9751
+                                                  Design df       =        165
+
+-------------------------------------------------------
+Unmet     |
+Need in   |       Using contraception in Phase 2       
+Phase 1   |             0              1          Total
+----------+--------------------------------------------
+ no unmet |         .8056          .1944              1
+          | [.7744,.8334]  [.1666,.2256]               
+          | 
+ unmet ne |          .752           .248              1
+          | [.7126,.7877]  [.2123,.2874]               
+          | 
+    Total |         .7899          .2101              1
+          | [.7626,.8148]  [.1852,.2374]               
+-------------------------------------------------------
+Key: Row proportion
+     [95% confidence interval for row proportion]
+
+  Pearson:
+    Uncorrected   chi2(1)         =   12.2006
+    D-B (null)    F(1, 165)       =    7.0052     P = 0.0089
+    Design-based  F(1, 165)       =    7.3807     P = 0.0073
+
+Note: 26 strata omitted because they contain no subpopulation members.
+
+. 
+. * Test for difference in Nigeria-Kano
+. svy, subpop(if pop == 5 ): tab unmetyn_1 y, row pearson null ci
+(running tabulate on estimation sample)
+
+Number of strata =  2                                Number of obs   =     881
+Number of PSUs   = 25                                Population size = 901.912
+                                                     Subpop. no. obs =     881
+                                                     Subpop. size    = 901.912
+                                                     Design df       =      23
+
+-------------------------------------------------------
+Unmet     |
+Need in   |       Using contraception in Phase 2       
+Phase 1   |             0              1          Total
+----------+--------------------------------------------
+ no unmet |         .9613          .0387              1
+          |  [.929,.9793]   [.0207,.071]               
+          | 
+ unmet ne |          .894           .106              1
+          | [.7754,.9537]  [.0463,.2246]               
+          | 
+    Total |         .9456          .0544              1
+          | [.9095,.9679]  [.0321,.0905]               
+-------------------------------------------------------
+Key: Row proportion
+     [95% confidence interval for row proportion]
+
+  Pearson:
+    Uncorrected   chi2(1)         =   13.8741
+    D-B (null)    F(1, 23)        =    3.5261     P = 0.0731
+    Design-based  F(1, 23)        =    6.5905     P = 0.0172
+
+Note: 26 strata omitted because they contain no subpopulation members.
+
+. 
+. ******************************************************************************
+> **
+. 
+. use post4_prepped, clear
+
+. 
+. keep if cp_1 == 0 & inlist(fppartsupport_1,0,1,97)
+(11,811 observations deleted)
+
+. replace fppartsupport_1 = 2 if fppartsupport_1 == 97 
+(743 real changes made)
+
+. 
+. * Prepare to post data to a new dataset
+. capture postclose toplot
+
+. tempfile postout
+
+. postfile toplot fppartsupport_1 pop estimate lcb ucb using `postout', replace
+(file C:\Users\DaleR\AppData\Local\Temp\ST_910_000009.tmp not found)
+
+. 
+. forvalues i = 0/2 {
+  2.         forvalues j = 1/6 {
+  3.                 capture drop y
+  4.                 gen y = cp_2 == 1
+  5.                 quietly svy, subpop(if fppartsupport_1 == `i' & pop == `j')
+> : proportion y 
+  6.                 post toplot (`i') (`j') ///
+>                                         (`=100*r(table)[1,2]') /// // the esti
+> mate
+>                                         (`=100*r(table)[5,2]') /// // the LCB
+>                                         (`=100*r(table)[6,2]')     // the UCB
+  7.         }
+  8. }
+
+. capture postclose toplot
+
+. use `postout', clear
+
+. 
+. label define fppartsupport_1 0 "No" 1 "Yes" 2 `"Do not know"', replace
+
+. label values fppartsupport_1 fppartsupport_1
+
+. 
+. label define pop ///
+>            1 "Burkina Faso" ///
+>            2 "DRC-Kinshasa" ///
+>            3 "DRC-Kongo Central" ///
+>            4 "Kenya" ///
+>            5 "Nigeria-Kano" ///
+>            6 "Nigeria-Lagos", replace
+
+. label values pop pop
+
+. 
+. twoway (bar estimate fppartsupport_1 , ///
+>                    color(blue*.5) horizontal barwidth(0.9) ///
+>                    ylabel(0(1)2,valuelabel angle(0) nogrid labsize(small)) ///
+>                    xlabel(0(20)100)) ///
+>                 (rcap lcb ucb fppartsupport_1 , horizontal lcolor(black)) ///
+>                 ,  by(pop , graphregion(color(white)) ///
+>                       note("Among women who were not using family planning in 
+> Phase 1.", ///
+>                                size(vsmall)) col(1) legend(off) ) ///
+>                    subtitle(,size(small) lcolor(white) fcolor(white)) ///
+>                    xtitle("Had adopted a method of family planning in Phase 2"
+> , size(small)) ///
+>                    xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
+>                    ytitle("Partner supportive of family planning in Phase 1") 
+> ///
+>                    ysize(10) xsize(8) ///
+>                    name(f4_11, replace)
+
+.                    
+. graph export f4_11.png, width(2000) replace
+file f4_11.png saved as PNG format
+
+. 
+. ******************************************************************************
+> **
+. 
+. use post4_prepped, clear
+
+. 
+. keep if cp_1 == 0
+(7,132 observations deleted)
+
+. 
+. table (fpplanwhen_1) ( ) ( ), nototals missing
+
+----------------------------------------------------------
+                                              |  Frequency
+----------------------------------------------+-----------
+when will start using fp method in the future |           
+  months                                      |        932
+  years                                       |      3,039
+  soon / now                                  |        685
+  after the birth of this child               |        338
+  don't know                                  |        893
+  no response or missing                      |         18
+  niu (not in universe)                       |      4,668
+----------------------------------------------------------
+
+. 
+. gen fpplanyr_1 =  (fpplanval_1  <= 12 & fpplanwhen_1 == 1) | ///
+>                   (fpplanval_1 == 1   & fpplanwhen_1 == 2) | ///
+>                   inlist(fpplanwhen_1,3,4)
+
+. 
+. label define fpplanyr_1 0 "No" 1 "Yes", replace
+
+. label values fpplanyr_1 fpplanyr_1
+
+. 
+. label var fpplanyr_1 "Plan to start using family planning within 1 year at Pha
+> se 1"
+
+. 
+. * Prepare to post data to a new dataset
+. capture postclose toplot
+
+. tempfile postout
+
+. postfile toplot fpplanyr_1 pop estimate lcb ucb using `postout', replace
+(file C:\Users\DaleR\AppData\Local\Temp\ST_910_00000a.tmp not found)
+
+. 
+. forvalues i = 0/1 {
+  2.         forvalues j = 1/6 {
+  3.                 capture drop y
+  4.                 gen y = cp_2 == 1
+  5.                 quietly svy, subpop(if fpplanyr_1 == `i' & pop == `j'): pro
+> portion y 
+  6.                 post toplot (`i') (`j') ///
+>                                         (`=100*r(table)[1,2]') /// // the esti
+> mate
+>                                         (`=100*r(table)[5,2]') /// // the LCB
+>                                         (`=100*r(table)[6,2]')     // the UCB
+  7.         }
+  8. }
+
+. capture postclose toplot
+
+. use `postout', clear
+
+. 
+. label define fpplanyr_1 0 "No" 1 "Yes", replace
+
+. label values fpplanyr_1 fpplanyr_1
+
+. 
+. label define pop ///
+>            1 "Burkina Faso" ///
+>            2 "DRC-Kinshasa" ///
+>            3 "DRC-Kongo Central" ///
+>            4 "Kenya" ///
+>            5 "Nigeria-Kano" ///
+>            6 "Nigeria-Lagos", replace
+
+. label values pop pop
+
+. 
+. twoway (bar estimate fpplanyr_1 , ///
+>                    color(blue*.5) horizontal barwidth(0.9) ///
+>                    ylabel(0(1)1,valuelabel angle(0) nogrid labsize(small)) ///
+>                    xlabel(0(20)100)) ///
+>                 (rcap lcb ucb fpplanyr_1 , horizontal lcolor(black)) ///
+>                 ,  by(pop , graphregion(color(white)) ///
+>                       note("Among women who were not using family planning in 
+> Phase 1.", ///
+>                                size(vsmall)) col(1) legend(off) ) ///
+>                    subtitle(,size(small) lcolor(white) fcolor(white)) ///
+>                    xtitle("Had adopted a method of family planning in Phase 2"
+> , size(small)) ///
+>                    xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
+>                    ytitle("Respondent plans to adopt a FP method within a year
+>  at Phase 1") ///
+>                    ysize(10) xsize(8) ///
+>                    name(f4_12, replace) 
+
+.                    
+. graph export f4_12.png, width(2000) replace
+file f4_12.png saved as PNG format
+
+. 
+. * Cleanup
+. capture erase post4_prepped.dta
+
+. 
+. capture log close

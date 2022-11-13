@@ -1,0 +1,313 @@
+--------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  Q:\BMGF - PMA IPUMS FP Blog Posts\PMA 2022 longitudinal guide - Sta
+> ta files\Blog2_log.txt
+  log type:  text
+ opened on:   8 Nov 2022, 04:32:56
+
+. 
+. * Import the long format data
+. use pma_00119, clear
+
+. 
+. ******************************************************************************
+> **
+. 
+. * a simple example to show what long data looks like 
+. * (var: FQINSTID, PHASE, AGE, PANELWOMAN)
+. sort fqinstid
+
+. list fqinstid phase age panelwoman if strmatch(fqinstid, "011*") | ///
+>      strmatch(fqinstid, "015*"), separator(8) noobs
+
+  +-------------------------------------------------------+
+  |                  fqinstid      phase   age   panelw~n |
+  |-------------------------------------------------------|
+  | 011W5S0HN91I4H4I3T9JCMBHB   baseline    29          . |
+  | 011W5S0HN91I4H4I3T9JCMBHB   first fo    30        yes |
+  | 015NP6FJTIA98FYCBBBS1FOF7   first fo    48        yes |
+  | 015NP6FJTIA98FYCBBBS1FOF7   baseline    47          . |
+  | 015WYNNO2WXHH6JA4HA9PL1MR   baseline    20          . |
+  | 015WYNNO2WXHH6JA4HA9PL1MR   first fo    21        yes |
+  +-------------------------------------------------------+
+
+. 
+. ******************************************************************************
+> **
+. 
+. * tab to show the data include non-panel women 
+. * (var: PHASE, PANELWOMAN, FQINSTID == "")
+. gen non_panel = fqinstid == ""
+
+. label define fqinstid_blank 0 "fqinstid is not blank" 1 "fqinstid is blank"
+
+. label values non_panel fqinstid_blank
+
+. table (phase panelwoman) (non_panel), nototals missing
+
+-----------------------------------------------------------------------------------
+                                       |                  non_panel                
+                                       |  fqinstid is not blank   fqinstid is blank
+---------------------------------------+-------------------------------------------
+longitudinal survey phase              |                                           
+  baseline                             |                                           
+    panel woman interviewed in phase 1 |                                           
+      .                                |                 23,591                    
+  first follow up                      |                                           
+    panel woman interviewed in phase 1 |                                           
+      no                               |                                      6,586
+      yes                              |                 18,194                    
+-----------------------------------------------------------------------------------
+
+. 
+. ******************************************************************************
+> **
+. 
+. * Filter the data to keep data for women with data in both phases 
+. 
+. gen keep = 1 if phase == 1
+(24,780 missing values generated)
+
+. replace keep = 1 if phase == 2 & resultfq == 1
+(24,756 real changes made)
+
+. bysort fqinstid : egen keep_both = sum(keep)
+
+. keep if keep_both == 2
+(12,011 observations deleted)
+
+. drop keep keep_both
+
+. 
+. ******************************************************************************
+> **
+. 
+. * Filter the data to keep data for de facto women with data in both phases 
+. 
+. gen keep = 1 if phase == 1 & (resident == 11 | resident == 22)
+(18,424 missing values generated)
+
+. replace keep = 2 if phase == 2 & (resident == 11 | resident == 22)
+(17,913 real changes made)
+
+. bysort fqinstid : egen keep_both = sum(keep)
+
+. keep if keep_both == 3
+(910 observations deleted)
+
+. drop keep keep_both
+
+. 
+. ******************************************************************************
+> **
+. 
+. gen pop = .
+(35,450 missing values generated)
+
+. replace pop = 1 if country == 1 // Burkina Faso
+(10,424 real changes made)
+
+. replace pop = 2 if country == 2 & geocd == 1 // Kinshasa
+(3,946 real changes made)
+
+. replace pop = 3 if country == 2 & geocd == 2 // Kongo Central
+(3,028 real changes made)
+
+. replace pop = 4 if country == 7 // Kenya
+(13,878 real changes made)
+
+. replace pop = 5 if country == 9 & geong == 4 // Kano
+(1,996 real changes made)
+
+. replace pop = 6 if country == 9 & geong == 2 // Lagos
+(2,178 real changes made)
+
+. 
+. label define pop ///
+>            1 "Burkina Faso" ///
+>            2 "DRC-Kinshasa" ///
+>            3 "DRC-Kongo Central" ///
+>            4 "Kenya" ///
+>            5 "Nigeria-Kano" ///
+>            6 "Nigeria-Lagos", replace
+
+. 
+. label values pop pop
+
+.            
+. table ( pop ) ( phase) ( ), nototals missing
+
+--------------------------------------------------
+                    |   longitudinal survey phase 
+                    |   baseline   first follow up
+--------------------+-----------------------------
+pop                 |                             
+  Burkina Faso      |      5,212             5,212
+  DRC-Kinshasa      |      1,973             1,973
+  DRC-Kongo Central |      1,514             1,514
+  Kenya             |      6,939             6,939
+  Nigeria-Kano      |        998               998
+  Nigeria-Lagos     |      1,089             1,089
+--------------------------------------------------
+
+. 
+. ******************************************************************************
+> **
+. 
+. * Import the wide format data
+. use pma_00116, clear
+
+. * show the data for the same FQINSTID to show the difference 
+. * between long and wide data
+. list fqinstid age_1 age_2 panelwoman_1 panelwoman_2 ///
+>      if strmatch(fqinstid, "011*") | ///
+>             strmatch(fqinstid, "015*"), separator(8) noobs
+
+  +-----------------------------------------------------------------+
+  |                  fqinstid   age_1   age_2   panelw~1   panelw~2 |
+  |-----------------------------------------------------------------|
+  | 011W5S0HN91I4H4I3T9JCMBHB      29      30          .        yes |
+  | 015NP6FJTIA98FYCBBBS1FOF7      47      48          .        yes |
+  | 015WYNNO2WXHH6JA4HA9PL1MR      20      21          .        yes |
+  +-----------------------------------------------------------------+
+
+. 
+. ******************************************************************************
+> **
+. 
+. * Demonstrate why wide is not exactly half of long 
+. * (use the orignal long data not the filtered one)
+. 
+. list resultfq_1 age_1 resultfq_2 age_2 ///
+>      if fqinstid == "0C8VQU6B03BXLAVVZ8SB90EKQ", noobs
+
+  +----------------------------------------+
+  | res~fq_1   age_1   res~fq_2      age_2 |
+  |----------------------------------------|
+  | complete      31   not at h   not inte |
+  +----------------------------------------+
+
+. 
+. ******************************************************************************
+> **
+. 
+. use pma_00119, clear
+
+. list phase age resultfq ///
+>      if fqinstid == "0C8VQU6B03BXLAVVZ8SB90EKQ", noobs
+
+  +---------------------------+
+  |    phase   age   resultfq |
+  |---------------------------|
+  | baseline    31   complete |
+  +---------------------------+
+
+. 
+. ******************************************************************************
+> **
+. 
+. * import wide data again
+. use pma_00116, clear
+
+. 
+. *filter the wide data to drop who didn't get interviewed in 
+. * phase 1 or didn't complete phase 2
+. keep if resultfq_2 == 1 & resultfq_1 != .
+(11,997 observations deleted)
+
+. 
+. *filter the wide data to keep de facto only
+. keep if resident_1 == 11 | resident_1 == 22
+(244 observations deleted)
+
+. keep if resident_2 == 11 | resident_2 == 22
+(211 observations deleted)
+
+. 
+. gen pop = .
+(17,725 missing values generated)
+
+. replace pop = 1 if country == 1 // Burkina Faso
+(5,212 real changes made)
+
+. replace pop = 2 if country == 2 & geocd == 1 // Kinshasa
+(1,973 real changes made)
+
+. replace pop = 3 if country == 2 & geocd == 2 // Kongo Central
+(1,514 real changes made)
+
+. replace pop = 4 if country == 7 // Kenya
+(6,939 real changes made)
+
+. replace pop = 5 if country == 9 & geong == 4 // Kano
+(998 real changes made)
+
+. replace pop = 6 if country == 9 & geong == 2 // Lagos
+(1,089 real changes made)
+
+. 
+. label define pop ///
+>            1 "Burkina Faso" ///
+>            2 "DRC-Kinshasa" ///
+>            3 "DRC-Kongo Central" ///
+>            4 "Kenya" ///
+>            5 "Nigeria-Kano" ///
+>            6 "Nigeria-Lagos", replace
+
+. 
+. label values pop pop
+
+.            
+. table ( pop ) ( ), nototals missing
+
+--------------------------------
+                    |  Frequency
+--------------------+-----------
+pop                 |           
+  Burkina Faso      |      5,212
+  DRC-Kinshasa      |      1,973
+  DRC-Kongo Central |      1,514
+  Kenya             |      6,939
+  Nigeria-Kano      |        998
+  Nigeria-Lagos     |      1,089
+--------------------------------
+
+. 
+. ******************************************************************************
+> **
+. 
+. use pma_00116, clear
+
+. keep if resultfq_2 == 1 & resultfq_1 != .
+(11,997 observations deleted)
+
+. 
+. keep if inlist(resident_1, 11, 22)
+(244 observations deleted)
+
+. keep if inlist(resident_2, 11, 22)
+(211 observations deleted)
+
+. 
+. keep fqinstid age_1 pregnant_1 age_2 pregnant_2
+
+. 
+. reshape long age_ pregnant_ , i(fqinstid) j(phase)
+(j = 1 2)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations           17,725   ->   35,450      
+Number of variables                   5   ->   4           
+j variable (2 values)                     ->   phase
+xij variables:
+                            age_1 age_2   ->   age_
+                  pregnant_1 pregnant_2   ->   pregnant_
+-----------------------------------------------------------------------------
+
+. rename age_ age
+
+. rename pregnant_ pregnant
+
+. 
+. capture log close
