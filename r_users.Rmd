@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
   fig.align = 'center'
 )
 
-source(here::here("r/utilities.r"))
+source("utilities.r")
 ```
 
 # Introduction

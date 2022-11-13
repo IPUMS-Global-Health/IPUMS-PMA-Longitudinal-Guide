@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
   highlight = FALSE
 )
 
-source(here::here("r/utilities.r"))
+source("r/utilities.r")
 ```
 
 # Introduction
