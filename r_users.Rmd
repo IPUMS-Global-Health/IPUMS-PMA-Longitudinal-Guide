@@ -1,6 +1,6 @@
 ---
 cap-location: margin
-css:  [css/layout.css, css/fix-pagedown.css, css/fonts.css]
+css:  [css/layout.css, css/edit-pagedown.css, css/fonts.css]
 output:
   pagedown::html_paged: 
     toc: true
