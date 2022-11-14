@@ -5,7 +5,7 @@ output:
   pagedown::html_paged: 
     toc: true
     self_contained: false
-    front_cover: images/stata-cover.png
+    front_cover: images/cover-stata.png 
 toc-title: Contents
 paged-footnotes: true
 lot: false
