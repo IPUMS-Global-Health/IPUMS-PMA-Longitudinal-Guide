@@ -18,6 +18,22 @@
   }
 }
 
+@page frontmatter {
+  @top-right {
+    display: none;
+  }
+  @top-left {
+    display: none;
+  }
+  @bottom-right {
+    content: counter(page, lower-roman);
+    text-align: right; 
+    align-items: flex-start;
+    color: rgba(0, 0, 0, 0.6) !important;
+    font-size: 0.8em;
+  }
+}
+
 /* Pagebreak for each H1 */
 .level1 {
   break-before: page;

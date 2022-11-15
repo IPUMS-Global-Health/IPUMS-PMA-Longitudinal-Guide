@@ -135,8 +135,6 @@ The four files that are incorporated in that manner are named:
   
 The contents of these files are shown below:
 
-\newpage 
-
 #### Save as `gen_pop.do`  {.unnumbered}
 
 ```{stata}
@@ -376,8 +374,8 @@ Variable names in a "wide" extract have a numeric suffix for their data collecti
 For example, let's consider a **Wide** format data extract containing Phase 1 and Phase 2 respondents to the Female Questionnaire from Burkina Faso. You'll find the number of women who slept in the household before the Household Questionnaire for each phase reported in `r stata_link(resident_1)` and `r stata_link(resident_2)`:^[Stata's `table` command was revised and extended in Stata Version 17, so some of the examples in this guide require you to have Stata Version 17 or after to run.  The updated command yields nicer looking output than the older syntax, but in every case there is a corresponding syntax that will run in older versions of Stata.  The .do-files that accompany this guide in [its GitHub repository](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide) check to see what version of Stata the user is running.  If they are running v17 or after, it uses the updated `table` command.  If they are running an older version, it uses syntax for the older `tabulate` command, which is often abbreviated with the syntax `tab`.]
 
 ```{stata}
-use pma_00006, clear 
-
+use pma_00001, clear 
+keep if sample_1 == 85409
 table ( resident_1 ) () (), nototals missing zerocounts
 ```
 ```
@@ -414,6 +412,8 @@ usual member of household                                    |
 
 The extract also includes 230 women who are not members of the *de facto* population because they did not sleep in the sampled household during the night before the Phase 2 interview. Moreover, there are 492 missing values (`.`) in `r stata_link(resident_2)` representing women who were **lost to follow-up** after Phase 1. We will explain **loss to follow-up** in detail in Chapter 3. 
 
+\newpage 
+
 The *de facto* population is represented in both variables by codes 11 and 22. We will use an `if` statement or `keep` statement to include only those cases.
 
 
@@ -449,8 +449,8 @@ knitr::include_graphics("images/cases1.png")
 We'll further restrict our sample by selecting only cases where `r stata_link(resultfq_2)` shows that the woman also completed the Phase 2 questionnaire. Notice that, in addition to each of the value 1 through 10, there are several **non-response codes** numbered 90 through 99. You'll see similar values repeated across all IPUMS PMA variables, except that they will be left-padded to match the maximum width of a particular variable (e.g. `9999` is used for `r stata_link(INTFQYEAR)`, which represents a 4-digit year for the Female Interview). 
 
 ```{stata}
-use pma_00006, clear 
-
+use pma_00001, clear 
+keep if sample_1 == 85409
 tab resultfq_2, m
 ```
 ```
@@ -486,7 +486,8 @@ A missing value (`.`) in an IPUMS extract indicates that a particular variable i
 You can drop incomplete Phase 2 female responses as follows:
 
 ```{stata}
-use pma_00006, clear 
+use pma_00001, clear 
+keep if sample_1 == 85409
 keep if resultfq_2 == 1
 tab resultfq_1 resultfq_2,m
 ```
@@ -525,7 +526,7 @@ Throughout this guide, we'll demonstrate how to incorporate PMA sampling weights
 Let's return to the **Wide** data extract described in the previous section, which includes Phase 1 and Phase 2 **Female Respondents** from Burkina Faso. As a reminder: we'll drop women who are non members of the *de facto* population and those who did not complete all or part the Female Questionnaire in both phases. 
 
 ```{stata}
-use pma_00006, clear 
+use pma_00001, clear 
 keep if inlist(resident_1,11,22) & inlist(resident_2,11,22) & resultfq_2  == 1
 ```
 
@@ -707,6 +708,7 @@ tab y
       Total |        929      100.00
 ```
 
+\newpage
 ```{stata}
 svyset _n
 svy: proportion y
@@ -732,10 +734,10 @@ Number of PSUs   = 929                   Population size = 929
 Now let’s compare the CI width from the simple random sample with N=929 with that from the complex sample with N=5,207. That is: we'll divide the difference between the upper and lower limits of our 95% confidence interval from the complex data by that of the simple random sample. We'll see that it is approximately equal to `DEFT`.
 
 ```{stata}
-di (.213738 - .1634491) / (.1986672 - .177417)
+di (.213738 - .1634491) / (.1986672 - .1774417)
 ```
 ```
-2.3665142
+2.3692681
 ```
 
 It can be disheartening to know that the teams did all the work to interview 5,207 respondents and yet for this estimation that sample only has the statistical precision of a simple random sample of 929 respondents. The statistical penalty is because of both a clustering effect – spatial heterogeneity in the outcome across PSUs – and because of heterogeneity in the survey weights. In some survey reporting contexts you will be expected to report either `DEFF` or `DEFT`, or both. Be clear about which one you are reporting. The design effect will vary across outcomes, across strata, and across PMA Phases, so if it is of interest, estimate it anew for each analysis. You can learn more about the survey design effect in materials on survey sampling statistics, such as the excellent textbook [Applied Survey Data Analysis](https://websites.umich.edu/~surveymethod/asda/). 
@@ -747,8 +749,9 @@ This syntax and `svyset` command worked well for Burkina Faso, but take note: th
 For example, let’s look at a different wide extract, containing all of the samples included in this data release. Here, we again include only panel members who completed all or part of the female questionnaire in both phases, and who slept in the household during the night before the interview: 
 
 ```{stata}
-use pma_00007, clear 
-keep if inlist(resident_1,11,22) & inlist(resident_2,11,22) & resultfq_2  == 1
+use pma_00002, clear 
+keep if inlist(resident_1,11,22) & inlist(resident_2,11,22) & resultfq_2 == 1 & ///
+  cp_1 < 90 & cp_2 < 90
 ```
 
 Notice that `r stata_link(strata_1)` lists the sample strata for all values of `r stata_link(country)` except for DRC, where the variable is missing.
@@ -756,13 +759,12 @@ Notice that `r stata_link(strata_1)` lists the sample strata for all values of `
 ```{stata}
 table ( strata_1 ) if country == 2, nototals missing zerocounts
 ```
-
 ```
 -------------------
        |  Frequency
 -------+-----------
 strata |           
-  .    |      3,487
+  .    |      3,478
 -------------------
 ```
 
@@ -775,10 +777,10 @@ tab geocd, nolabel
   province, |
    congo dr |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          1 |      1,973       56.58       56.58
-          2 |      1,514       43.42      100.00
+          1 |      1,967       56.56       56.56
+          2 |      1,511       43.44      100.00
 ------------+-----------------------------------
-      Total |      3,487      100.00
+      Total |      3,478      100.00
 ```
 
 \newpage 
@@ -797,36 +799,36 @@ tab strata_recode, m
 ```
                                  strata |      Freq.     Percent        Cum.
 ----------------------------------------+-----------------------------------
-                          Kinshasa, DRC |      1,973       11.13       11.13
-                     Kongo Central, DRC |      1,514        8.54       19.67
-                 bungoma - urban, kenya |        153        0.86       20.54
-                 bungoma - rural, kenya |        489        2.76       23.30
-                kakamega - urban, kenya |        133        0.75       24.05
-                kakamega - rural, kenya |        438        2.47       26.52
-                 kericho - urban, kenya |        249        1.40       27.92
-                 kericho - rural, kenya |        453        2.56       30.48
-                  kiambu - urban, kenya |        214        1.21       31.69
-                  kiambu - rural, kenya |        311        1.75       33.44
-                  kilifi - urban, kenya |        170        0.96       34.40
-                  kilifi - rural, kenya |        455        2.57       36.97
-                   kitui - urban, kenya |        153        0.86       37.83
-                   kitui - rural, kenya |        586        3.31       41.14
-                 nairobi - urban, kenya |        494        2.79       43.92
-                   nandi - urban, kenya |        260        1.47       45.39
-                   nandi - rural, kenya |        711        4.01       49.40
-                 nyamira - urban, kenya |        143        0.81       50.21
-                 nyamira - rural, kenya |        382        2.16       52.36
-                   siaya - urban, kenya |        130        0.73       53.10
-                   siaya - rural, kenya |        437        2.47       55.56
-              west pokot - urban, kenya |        104        0.59       56.15
-              west pokot - rural, kenya |        474        2.67       58.82
-                         lagos, nigeria |      1,088        6.14       64.96
-                           kano - urban |        437        2.47       67.43
+                          Kinshasa, DRC |      1,967       11.11       11.11
+                     Kongo Central, DRC |      1,511        8.53       19.64
+                 bungoma - urban, kenya |        153        0.86       20.51
+                 bungoma - rural, kenya |        488        2.76       23.26
+                kakamega - urban, kenya |        133        0.75       24.02
+                kakamega - rural, kenya |        438        2.47       26.49
+                 kericho - urban, kenya |        249        1.41       27.90
+                 kericho - rural, kenya |        453        2.56       30.45
+                  kiambu - urban, kenya |        213        1.20       31.66
+                  kiambu - rural, kenya |        311        1.76       33.41
+                  kilifi - urban, kenya |        170        0.96       34.37
+                  kilifi - rural, kenya |        455        2.57       36.94
+                   kitui - urban, kenya |        153        0.86       37.81
+                   kitui - rural, kenya |        585        3.30       41.11
+                 nairobi - urban, kenya |        493        2.78       43.90
+                   nandi - urban, kenya |        260        1.47       45.37
+                   nandi - rural, kenya |        711        4.02       49.38
+                 nyamira - urban, kenya |        143        0.81       50.19
+                 nyamira - rural, kenya |        382        2.16       52.35
+                   siaya - urban, kenya |        130        0.73       53.08
+                   siaya - rural, kenya |        437        2.47       55.55
+              west pokot - urban, kenya |        104        0.59       56.14
+              west pokot - rural, kenya |        473        2.67       58.81
+                         lagos, nigeria |      1,088        6.15       64.95
+                           kano - urban |        437        2.47       67.42
                            kano - rural |        561        3.17       70.59
-                    urban, burkina faso |      3,058       17.25       87.85
-                    rural, burkina faso |      2,154       12.15      100.00
+                    urban, burkina faso |      3,053       17.24       87.83
+                    rural, burkina faso |      2,154       12.17      100.00
 ----------------------------------------+-----------------------------------
-                                  Total |     17,724      100.00
+                                  Total |     17,705      100.00
 ```
 
 \newpage 
@@ -1131,7 +1133,7 @@ htmltools::img(
 We've downloaded a **Long** data extract (**Female Respondents** only), which we'll now load into Stata as follows:
 
 ```{stata}
-use pma_00002, clear 
+use pma_00003, clear 
 ```
 
 In a **Long** extract, data from each phase will be organized in *separate rows*. Here, responses from three panel members are shown: 
@@ -1212,27 +1214,9 @@ drop keep keep_both
 Following these steps, you can check the size of each analytic sample like so: 
 
 ```{stata}
-gen pop = .
-replace pop = 1 if country == 1 // Burkina Faso
-replace pop = 2 if country == 2 & geocd == 1 // Kinshasa
-replace pop = 3 if country == 2 & geocd == 2 // Kongo Central
-replace pop = 4 if country == 7 // Kenya
-replace pop = 5 if country == 9 & geong == 4 // Kano
-replace pop = 6 if country == 9 & geong == 2 // Lagos
-
-label define pop ///
-           1 "Burkina Faso" ///
-           2 "DRC-Kinshasa" ///
-           3 "DRC-Kongo Central" ///
-           4 "Kenya" ///
-           5 "Nigeria-Kano" ///
-           6 "Nigeria-Lagos", replace
-
-label values pop pop
-           
-table ( pop ) ( phase) ( ), nototals missing
+* Include the code snippet that makes the pop variable
+include gen_pop.do
 ```
-
 ```
 --------------------------------------------------
                     |   longitudinal survey phase 
@@ -1253,7 +1237,7 @@ pop         |
 We've also downloaded a **Wide** data extract (**Female Respondents** only), which we'll load into Stata like so: 
 
 ```{stata}
-use pma_00001, clear 
+use pma_00004, clear 
 
 ```
 
@@ -1301,7 +1285,7 @@ list resultfq_1 age_1 resultfq_2 age_2 ///
 In a **Long** extract, rows for the missing phase are dropped. In this example, the woman was "not at home" for the Phase 2 Female Questionnaire. When we select a **Long** extract containing only Female Respondents, her Phase 2 row is excluded automatically (it will be included if you request an extract containing Female Respondents and Female Non-respondents). 
 
 ```{stata}
-use pma_00002, clear 
+use pma_00003, clear 
 list phase age resultfq ///
      if fqinstid == "0C8VQU6B03BXLAVVZ8SB90EKQ", noobs
 ```
@@ -1317,7 +1301,7 @@ list phase age resultfq ///
 The **Inclusion Criteria for Analysis** section in Chapter 1 shows how to identify members of the *de facto* population who completed the Female Questionnaire in both phases for a **Wide** extract. Those steps are repeated here: 
 
 ```{stata}
-use pma_00001, clear 
+use pma_00004, clear 
 keep if inlist(resident_1,11,22) & inlist(resident_2,11,22) & resultfq_2  == 1
 ```
 
@@ -1372,7 +1356,7 @@ We will revisit `reshape` when analyzing PMA Contraceptive Calendar data in Chap
 </aside>
 
 ```{stata}
-use pma_00001, clear 
+use pma_00004, clear 
 keep if resultfq_2 == 1 & resultfq_1 != .
 
 keep if inlist(resident_1, 11, 22)
@@ -1458,7 +1442,7 @@ knitr::include_graphics("images/technical.png")
 Once you've finished selecting variables and downloaded an extract, load it into Stata like so:
 
 ```{stata}
-use pma_00003, clear
+use pma_00005, clear
 ```
 
 We mentioned in Chapter 1 that variables in a **Wide** extract include a numeric suffix corresponding with a data collection phase. For example, you'll find two versions of `r stata_link(SAMPLE)`: `r stata_link(sample_1)` contains a numeric code for each Phase 1 sample, while `r stata_link(sample_2)` contains a numeric code for each Phase 2 sample.
@@ -1472,13 +1456,8 @@ We also mentioned in Chapter 1 that IPUMS PMA combines sub-nationally representa
 We'll combine the `r stata_link(COUNTRY)` name for each sample together with the DRC and Nigeria regions shown in `r stata_link(GEOCD)` and `r stata_link(GEONG)`, respectively. 
 
 ```{stata}
-gen pop = .
-replace pop = 1 if country == 1 // Burkina Faso
-replace pop = 2 if country == 2 & geocd == 1 // Kinshasa
-replace pop = 3 if country == 2 & geocd == 2 // Kongo Central
-replace pop = 4 if country == 7 // Kenya
-replace pop = 5 if country == 9 & geong == 4 // Kano
-replace pop = 6 if country == 9 & geong == 2 // Lagos
+* Include the code snippet that makes the pop variable
+include gen_pop.do
 
 label define pop ///
   1 "Burkina Faso" ///
@@ -1565,7 +1544,7 @@ Across samples, 96.35% of households completed all or part of the Phase 1 Househ
 
 ```{stata}
 preserve
-use pma_00003, clear
+use pma_00005, clear
 
 drop if missing(hhid_1) // focus on Phase 1
 bysort hhid_1: keep if _n == 1 // keep one row per household
@@ -1726,11 +1705,11 @@ pop                 |
 
 Enumerators invited these women to participate in Phase 2 of the panel study one year later. Only women who agreed to participate at that time are considered panel members at Phase 2, as shown in `r stata_link(PANELWOMAN_2)`.^[Women who completed the Phase 1 Female Questionnaire but declined to participate in the panel were given an opportunity to join the panel again at Phase 2 (if eligible). They are not panel members as shown in `r stata_link(PANELWOMAN_2)`, but they may be listed as such in `r stata_link(PANELWOMAN_3)` if they agree to participation in the panel going forward.] 
 
+\newpage 
+
 <aside>
 Total number of women, per sample, who consented at Phase 1 to the Phase 2 follow-up
 </aside>
-
-\newpage 
 
 Their responses to the panel invitation are recorded in `r stata_link(SURVEYWILLING_1)`. IPUMS PMA uses the **non-response code** "Not interviewed (female questionnaire)" to indicate women who were eligible, but not interviewed for the Female Questionnaire as shown in `r stata_link(RESULTLFQ_1)`. Additionally, "No response or missing" is used for women who did not respond to the panel invitation. 
 
@@ -2081,7 +2060,7 @@ Following the steps outlined in Chapter 2, you'll need to request a `.dta` (Stat
 Download your data extract and load it into Stata:
 
 ```{stata}
-use pma_00004, clear 
+use pma_00006, clear 
 ```
 
 Chapter 1 describes **Inclusion Criteria for Analysis**: to summarise, we'll be focusing on members of the *de facto* population who participated in both phases of the panel study (excluding a small number of women marked "NIU (not in universe)" for a key measure of current contraceptive use recorded in `r stata_link(CP)`). 
@@ -2097,13 +2076,9 @@ Recall that only the Burkina Faso and Kenya samples are **nationally representat
   * `pop` - Population of interest 
 
 ```{stata}
-gen pop = .
-replace pop = 1 if country == 1 // Burkina Faso
-replace pop = 2 if country == 2 & geocd == 1 // Kinshasa
-replace pop = 3 if country == 2 & geocd == 2 // Kongo Central
-replace pop = 4 if country == 7 // Kenya
-replace pop = 5 if country == 9 & geong == 4 // Kano
-replace pop = 6 if country == 9 & geong == 2 // Lagos
+* Include the code snippet that makes the pop variable
+include gen_pop.do
+
 label define pop ///
   1 "Burkina Faso" ///
   2 "DRC-Kinshasa" ///
@@ -2120,11 +2095,15 @@ We'll be using survey design information to derive population estimates througho
   * `strata_recode` - Numeric codes for PMA sample strata (recoded for DRC samples)
   
 ```{stata}
-clonevar strata_recode = strata_1 
-replace  strata_recode = geocd if country == 2
-label copy STRATA_1 strata_recode, replace
-label define strata_recode 1 "Kinshasa, DRC" 2 "Kongo Central, DRC", modify
-label values strata_recode strata_recode
+* Include the code snippet that makes the strata_recode variable
+include gen_strata_recode.do
+```
+
+Here, we labels the variables `r stata_link(CP_1)` and `r stata_link(CP_2)`.
+
+```{stata}
+label variable cp_1  "Contraceptive user (Phase 1)"
+label variable cp_2  "Contraceptive user (Phase 2)"
 ```
 
 Finally, Chapter 1 demonstrates how to use survey design information to estimate the proportion of women in each population `pop` who were using a contraceptive method both at Phase 1 and at Phase 2. Let's revisit that example again, expect that we'll now estimate the proportion of users and non-users alike. 
@@ -2219,13 +2198,12 @@ Continuing with the previous example, we will now demonstrate how to calculate a
 ```{stata}
 svy, subpop(if pop == 1): tab cp_1 cp_2 , row ci nomarginals pearson null
 ```
-
 ```
-Number of strata =   1                            Number of obs   =      5,207
+Number of strata =   2                            Number of obs   =      5,207
 Number of PSUs   = 167                            Population size = 5,215.6413
                                                   Subpop. no. obs =      5,207
                                                   Subpop. size    = 5,215.6413
-                                                  Design df       =        166
+                                                  Design df       =        165
 
 ----------------------------------------
 Contracep |
@@ -2233,20 +2211,20 @@ tive user | Contraceptive user (Phase 2)
 (Phase 1) |            no            yes
 ----------+-----------------------------
        no |         .7899          .2101
-          | [.7625,.8148]  [.1852,.2375]
+          | [.7626,.8148]  [.1852,.2374]
           | 
       yes |         .3473          .6527
-          | [.3058,.3913]  [.6087,.6942]
+          | [.3058,.3912]  [.6088,.6942]
 ----------------------------------------
 Key: Row proportion
      [95% confidence interval for row proportion]
 
   Pearson:
     Uncorrected   chi2(1)         =  934.8348
-    D-B (null)    F(1, 166)       =  305.9783     P = 0.0000
-    Design-based  F(1, 166)       =  472.5643     P = 0.0000
+    D-B (null)    F(1, 165)       =  309.7156     P = 0.0000
+    Design-based  F(1, 165)       =  468.3324     P = 0.0000
 
-Note: 5 strata omitted because they contain no subpopulation members.
+Note: 26 strata omitted because they contain no subpopulation members.
 ```
 
 The p-value for the Rao-Scott test is in the row of output labeled `D-B (null)` (where the null hypothesis is that the proportions are equal to the product of the marginal probabilities). We see a p-value of `0.0000`, so we reject the null hypothesis that the proportion of Phase 2 contraceptive users might be the same regardless of contraceptive use at Phase 1. 
@@ -2267,13 +2245,13 @@ svy: tab cp_2 pop if inlist(pop,1,3) & cp_1 == 1, null pearson col
 ```
 
 ```
-Number of strata =   2                            Number of obs   =      2,412
+Number of strata =   3                            Number of obs   =      2,412
 Number of PSUs   = 223                            Population size = 2,054.7818
-                                                  Design df       =        221
+                                                  Design df       =        220
 
 ----------------------------------------
 Contracep |
-tive user |             pop             
+tive user |          Population         
 (Phase 2) |  Burkina  DRC-Kong     Total
 ----------+-----------------------------
        no |    .3473     .2696     .3264
@@ -2285,12 +2263,11 @@ Key: Column proportion
 
   Pearson:
     Uncorrected   chi2(1)         =   13.0465
-    D-B (null)    F(1, 221)       =    3.3293     P = 0.0694
-    Design-based  F(1, 221)       =    3.4134     P = 0.0660
+    D-B (null)    F(1, 220)       =    3.3221     P = 0.0697
+    Design-based  F(1, 220)       =    3.4166     P = 0.0659
 ```
 
-This time, the value in `D-B (null)` is `0.0694`, so we fail to reject the null hypothesis. The likelihood that a difference exists between Phase 1 users in Burkina Faso and DRC-Kongo is less than 95%. 
-
+This time, the value in `D-B (null)` is `0.0697`, so we fail to reject the null hypothesis. The likelihood that a difference exists between Phase 1 users in Burkina Faso and DRC-Kongo is less than 95%. 
 
 ## Data Visualization 
 
@@ -2331,12 +2308,11 @@ forvalues i = 0/1 {
 capture postclose toplot
 use `postout', clear
 
+include label_pop_values.do
+
 label define yesno 0 "No" 1 "Yes", replace
-label define pop 1 "Burkina Faso" 2 "DRC-Kinshasa" 3 "DRC-Kongo Central" ///
-  4 "Kenya" 5 "Nigeria-Kano" 6 "Nigeria-Lagos", replace
 label values cp_1 yesno
 label values cp_2 yesno
-label values pop pop
 label variable cp_1 "Contraceptive user (Phase 1)"
 label variable cp_2 "Contraceptive user (Phase 2)"
 ```
@@ -2352,7 +2328,8 @@ twoway (bar estimate cp_1, horizontal  ///
         xlabel(0(20)100)) ///
         (rcap lcb ucb cp_1 , horizontal ) ///
         ,  by(pop, legend(off) ) ///
-           xtitle(Contraceptive user (Phase 2) (%))
+           xtitle(Contraceptive user (Phase 2) (%)) ///
+           name(f4_01, replace)
 ```
 
 ```{r, eval = TRUE, echo = FALSE}
@@ -2364,14 +2341,18 @@ knitr::include_graphics("images/f4_01.png")
 And finally, we incorporate some additional syntax to bring more aspects of the aesthetics under our control:
 
 ```{stata}
+
+* Additional aesthetic options           
 twoway (bar estimate cp_1 if cp_2 == 1 , ///
-              color(blue*.5) horizontal barwidth(0.9) ///
-              ylabel(0(1)1,valuelabel angle(0) nogrid) ///
-              xlabel(0(20)100)) ///
-	(rcap lcb ucb cp_1 if cp_2 == 1, horizontal lcolor(black)) ///
-            ,  by(pop, graphregion(color(white)) legend(off) note("")) ///          	   subtitle(,lcolor(white) fcolor(white)) ///
- 	   xtitle(Contraceptive user (Phase 2) (%)) ///
-	   xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) 
+           color(blue*.5) horizontal barwidth(0.9) ///
+           ylabel(0(1)1,valuelabel angle(0) nogrid) ///
+           xlabel(0(20)100)) ///
+        (rcap lcb ucb cp_1 if cp_2 == 1, horizontal lcolor(black)) ///
+        ,  by(pop, graphregion(color(white)) legend(off) note("")) ///
+           subtitle(,lcolor(white) fcolor(white)) ///
+           xtitle(Contraceptive user (Phase 2) (%)) ///
+           xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
+           name(f4_02, replace)
 ```
 
 ```{r, eval = TRUE, echo = FALSE}
@@ -2461,14 +2442,12 @@ use `postout', clear
 label define status 1 "Pregnant" 3 "Using FP" 2 "Not Using FP"
 label values fpstatus_1 status
 label values fpstatus_2 status
-label define pop 1 "Burkina Faso" 2 "DRC-Kinshasa" 3 "DRC-Kongo Central" ///
-  4 "Kenya" 5 "Nigeria-Kano" 6 "Nigeria-Lagos", replace
-label values pop pop
-
 label variable fpstatus_1 "Family Planning Status (Phase 1)"
 label variable fpstatus_2 "Family Planning Status (Phase 2)"
 label define status2 1 "Pregnant in Phase 1" 3 "Using FP in Phase 1" 2 "Not Using FP in Phase 1", replace
 label values fpstatus_1 status2
+
+include label_pop_values.do
 ```
  
 \newpage 
@@ -2477,20 +2456,23 @@ And next, we build a bar chart with customized aesthetic options.
 
 ```{stata}
 twoway (bar estimate fpstatus_2 if fpstatus_2 == fpstatus_1, ///
-        color(blue*.5) horizontal ///
-        ylabel(1(1)3,valuelabel angle(0) nogrid) ///
-        xlabel(0(20)100)) ///
+           color(blue*.5) horizontal barwidth(0.9) ///
+           ylabel(1(1)3,valuelabel angle(0) nogrid) ///
+           xlabel(0(20)100)) ///
         (bar estimate fpstatus_2 if fpstatus_2 != fpstatus_1, ///
-        color(orange*.5) horizontal) ///
+           color(orange*.5) horizontal barwidth(0.9)) ///
         (rcap lcb ucb fpstatus_2 , horizontal lcolor(black)) ///
         ,  by(pop fpstatus_1, graphregion(color(white)) ///
-              note("") col(3)  ) ///
+              note("Estimates within each subplot sum to 100%." ///
+                   "Graphs by population and Phase 1 status.", size(vsmall)) ///
+                   col(3) ) ///
            subtitle(,lcolor(white) fcolor(white)) ///
-           xtitle(Family Planning Status (Phase 2)) ///
+           ytitle(Family Planning Status (Phase 2)) ///
            xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
            legend(order(1 "No change" 2 "Status changed") size(vsmall) ///
                   region(lcolor(white)) symxsize(small) symysize(small)) ///
-           ytitle("") 
+           xtitle("Percent") ///
+           name(f4_04, replace)  
 ```
 
 To reiterate: comparing the error bars within each of these 18 panels gives us a informal, but conservative test for significant difference. We'll say that a significant difference occurs where two pairs of error bars **do not overlap** (but additional testing may be necessary to determine whether a significant difference occurs where error bars overlap only slightly). A few observations: 
@@ -2613,9 +2595,7 @@ label define fpmethod 4 "Long-acting" 3 "Short-acting" 2 "Traditional" 1 "None",
 label values methcat_1 fpmethod
 label values methcat_2 fpmethod
 
-label define pop 1 "Burkina Faso" 2 "DRC-Kinshasa" 3 "DRC-Kongo Central" ///
-  4 "Kenya" 5 "Nigeria-Kano" 6 "Nigeria-Lagos", replace
-label values pop pop
+include label_pop_values.do
 
 label variable methcat_1 "Family Planning Method (Phase 1)"
 label variable methcat_2 "Family Planning Method (Phase 2)"
@@ -2626,21 +2606,25 @@ label variable methcat_2 "Family Planning Method (Phase 2)"
 And finally, we plot the results. 
 
 ```{stata}
+
 twoway (bar estimate methcat_2 if methcat_1 == methcat_2, ///
-           color(blue*.5) horizontal ///
+           color(blue*.5) horizontal barwidth(0.9) ///
            ylabel(1(1)4,valuelabel angle(0) nogrid labsize(small)) ///
            xlabel(0(20)100)) ///
         (bar estimate methcat_2 if methcat_1 != methcat_2, ///
-           color(orange*.5) horizontal) ///
+           color(orange*.5) horizontal barwidth(0.9)) ///
         (rcap lcb ucb methcat_2 , horizontal lcolor(black)) ///
         ,  by(pop (methcat_1), graphregion(color(white)) ///
-              note(Graphs by population and Phase 1 method, size(vsmall)) col(4)) ///
+              note("Estimates within each subplot sum to 100%." ///
+                   "Graphs by population and Phase 1 method.", size(vsmall)) ///
+                   col(4) ) ///
            subtitle(,size(small) lcolor(white) fcolor(white)) ///
-           xtitle(Family Planning Method (Phase 2), size(small)) ///
+           ytitle(Family Planning Method (Phase 2), size(small)) ///
            xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
            legend(order(1 "No change" 2 "Method changed") size(vsmall) ///
                   region(lcolor(white)) symxsize(small) symysize(small)) ///
-           ytitle("")
+           xtitle("Percent") ///
+           name(f4_05, replace)  
 ```
 
 
@@ -2675,10 +2659,8 @@ replace chg_fpcurr = 3 if fpcurreffmethrc_1 > 900 & fpcurreffmethrc_2 > 900
 replace chg_fpcurr = 4 if fpcurreffmethrc_1 > 900 & fpcurreffmethrc_2 < 900
 replace chg_fpcurr = 5 if fpcurreffmethrc_1 < 900 & fpcurreffmethrc_2 > 900
 
-label define chg_fpcurr 1 "Changed methods" 2 "Continued method" ///
-  3 "Continued non-use" 4 "Started using" 5 "Stopped using", replace
-label values chg_fpcurr chg_fpcurr
-label var chg_fpcurr = "Phase 1 to 2 Family Planning Change Status"
+include label_chg_fpcurr.do
+include label_pop_values.do
 ```
 
 PMA reports disaggregate the outcomes captured in `chg_fpcurr` by age, marital status, education level, and parity (number of live childbirths). 
@@ -2737,18 +2719,20 @@ label var chg_fpcurr = "Phase 1 to 2 Family Planning Change Status"
 Plotting `cat_age_2` on the y-axis allows us to compare confidence intervals across age groups. For example, notice that women aged 15-19 in every population seem more likely to continue non-use than women who are aged 20-24 or 25-49 (column 3). 
 
 ```{stata}
-twoway ///
-  (bar estimate cat_age_2 , ///
-     color(blue*.5) horizontal barwidth(0.9) ///
-     ylabel(1(1)3,valuelabel angle(0) nogrid labsize(small)) ///
-     xlabel(0(20)100)) ///
-  (rcap lcb ucb cat_age_2 , horizontal lcolor(black)) ///
-  , by(pop chg_fpcurr, graphregion(color(white)) ///
-         note("") col(5) legend(off) ) ///
-  subtitle(,size(small) lcolor(white) fcolor(white)) ///
-  xtitle("Changes in Family Planning Status, Phase 1 to Phase 2", size(small)) ///
-  xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
-  ytitle("")
+twoway (bar estimate cat_age_2 , ///
+           color(blue*.5) horizontal barwidth(0.9) ///
+           ylabel(1(1)3,valuelabel angle(0) nogrid labsize(small)) ///
+           xlabel(0(20)100)) ///
+        (rcap lcb ucb cat_age_2 , horizontal lcolor(black)) ///
+        ,  by(pop chg_fpcurr, graphregion(color(white)) ///
+              note("Estimates across each row of the figure sum to 100%.", ///
+                size(vsmall)) col(5) legend(off) ) ///
+           subtitle(,size(small) lcolor(white) fcolor(white)) ///
+           xtitle("Changes in Family Planning Status, Phase 1 to Phase 2", ///
+              size(small)) ///
+           xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
+           ytitle("") ///
+           name(f4_06, replace)
 ```
 
 ```{r, eval = TRUE, echo = FALSE, out.width="90%"}
@@ -2791,17 +2775,10 @@ capture postclose toplot
 use `postout', clear
 
 label define cat_educattgen_2 1 "None/Primary" 2 "Secondary" 3 "Tertiary", replace
-label define chg_fpcurr 1 "Changed methods" 2 "Continued method" ///
-  3 "Continued non-use" 4 "Started using" 5 "Stopped using", replace
-
 label values cat_educattgen_2 cat_educattgen_2
-label values chg_fpcurr chg_fpcurr
 
-label define pop 1 "Burkina Faso" 2 "DRC-Kinshasa" 3 "DRC-Kongo Central" ///
-  4 "Kenya" 5 "Nigeria-Kano" 6 "Nigeria-Lagos", replace
-label values pop pop
-
-label var chg_fpcurr = "Phase 1 to 2 Family Planning Change Status"
+include label_chg_fpcurr.do
+include label_pop_values.do
 ```
 
 \newpage 
@@ -2815,12 +2792,14 @@ twoway (bar estimate cat_educattgen_2 , ///
            xlabel(0(20)100)) ///
         (rcap lcb ucb cat_educattgen_2 , horizontal lcolor(black)) ///
         ,  by(pop chg_fpcurr, graphregion(color(white)) ///
-              note("") col(5) legend(off) ) ///
+              note("Estimates across each row of the figure sum to 100%.", ///
+                size(vsmall)) col(5) legend(off) ) ///
            subtitle(,size(small) lcolor(white) fcolor(white)) ///
            xtitle("Changes in Family Planning Status, Phase 1 to Phase 2", ///
-                    size(small)) ///
+             size(small)) ///
            xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
-           ytitle("")
+           ytitle("") ///
+           name(f4_07, replace)
 ```
 
 ```{r, eval = TRUE, echo = FALSE, out.width="90%"}
@@ -2870,7 +2849,7 @@ Key: Row proportion
     D-B (null)    F(1, 50)        =    5.3040     P = 0.0255
     Design-based  F(1, 50)        =    5.3259     P = 0.0252
 
-Note: 5 strata omitted because they contain no subpopulation members.
+Note: 27 strata omitted because they contain no subpopulation members.
 ```
 
 This is an example where even though the confidence intervals overlap, the chi-square test rejects the null hypothesis that the proportion of respondents who continued non-use is equal in the secondary versus tertiary category in Lagos, with a p-value of 0.0255.
@@ -2910,17 +2889,10 @@ capture postclose toplot
 use `postout', clear
 
 label define cat_marstat_2 1 "In union" 2 "Not in union", replace
-label define chg_fpcurr 1 "Changed methods" 2 "Continued method" ///
-  3 "Continued non-use" 4 "Started using" 5 "Stopped using", replace
-
 label values cat_marstat_2 cat_marstat_2
-label values chg_fpcurr chg_fpcurr
 
-label define pop 1 "Burkina Faso" 2 "DRC-Kinshasa" 3 "DRC-Kongo Central" ///
-  4 "Kenya" 5 "Nigeria-Kano" 6 "Nigeria-Lagos", replace
-label values pop pop
-
-label var chg_fpcurr "Phase 1 to 2 Family Planning Change Status"
+include label_chg_fpcurr.do
+include label_pop_values.do
 ```
 
 \newpage 
@@ -2935,11 +2907,13 @@ twoway (bar estimate cat_marstat_2 , ///
         (rcap lcb ucb cat_marstat_2 , horizontal lcolor(black)) ///
         ,  by(pop chg_fpcurr, graphregion(color(white)) ///
               note("Estimates across each row of the figure sum to 100%.", ///
-                     size(vsmall)) col(5) legend(off)) ///
+                size(vsmall)) col(5) legend(off) ) ///
            subtitle(,size(small) lcolor(white) fcolor(white)) ///
-           xtitle("Changes in Family Planning Status, Phase 1 to Phase 2", size(small)) ///
+           xtitle("Changes in Family Planning Status, Phase 1 to Phase 2", ///
+             size(small)) ///
            xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
-           ytitle("")
+           ytitle("") ///
+           name(f4_08, replace)
 ```
 
 ```{r, eval = TRUE, echo = FALSE, out.width="90%"}
@@ -2983,17 +2957,10 @@ capture postclose toplot
 use `postout', clear
 
 label define cat_birthevent_2 1 "None" 2 "One-two" 3 "Three-four" 4 "Five +", replace
-label define chg_fpcurr 1 "Changed methods" 2 "Continued method" ///
-  3 "Continued non-use" 4 "Started using" 5 "Stopped using", replace
-
 label values cat_birthevent_2 cat_birthevent_2
-label values chg_fpcurr chg_fpcurr
 
-label define pop 1 "Burkina Faso" 2 "DRC-Kinshasa" 3 "DRC-Kongo Central" ///
-  4 "Kenya" 5 "Nigeria-Kano" 6 "Nigeria-Lagos", replace
-label values pop pop
-
-label var chg_fpcurr "Phase 1 to 2 Family Planning Change Status"
+include label_chg_fpcurr.do
+include label_pop_values.do
 ```
 
 \newpage 
@@ -3008,12 +2975,13 @@ twoway (bar estimate cat_birthevent_2 , ///
         (rcap lcb ucb cat_birthevent_2 , horizontal lcolor(black)) ///
         ,  by(pop chg_fpcurr, graphregion(color(white)) ///
               note("Estimates across each row of the figure sum to 100%.", ///
-                     size(vsmall)) col(5) legend(off) ) ///
+                size(vsmall)) col(5) legend(off) ) ///
            subtitle(,size(small) lcolor(white) fcolor(white)) ///
            xtitle("Changes in Family Planning Status, Phase 1 to Phase 2", ///
-                    size(small)) ///
+             size(small)) ///
            xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
-           ytitle("")
+           ytitle("") ///
+           name(f4_09, replace)
 ```
 
 ```{r, eval = TRUE, echo = FALSE, out.width="90%"}
@@ -3054,9 +3022,7 @@ use `postout', clear
 label define unmetyn_1 0 "No" 1 "Yes", replace
 label values unmetyn_1 unmetyn_1
 
-label define pop 1 "Burkina Faso" 2 "DRC-Kinshasa" 3 "DRC-Kongo Central" ///
-  4 "Kenya" 5 "Nigeria-Kano" 6 "Nigeria-Lagos", replace
-label values pop pop
+include label_pop_values.do
 ```
 
 \newpage 
@@ -3076,14 +3042,13 @@ twoway (bar estimate unmetyn_1 , ///
            xtitle("Had adopted a method of family planning in Phase 2", size(small)) ///
            xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
            ytitle("Had unmet need in Phase 1") ///
-           ysize(10) xsize(8)
+           ysize(10) xsize(8) ///
+           name(f4_10, replace)
 ```
 
 ```{r, eval = TRUE, echo = FALSE, out.width="60%"}
 knitr::include_graphics("images/f4_10.png")
 ```
-
-\newpage 
 
 Here, we conduct a Rao-Scott chi-square test for Burkina Faso:
 
@@ -3100,13 +3065,11 @@ label variable unmetyn_1 "Unmet Need in Phase 1"
 svy, subpop(if pop == 1 ): tab unmetyn_1 y, row pearson null ci
 ```
 ```
-(running tabulate on estimation sample)
-
-Number of strata =   1                            Number of obs   =      3,410
+Number of strata =   2                            Number of obs   =      3,410
 Number of PSUs   = 167                            Population size = 3,714.9751
                                                   Subpop. no. obs =      3,410
                                                   Subpop. size    = 3,714.9751
-                                                  Design df       =        166
+                                                  Design df       =        165
 
 -------------------------------------------------------
 Unmet     |
@@ -3114,23 +3077,23 @@ Need in   |       Using contraception in Phase 2
 Phase 1   |             0              1          Total
 ----------+--------------------------------------------
  no unmet |         .8056          .1944              1
-          | [.7743,.8334]  [.1666,.2257]               
+          | [.7744,.8334]  [.1666,.2256]               
           | 
  unmet ne |          .752           .248              1
-          | [.7125,.7878]  [.2122,.2875]               
+          | [.7126,.7877]  [.2123,.2874]               
           | 
     Total |         .7899          .2101              1
-          | [.7625,.8148]  [.1852,.2375]               
+          | [.7626,.8148]  [.1852,.2374]               
 -------------------------------------------------------
 Key: Row proportion
      [95% confidence interval for row proportion]
 
   Pearson:
     Uncorrected   chi2(1)         =   12.2006
-    D-B (null)    F(1, 166)       =    7.0687     P = 0.0086
-    Design-based  F(1, 166)       =    7.4473     P = 0.0070
+    D-B (null)    F(1, 165)       =    7.0052     P = 0.0089
+    Design-based  F(1, 165)       =    7.3807     P = 0.0073
 
-Note: 5 strata omitted because they contain no subpopulation members.
+Note: 26 strata omitted because they contain no subpopulation members.
 ```
 \newpage 
 
@@ -3141,13 +3104,11 @@ And here, we conduct a Rao-Scott chi-square test for Nigeria-Kano:
 svy, subpop(if pop == 5 ): tab unmetyn_1 y, row pearson null ci
 ```
 ```
-(running tabulate on estimation sample)
-
-Number of strata =  1                                Number of obs   =     881
+Number of strata =  2                                Number of obs   =     881
 Number of PSUs   = 25                                Population size = 901.912
                                                      Subpop. no. obs =     881
                                                      Subpop. size    = 901.912
-                                                     Design df       =      24
+                                                     Design df       =      23
 
 -------------------------------------------------------
 Unmet     |
@@ -3155,25 +3116,26 @@ Need in   |       Using contraception in Phase 2
 Phase 1   |             0              1          Total
 ----------+--------------------------------------------
  no unmet |         .9613          .0387              1
-          | [.9294,.9791]  [.0209,.0706]               
+          |  [.929,.9793]   [.0207,.071]               
           | 
  unmet ne |          .894           .106              1
-          | [.7569,.9581]  [.0419,.2431]               
+          | [.7754,.9537]  [.0463,.2246]               
           | 
     Total |         .9456          .0544              1
-          | [.9062,.9691]  [.0309,.0938]               
+          | [.9095,.9679]  [.0321,.0905]               
 -------------------------------------------------------
 Key: Row proportion
      [95% confidence interval for row proportion]
 
   Pearson:
     Uncorrected   chi2(1)         =   13.8741
-    D-B (null)    F(1, 24)        =    2.8789     P = 0.1027
-    Design-based  F(1, 24)        =    5.8252     P = 0.0238
+    D-B (null)    F(1, 23)        =    3.5261     P = 0.0731
+    Design-based  F(1, 23)        =    6.5905     P = 0.0172
 
-Note: 5 strata omitted because they contain no subpopulation members.
+Note: 26 strata omitted because they contain no subpopulation members.
 ```
-The output indicates that the difference **is** statistically significant in Burkina Faso (p=0.0086) and **is not** significant in Kano (p=0.1027).
+ 
+The output indicates that the difference **is** statistically significant in Burkina Faso (p=0.0089) and **is not** significant in Kano (p=0.0731).
 
 ### Partner support 
 
@@ -3209,9 +3171,7 @@ use `postout', clear
 label define fppartsupport_1 0 "No" 1 "Yes" 2 `"Do not know"', replace
 label values fppartsupport_1 fppartsupport_1
 
-label define pop 1 "Burkina Faso" 2 "DRC-Kinshasa" 3 "DRC-Kongo Central" ///
-  4 "Kenya" 5 "Nigeria-Kano" 6 "Nigeria-Lagos", replace
-label values pop pop
+include label_pop_values.do
 ```
 
 \newpage 
@@ -3233,10 +3193,11 @@ twoway (bar estimate fppartsupport_1 , ///
            xtitle("Had adopted a method of family planning in Phase 2", size(small)) ///
            xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
            ytitle("Partner supportive of family planning in Phase 1") ///
-           ysize(10) xsize(8)
+           ysize(10) xsize(8) ///
+           name(f4_11, replace)
 ```
 
-```{r, eval = TRUE, echo = FALSE, out.width="55%"}
+```{r, eval = TRUE, echo = FALSE, out.width="60%"}
 knitr::include_graphics("images/f4_11.png")
 ```
 
@@ -3278,9 +3239,7 @@ use `postout', clear
 label define fpplanyr_1 0 "No" 1 "Yes", replace
 label values fpplanyr_1 fpplanyr_1
 
-label define pop 1 "Burkina Faso" 2 "DRC-Kinshasa" 3 "DRC-Kongo Central" ///
-  4 "Kenya" 5 "Nigeria-Kano" 6 "Nigeria-Lagos", replace
-label values pop pop
+include label_pop_values.do
 ```
 
 \newpage 
@@ -3300,7 +3259,8 @@ twoway (bar estimate fpplanyr_1 , ///
            xtitle("Had adopted a method of family planning in Phase 2", size(small)) ///
            xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
            ytitle("Respondent plans to adopt a FP method within a year at Phase 1") ///
-           ysize(10) xsize(8)
+           ysize(10) xsize(8) ///
+           name(f4_12, replace) 
 ```
 
 ```{r, eval = TRUE, echo = FALSE, out.width="55%"}
@@ -3341,7 +3301,7 @@ Chapter 5 digs into  some of the other data visualization tools that are commonl
 Recall that our analysis in Chapter 4 concerned only *de facto* panel members who completed all or part of the Female Questionnaire in both Phase 1 and Phase 2. We also excluded women who are marked "NIU (not in universe)" for a key measure concerning current contraceptive use (`r stata_link(CP)`). As a reminder, you can load the extract into Stata and select relevant cases like so:  
 
 ```{stata}
-use pma_00004, clear
+use pma_00006, clear
 
 * Filter data
 keep if resultfq_2 == 1
@@ -3357,13 +3317,10 @@ This chapter's analysis will focus on three **recoded** variables we derived in 
   * `fpstatus_2` - Pregnant, using contraception, or using no contraception at Phase 2
   
 ```{stata}
-gen pop = .
-replace pop = 1 if country == 1 // Burkina Faso
-replace pop = 2 if country == 2 & geocd == 1 // Kinshasa
-replace pop = 3 if country == 2 & geocd == 2 // Kongo Central
-replace pop = 4 if country == 7 // Kenya
-replace pop = 5 if country == 9 & geong == 4 // Kano
-replace pop = 6 if country == 9 & geong == 2 // Lagos
+* Include the code snippet that makes the pop variable
+include gen_pop.do
+* Include the code snippet that makes the strata_recode variable
+include gen_strata_recode.do
 
 label define pop ///
   1 "Burkina Faso" ///
@@ -3374,16 +3331,6 @@ label define pop ///
   6 "Nigeria-Lagos", replace
 
 label values pop pop
-
-******************************
-
-clonevar strata_recode = strata_1 
-replace  strata_recode = geocd if country == 2
-label copy STRATA_1 strata_recode, replace
-label define strata_recode 1 "Kinshasa, DRC" 2 "Kongo Central, DRC", modify
-label values strata_recode strata_recode
-
-******************************
 
 gen fpstatus_1 = 1 if pregnant_1 == 1
 replace fpstatus_1 = 3 if pregnant_1 != 1 & cp_1 == 1
@@ -3495,7 +3442,8 @@ heatplot estimate fpstring_2 fpstring_1 , ///
 	ylabel(,labsize(small)) ///
 	subtitle(,lcolor(white) fcolor(white) size(small)) ///
 	xtitle("Phase 1 Status", size(small)) ///
-	ytitle("Phase 2 Status", size(small))
+	ytitle("Phase 2 Status", size(small)) ///
+  name(f5_02, replace)
 	
 save post5_heatplot, replace
 ```
@@ -3576,7 +3524,8 @@ graph combine hm1 hm2 hm3 hm4 hm5 hm6, ///
     title("Change in Contraceptive Use or Non-use", size(medium)) ///
     subtitle("Percent women aged 15-49 who changed contraceptive use status", ///
 	  size(small)) ///
-	graphregion(color(white))
+    graphregion(color(white)) ///
+    name(f5_03, replace)
 ```
 
 ```{r, echo=FALSE, eval=TRUE, out.width="100%"}
@@ -3619,19 +3568,11 @@ use `postout', clear
 label define status 1 "Pregnant" 3 "Using FP" 2 "Not Using FP"
 label values fpstatus_1 status
 label values fpstatus_2 status
-label define pop ///
-           1 "Burkina Faso" ///
-           2 "DRC-Kinshasa" ///
-           3 "DRC-Kongo Central" ///
-           4 "Kenya" ///
-           5 "Nigeria-Kano" ///
-           6 "Nigeria-Lagos", replace
-label values pop pop
-
 label variable estimate "Joint probability of Phase 1 and Phase 2"
-
 decode fpstatus_1, gen(fpstring_1)
 decode fpstatus_2, gen(fpstring_2)
+
+include label_pop_values.do
 ```
 
 \newpage 
@@ -3651,7 +3592,8 @@ heatplot estimate fpstring_2 fpstring_1 , ///
 	ylabel(, labsize(small) nogrid) ///
 	subtitle(,lcolor(white) fcolor(white) size(small)) ///
 	xtitle("Phase 1 Status", size(small)) ///
-	ytitle("Phase 2 Status", size(small))
+	ytitle("Phase 2 Status", size(small)) ///
+  name(f5_04, replace)
 ```
 
 ```{r, echo=FALSE, eval=TRUE, out.width="100%"}
@@ -3675,7 +3617,8 @@ heatplot estimate fpstring_2 fpstring_1 if fpstring_2 != fpstring_1, ///
 	ylabel(, labsize(small) nogrid) ///
 	subtitle(,lcolor(white) fcolor(white) size(small)) ///
 	xtitle("Phase 1 Status", size(small)) ///
-	ytitle("Phase 2 Status", size(small)) 
+	ytitle("Phase 2 Status", size(small)) ///
+  name(f5_05, replace) 
 ```
 
 ```{r, echo=FALSE, eval=TRUE, out.width="100%"}
@@ -3695,7 +3638,8 @@ heatplot estimate fpstring_2 fpstring_1 if fpstring_2 == fpstring_1, ///
 	ylabel(, labsize(small) nogrid) ///
 	subtitle(,lcolor(white) fcolor(white) size(small)) ///
 	xtitle("Phase 1 Status", size(small)) ///
-	ytitle("Phase 2 Status", size(small)) 
+	ytitle("Phase 2 Status", size(small)) ///
+  name(f5_06, replace)
 ```
 
 
@@ -3767,14 +3711,7 @@ forvalues j = 1/6 {
 
 capture postclose toplot
 use `postout', clear
-label define pop ///
-           1 "Burkina Faso" ///
-           2 "DRC-Kinshasa" ///
-           3 "DRC-Kongo Central" ///
-           4 "Kenya" ///
-           5 "Nigeria-Kano" ///
-           6 "Nigeria-Lagos", replace
-label values pop pop
+include label_pop_values.do
 
 save post5_sankey, replace
 ```
@@ -3800,7 +3737,7 @@ forvalues i = 1/6 {
     sankey_plot_with_legend x1 y00 x2 y11, ///
         width0(width) adjust extra color(color) label0(label0) ///
         xsize(10) ysize(6) labcolor(edkblue*2) labsize(small) ///
-        legend( on order(1 "Pregnant" 4 "Not Using FP" 7 "Using FP") rows(1) ///
+        legend( on order(1 "Pregnant" 4 "Not Using FP" 7 "Using FP") cols(1) ///
           pos(3) region(lcolor(white)) size(small) symxsize(small) symysize(medium) ) ///
         xlabel(none) ///
         title("`country'", size(medium)) ///
@@ -3812,10 +3749,10 @@ forvalues i = 1/6 {
 And finally, we combine them into a single figure. 
 
 ```{stata}
-grc1leg2 sub_1 sub_2 sub_3 sub_4 sub_5 sub_6, row(2) legend(f5_07) ///
+grc1leg2 sub_1 sub_2 sub_3 sub_4 sub_5 sub_6, row(2) legend(sub_1) ///
         title("Changes in Contraceptive Use or Non-Use", size(medium)) ///
         subtitle("Women aged 15-49: PMA Phase 1 to Phase 2", size(medsmall)) ///
-        graphregion(color(white))
+        graphregion(color(white)) name(f5_07, replace)
 ```
 
 ```{r, echo=FALSE, eval=TRUE, out.width="100%"}
@@ -3940,7 +3877,7 @@ We've selected all of the calendar variables listed above, plus these additional
 We'll load the data extract into Stata and, following the **Inclusion Criteria for Analysis** described in Chapter 1, we'll drop cases for women who did not complete the Female Questionnaire or were not members of the *de facto* population in both phases. 
 
 ```{stata}
-use pma_00005, clear
+use pma_00007, clear
 keep if resultfq_1 == 1 & resultfq_2 == 1
 keep if resident_1 == 11 | resident_1 == 22
 keep if resident_2 == 11 | resident_2 == 22
@@ -4131,7 +4068,9 @@ We'll reshape the data in two steps. First, we'll merge data from each Phase one
 Here, we'll strip the numeric suffix from each calendar variable: we'll store this information in a new column called `phase`. All of the calendar variables from the same phase will then be stored in a separate row (resulting in two rows per woman). 
 
 ```{stata}
-reshape long calendarke_ calendarkewhy_ calendarng_ calendarngwhy_ calendarbf_ calendarbfwhy_ calendarcd_ calendarcdwhy_ calstart_ calstop_ , i(id) j(phase)
+reshape long calendarke_ calendarkewhy_ calendarng_ calendarngwhy_ ///
+        calendarbf_ calendarbfwhy_ calendarcd_ calendarcdwhy_ ///
+        calstart_ calstop_ , i(id) j(phase)
 rename calendarbfwhy_ calendarbfwhy
 rename calendarbf_ calendarbf
 rename calendarcdwhy_ calendarcdwhy
@@ -4541,9 +4480,9 @@ drop criteria
 order calstart , after(calmissing)
 ```
 
+\newpage 
 Let's take a look at the woman in row 6, where we previously saw a blank string. 
 
-\newpage 
 ```{stata}
 list in 6
 ```
@@ -4597,6 +4536,7 @@ we'd hope to see reported events beginning in `calstart == 1417`. We have flagge
 
 Counting the number of women flagged by `calmissing` we see that we'll now be able to reduce the number of missing calendars from 1 in 5 cases to less than 1 in 20.  
 
+\newpage
 Prior to this procedure, 1 in 5 rows in `cals` contained an empty `fpstatus` calendar. With help from `calmissing`, we'll now be able to reduce the proportion of empty calendars to less than 1 in 20.  
 
 ```{stata}
@@ -4632,7 +4572,11 @@ We'll now complete the missing calendars for women who were not flagged by `calm
 ```{stata}
 * relabel fpcurreffmethrc
 gen fpcur = fpcurreffmethrc
-label define fpcurreffmethrc_code 999 "0" 101 "1" 102 "2" 111 "3" 112 "4" 121 "5" 123 "5" 131 "7" 132 "8" 141 "9" 142 "10" 151 "11" 152 "12" 160 "13" 170 "14" 210 "30" 220 "31" 240 "39"
+
+label define fpcurreffmethrc_code 999 "0" 101 "1" 102 "2" 111 "3" 112 "4" ///
+                                  121 "5" 123 "5" 131 "7" 132 "8" 141 "9" ///
+                                  142 "10" 151 "11" 152 "12" 160 "13" ///
+                                  170 "14" 210 "30" 220 "31" 240 "39", replace
 label values fpcur fpcurreffmethrc_code
 decode fpcur, gen(fpcurreffmethrc_new)
 drop fpcur
@@ -4733,7 +4677,8 @@ list in 1/5
 Now, we'll split each string into several columns. Begin by finding the maximum length of any string: you'll need to create this many columns. 
 
 ```{stata}
-* calculate the number of variables we need to generate by counting the number of "," then plus 1
+* calculate the number of variables we need to generate by 
+* counting the number of "," then plus 1
 gen l1 = length(value)
 gen l2= length(subinstr(value,",","",.))
 gen tempvalue = trim(value)
@@ -4879,7 +4824,6 @@ list in 1/5
 From `month` and `calstart`, we'll derive `calcmc` to mark the *calendar* month for each `value`. 
 
 ```{stata}
-cals <- cals %>%
 * gen calcmc to mark the calendar month
 gen calcmc = calstart + month - 1
 ```
@@ -5007,8 +4951,8 @@ svyset _n, strata(country)
 
 capture postclose toplot
 tempfile postout
-postfile toplot unmetyn_1 fpplanyr_1 country margin_u margin_f joint using ///
-  `postout', replace
+postfile toplot unmetyn_1 fpplanyr_1 country margin_u margin_f joint ///
+    using `postout', replace
 
 levelsof country, local(clist)
 foreach j in `clist' {
@@ -5037,13 +4981,13 @@ label define country 1 "BF" 2 "CD" 7 "KE" 9 "NG", replace
 label values country country
 
 gen     margin_f_label = "Plan 1 Yr "     + string(round(margin_f,1.1)) + "%" ///
-  if fpplanyr_1 == 1
+    if fpplanyr_1 == 1
 replace margin_f_label = "No Plan 1 Yr "  + string(round(margin_f,1.1)) + "%" ///
- if fpplanyr_1 == 0
+    if fpplanyr_1 == 0
 gen     margin_u_label = "Unmet Need "    + string(round(margin_u,1.1)) + "%" ///
-  if unmetyn_1 == 1
+    if unmetyn_1 == 1
 replace margin_u_label = "No Unmet Need " + string(round(margin_u,1.1)) + "%" ///
-  if unmetyn_1 == 0
+    if unmetyn_1 == 0
 ```
 
 \newpage 
@@ -5069,14 +5013,15 @@ foreach c in 1 2 7 9 {
 
 * Combine them together
 graph combine hm1 hm2 hm7 hm9, ///
-    rows(2) ///
-    title("Non-users: Unmet Need and Intentions to Adopt a Method within 1 Year", ///
-            size(medium)) ///
-    subtitle("Unweighted percentage among sampled women ///
-             not currently using any method at Phase 1", ///
-               size(small)) ///
-    note("Percentages in each plot sum to 100%.", size(vsmall)) ///
-    graphregion(color(white))
+  rows(2) ///
+  title("Non-users: Unmet Need and Intentions to Adopt a Method within 1 Year", ///
+    size(medium)) ///
+  subtitle( ///
+  "Unweighted percentage among sampled women not currently using any method at Phase 1" ///
+    , size(small)) ///
+  note("Percentages in each plot sum to 100%.", size(vsmall)) ///
+  graphregion(color(white)) ///
+  name(f6_01, replace)
 ```
 
 ```{r, echo=FALSE, eval=TRUE, out.width="100%"}
@@ -5294,6 +5239,7 @@ ci title(Burkina Faso, size(small)) graphregion(color(white))  ///
 yline(1,lcolor(ltblue*.5) lwidth(thin)) legend(size(small) symxsize(small) ///
 symysize(small) region(lcolor(none)) order(1 "No unmet need" 3 "Unmet need") ///
 row(1)) name(hm1, replace) xtitle(Months After Phase 1 Interview, size(small)) ///
+
 sts graph if co == 2, failure by(unmetyn_1 ) ylabel(0(.2)1.0, angle(0)) ///
 ci title(DR Congo, size(small))     graphregion(color(white))   ///
 yline(1,lcolor(ltblue*.5) lwidth(thin)) ///
@@ -5315,7 +5261,7 @@ row(1)) name(hm4, replace) xtitle(Months After Phase 1 Interview, size(small))
 
 grc1leg2  hm1 hm2 hm3 hm4, rows(2) graphregion(color(white)) legend(hm1) ///
 title(Predicted Time to FP Adoption by Phase 1 Unmet Need Status, size(small)) ///
-xcommon ycommon
+xcommon ycommon name(f6_02, replace) 
 ```
 
 ```{r, echo=FALSE, eval=TRUE, out.width="100%"}
@@ -5355,7 +5301,7 @@ row(1)) name(hm4, replace) xtitle(Months After Phase 1 Interview, size(small))
 
 grc1leg2  hm1 hm2 hm3 hm4, rows(2) graphregion(color(white)) legend(hm1) ///
 title(Predicted Time to FP Adoption by Intentions Within 1 Year of Phase 1, ///
-size(small)) xcommon ycommon
+xcommon ycommon name(f6_03, replace) 
 ```
 
 ```{r, echo=FALSE, eval=TRUE, out.width="100%"}
@@ -5406,7 +5352,7 @@ order(9 "No need; No plan" 10 "No need; Plan 1yr" 11 "Unmet need; No plan" ///
 
 grc1leg2  hm1 hm2 hm3 hm4, rows(2) graphregion(color(white)) legend(hm1) ///
 title(Predicted Time to FP Adoption by Phase 1 Intentions and Unmet Need, ///
-size(small)) xcommon ycommon
+xcommon ycommon name(f6_04, replace)
 ```
 
 ```{r, echo=FALSE, eval=TRUE, out.width="100%"}
