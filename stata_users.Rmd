@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
   highlight = FALSE
 )
 
-source("utilities.r")
+source("utils/utilities.r")
 ```
 
 # Preface {.front-matter .unnumbered}
@@ -272,7 +272,7 @@ As of this writing, IPUMS PMA has released data from the first *two* phases for 
 library(kableExtra)
 options(knitr.kable.NA = '')
 
-avail <- read_csv("data/sample_avail.csv", show_col_types = F) 
+avail <- read_csv("utils/sample_avail.csv", show_col_types = F) 
 names(avail)[2] <- paste0(
   names(avail)[2], 
   footnote_marker_symbol(1)
@@ -4046,7 +4046,7 @@ The first month in each country's calendar is listed below:
 library(kableExtra)
 options(knitr.kable.NA = '')
 
-calstart <- read_csv("data/calstart.csv", show_col_types = F) 
+calstart <- read_csv("utils/calstart.csv", show_col_types = F) 
 
 calstart %>%   
   kable(escape = FALSE, format = "html", table.attr = "style='width:70%;'") %>% 
@@ -4068,7 +4068,7 @@ calstart %>%
 All women in the same sample were asked to recall events dating backward to a common start date (always in January, as shown above). However, the length of each woman's calendar will vary depending on the date of her interview. Interviews were collected over a period of months shown in the table below.
 
 ```{r, echo=FALSE, eval=TRUE}
-calstop <- read_csv("data/calstop.csv", show_col_types = F) 
+calstop <- read_csv("utils/calstop.csv", show_col_types = F) 
 
 calstop %>%   
   kable(escape = FALSE, format = "html", table.attr = "style='width:70%;'") %>% 

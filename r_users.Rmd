@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
   fig.align = 'center'
 )
 
-source("utilities.r")
+source("utils/utilities.r")
 ```
 
 # Preface {.front-matter .unnumbered}
@@ -81,8 +81,8 @@ Hyperlinks to IPUMS PMA variable documentation, relevant R and Stata documentati
 knitr::opts_chunk$set(echo = FALSE)
 
 widef <- read_ipums_micro(
-  ddi = "data/pma_00079.xml",
-  data = "data/pma_00079.dat.gz"
+  ddi = "data/pma_00008.xml",
+  data = "data/pma_00008.dat.gz"
 )
 ```
 
@@ -149,8 +149,38 @@ hex("tidyverse")
   - `r funlink(tibble)` for tibbles, a modern re-imagining of dataframes
   - `r funlink(stringr)` for strings
   - `r funlink(forcats)` for factors
+  
+#### Featured Data Extracts {.unnumbered}
 
-## Resources for R Users
+In subsequent chapters, we will include instructions for requesting data extracts from IPUMS PMA that are identical those used in our analysis. These data are available at no cost, but you must register and adhere to terms of use at [pma.ipums.org/register](https://pma.ipums.org/pma/register.shtml). 
+
+Each data extract that you request from IPUMS PMA is named with a unique number. For example, your very first extract will include a pair of files named `pma_00001.dat.gz` and `pma_00001.xml`. In this guide we reference seven data extracts, but your own file names may vary depending on the number of IPUMS PMA extracts you have requested previously. 
+
+  - `pma_00001.dat.gz` and `pma_00001.xml`
+  - `pma_00002.dat.gz` and `pma_00002.xml`
+  - `pma_00003.dat.gz` and `pma_00003.xml`
+  - `pma_00004.dat.gz` and `pma_00004.xml`
+  - `pma_00005.dat.gz` and `pma_00005.xml`
+  - `pma_00006.dat.gz` and `pma_00006.xml`
+  - `pma_00007.dat.gz` and `pma_00007.xml`
+  
+As you follow along with each chapter, save each data extract in folder called `data` within your `r funlink(base::setwd, "R working directory")`.
+
+#### Working Directory {.unnumbered}
+
+R users can identify their current working directory with the function `r funlink(base::getwd)` and change it with `r funlink(base::setwd)`. Files within the working directory can be found by R using the **relative path** from this locations. For example, we'll load our first data extract into R *assuming* that you have placed it in a folder called `data` within your `r funlink(base::setwd, "R working directory")`. 
+
+```{r, eval=FALSE, echo = TRUE}
+dat <- read_ipums_micro(
+  ddi = "data/pma_00001.xml",
+  data = "data/pma_00001.dat.gz"
+)
+```
+
+Rstudio users can find all of the code demonstrated in this guide in [this RStudio Project](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide).^[Lean more about RStudio Projects [here](https://support.posit.co/hc/en-us/articles/200526207-Using-RStudio-Projects).] Simply open the file `pma-longitudinal.Rproj` and navigate to the [RMarkdown](https://rmarkdown.rstudio.com/) file `r_users.Rmd` in RStudio - no need to set your own working directory!
+
+\newpage 
+#### Learning More {.unnumbered}
 
 This manual focuses exclusively on longitudinal family planning data from IPUMS PMA, but the companion [data analysis blog](https://tech.popdata.org/pma-data-hub/) covers a wide range of topics like: 
 
@@ -201,7 +231,7 @@ As of this writing, IPUMS PMA has released data from the first *two* phases for 
 library(kableExtra)
 options(knitr.kable.NA = '')
 
-avail <- read_csv("data/sample_avail.csv", show_col_types = F) 
+avail <- read_csv("utils/sample_avail.csv", show_col_types = F) 
 names(avail)[2] <- paste0(
   names(avail)[2], 
   footnote_marker_symbol(1)
@@ -483,24 +513,11 @@ Importantly, the variable `r r_link(STRATA)` is *not available* for samples coll
  
 For example, let's look at a different **Wide** extract, `dat2`, containing all of the samples included in this data release. Notice that `r r_link(STRATA_1)` lists the sample strata for every `r r_link(COUNTRY)` *except* for DRC, where you see the value `NA`. 
 
-```{r, echo = FALSE, results='hide'}
-dat2 <- read_ipums_micro(
-  ddi = "data/pma_00144.xml",
-  data = "data/pma_00144.dat.gz"
-)
-
-dat2 <- dat2 %>% 
-  filter(
-    RESIDENT_1 %in% c(11, 22) & RESIDENT_2 %in% c(11, 22),
-    RESULTFQ_2 == 1,
-    CP_1 < 90 & CP_2 < 90 
-  ) 
-
-# Bigger tibbles 
+```{r, echo=FALSE}
 options(tibble.print_min = 30)
 ```
 
-```{r, echo=TRUE, eval=FALSE}
+```{r, echo = TRUE, results='hide'}
 dat2 <- read_ipums_micro(
   ddi = "data/pma_00002.xml",
   data = "data/pma_00002.dat.gz"
@@ -513,10 +530,6 @@ dat2 <- dat2 %>%
     CP_1 < 90 & CP_2 < 90 
   ) 
 
-dat2 %>% filter(is.na(STRATA_1)) %>% count(COUNTRY, STRATA_1)
-```
-
-```{r, echo=FALSE}
 dat2 %>% filter(is.na(STRATA_1)) %>% count(COUNTRY, STRATA_1)
 ```
 
@@ -799,8 +812,8 @@ Once the Fixed-width option is selected, you may add a description and then proc
 
 After a few moments, you'll receive an email indicating that your extract has been created. You'll need to obtain two files from the download page: 
 
-  * Click the green "Download DAT" button to download the data file. You'll receive a file with a number like `pma_00001.dat.gz`.  
-  * Right click on "DDI" and click "Save link as". You'll receive a corresponding XML file like `pma_00001.xml`. 
+  * Click the green "Download DAT" button to download the data file. You'll receive a file with a number like `pma_00003.dat.gz`.  
+  * Right click on "DDI" and click "Save link as". You'll receive a corresponding XML file like `pma_00003.xml`. 
 
 
 ```{r, fig.align='center'}
@@ -836,8 +849,8 @@ To load an IPUMS PMA extract into R, you'll need to reference *both* the DDI fil
 
 ```{r, results='hide'}
 long <- read_ipums_micro(
-  ddi = "data/pma_00095.xml",
-  data = "data/pma_00095.dat.gz"
+  ddi = "data/pma_00003.xml",
+  data = "data/pma_00003.dat.gz"
 )
 ```
 
@@ -894,8 +907,8 @@ We've also downloaded a **Wide** data extract (**Female Respondents** only) and 
 
 ```{r, results='hide', eval = TRUE}
 wide <- read_ipums_micro(
-  ddi = "data/pma_00084.xml",
-  data = "data/pma_00084.dat.gz"
+  ddi = "data/pma_00004.xml",
+  data = "data/pma_00004.dat.gz"
 )
 ```
 
@@ -925,8 +938,8 @@ In a **Long** extract, rows for the missing phase are dropped. In this example, 
 
 ```{r, results='hide', echo = FALSE}
 long <- read_ipums_micro(
-  ddi = "data/pma_00095.xml",
-  data = "data/pma_00095.dat.gz"
+  ddi = "data/pma_00003.xml",
+  data = "data/pma_00003.dat.gz"
 )
 ```
 
@@ -1038,8 +1051,8 @@ library(ipumsr)
 library(tidyverse)
 
 dat <- read_ipums_micro(
-  ddi = "data/pma_00086.xml",
-  data = "data/pma_00086.dat.gz"
+  ddi = "data/pma_00005.xml",
+  data = "data/pma_00005.dat.gz"
 )
 ```
 
@@ -1361,8 +1374,8 @@ options(tibble.print_min = 30)
 
 # load dat 
 dat <- read_ipums_micro(
-  ddi = "data/pma_00106.xml",
-  data = "data/pma_00106.dat.gz"
+  ddi = "data/pma_00006.xml",
+  data = "data/pma_00006.dat.gz"
 ) 
 ```
 
@@ -1442,8 +1455,8 @@ library(ipumsr)
 library(srvyr)
 
 dat <- read_ipums_micro(
-  ddi = "data/pma_00106.xml",
-  data = "data/pma_00106.dat.gz"
+  ddi = "data/pma_00006.xml",
+  data = "data/pma_00006.dat.gz"
 )
 ```
 
@@ -2276,8 +2289,8 @@ Recall that our analysis in Chapter 4 concerned only *de facto* panel members wh
 ```{r, results='hide'}
 # import the data extract and metadata files
 dat <- read_ipums_micro(
-  ddi = "data/pma_00106.xml",
-  data = "data/pma_00106.dat.gz"
+  ddi = "data/pma_00006.xml",
+  data = "data/pma_00006.dat.gz"
 ) 
 
 # inclusion criteria for analysis
@@ -2880,8 +2893,8 @@ library(tidyverse)
 library(survival)
 
 dat <- read_ipums_micro(
-  ddi = "data/pma_00111.xml",
-  data = "data/pma_00111.dat.gz")  %>% 
+  ddi = "data/pma_00007.xml",
+  data = "data/pma_00007.dat.gz")  %>% 
   filter(RESULTFQ_2 == 1, RESIDENT_1 %in% c(11, 22) & RESIDENT_2 %in% c(11, 22))
 ```
 
@@ -3005,7 +3018,7 @@ The first month in each country's calendar is listed below:
 library(kableExtra)
 options(knitr.kable.NA = '')
 
-calstart <- read_csv("data/calstart.csv", show_col_types = F) 
+calstart <- read_csv("utils/calstart.csv", show_col_types = F) 
 
 calstart %>%   
   kable(escape = FALSE, format = "html", table.attr = "style='width:70%;'") %>% 
@@ -3026,7 +3039,7 @@ calstart %>%
 All women in the same sample were asked to recall events dating backward to a common start date (always in January, as shown above). However, the length of each woman's calendar will vary depending on the date of her interview. Interviews were collected over a period of months shown in the table below.
 
 ```{r, echo=FALSE}
-calstop <- read_csv("data/calstop.csv", show_col_types = F) 
+calstop <- read_csv("utils/calstop.csv", show_col_types = F) 
 
 calstop %>%   
   kable(escape = FALSE, format = "html", table.attr = "style='width:70%;'") %>% 

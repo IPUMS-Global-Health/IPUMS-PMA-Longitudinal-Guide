@@ -1,4 +1,4 @@
-source("utilities.r")
+source("utils/utilities.r")
 
 pagedown::chrome_print(
   here("stata_users.Rmd"),
