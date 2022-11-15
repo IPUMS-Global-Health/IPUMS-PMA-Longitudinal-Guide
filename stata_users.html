@@ -187,25 +187,24 @@
 <div class="main">
 <div id="preface" class="section level1 front-matter unnumbered">
 <h1>Preface</h1>
-<p>The work was commissioned and funded by the Family Planning Team at the Bill &amp; Melinda Gates Foundation. The examples here are directly based on the companion <a href="https://tech.popdata.org/pma-data-hub/">IPUMS PMA Blog</a>, with R examples developed by Matt Gunther and IPUMS PMA documentation by Devon Kristiansen under the management of Kathryn Grace, PhD and Elizabeth Heger Boyle, PhD at IPUMS PMA, University of Minnesota. The Stata version and statistical consulting were provided by Mia Yu, Dale Rhoda, and Caitlin Clary at <a href="http://www.biostatglobal.com/">Biostat Global Consulting</a>. These authors are grateful for helpful reviews &amp; comments from Philip Anglewicz, PhD; Linnea Zimmerman, PhD, and Aisha Siewe at Johns Hopkins University. Thanks also to Nina Brooks, PhD and Finn Roberts for code contributions and review.</p>
-<h4>
-Suggested Citation
-</h4>
+<p>This guide was commissioned and funded by the Family Planning Team at the Bill &amp; Melinda Gates Foundation. The examples here are directly based on the companion <a href="https://tech.popdata.org/pma-data-hub/">IPUMS PMA data analysis blog</a>, with R examples developed by Matt Gunther and IPUMS PMA documentation by Devon Kristiansen under the management of Kathryn Grace, PhD and Elizabeth Heger Boyle, PhD at IPUMS PMA, University of Minnesota. The Stata version and statistical consulting were provided by Mia Yu and Dale Rhoda at <a href="http://www.biostatglobal.com/">Biostat Global Consulting</a>. These authors are grateful for helpful reviews &amp; comments from Philip Anglewicz, PhD; Linnea Zimmerman, PhD, and Aisha Siewe at Johns Hopkins University. Thanks also to Caitlin Clary, PhD, Nina Brooks, PhD, and Finn Roberts for code contributions and review.</p>
+<div id="suggested-citation" class="section level4 unnumbered">
+<h4>Suggested Citation</h4>
 <p>TBD</p>
-<h4>
-Source Code
-</h4>
-<p>This manual is open source. It was constructed from <a href="https://rmarkdown.rstudio.com/">R Markdown</a> files with the <a href="https://github.com/rstudio/pagedown">pagedown</a> package for R.<span id="fn1" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="1"><a href="https://github.com/rstudio/pagedown">pagedown</a> © Xie, Yihui et al. (MIT)</span> These files are available on our <a href="">GitHub repository</a>, where you will also find <code>.r</code> and <code>.do</code> files containing the code shown in this manual.</p>
+</div>
+<div id="source-code" class="section level4 unnumbered">
+<h4>Source Code</h4>
+<p>This manual is open source. It was constructed from <a href="https://rmarkdown.rstudio.com/">R Markdown</a> files with the <a href="https://github.com/rstudio/pagedown">pagedown</a> package for R.<span id="fn1" class="footnote" data-pagedown-footnote-number="1" style="white-space: pre-line;"><a href="https://github.com/rstudio/pagedown">pagedown</a> © Xie, Yihui et al. (MIT)</span> These files are available on our <a href="">GitHub repository</a>, where you will also find <code>.r</code> and <code>.do</code> files containing the code shown in this manual.</p>
 <p>The IPUMS PMA data files referenced in this manual are also available at no cost, but you must register and adhere to terms of use at <a href="https://pma.ipums.org/pma/register.shtml">pma.ipums.org/register</a>. Dataset access is granted only for non-commercial purposes. Users must register an account with IPUMS, request access to data from particular countries, and describe their intended use for the data. Users who have been approved for access to certain countries may submit justification to expand their access to other countries.</p>
 <p><a href="https://pma.ipums.org/pma/formulaire_d_inscription.shtml">La version française du formulaire d’inscription</a></p>
-<h4>
-Hyperlinks
-</h4>
+</div>
+<div id="hyperlinks" class="section level4 unnumbered">
+<h4>Hyperlinks</h4>
 <p>Hyperlinks to IPUMS PMA variable documentation, relevant R and Stata documentation, and various other resources are highlighted <a href="">in pink</a> throughout this manual. If the reader prefers a printed version, they are recommended to compile the manual from source files on our GitHub repository, changing the <a href="https://github.com/rstudio/pagedown">pagedown</a> option described <a href="https://pagedown.rbind.io/#links">here</a>. <strong>Warning:</strong> this will add additional footnotes to the document, and may impact pagination.</p>
 <div class="page-break-after"></div>
-<h4>
-Acronyms
-</h4>
+</div>
+<div id="acronyms" class="section level4 unnumbered">
+<h4>Acronyms</h4>
 <ul>
 <li>BMGF - <a href="https://www.gatesfoundation.org/">Bill &amp; Melinda Gates Foundation</a></li>
 <li>CI - confidence interval</li>
@@ -233,6 +232,7 @@ Acronyms
 <li>SPSS - <a href="https://www.ibm.com/spss">statistical package for social sciences</a> (statistical software)</li>
 </ul>
 </div>
+</div>
 <div id="introduction" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Introduction</h1>
 <p><a href="https://www.pmadata.org/">Performance Monitoring for Action (PMA)</a> uses innovative mobile technology to support low-cost, rapid-turnaround surveys that monitor key health and development indicators.</p>
@@ -241,12 +241,12 @@ Acronyms
 <aside>
 PMA has also published a guide to <strong>cross-sectional</strong> analysis in both <a href="https://www.pmadata.org/media/1243/download?attachment">English</a> and <a href="https://www.pmadata.org/media/1244/download?attachment">French</a>.
 </aside>
-<p>The purpose of this manual is to provide guidance on the analysis of <strong>harmonized longitudinal data</strong> for a panel of women age 15-49 surveyed by PMA and published in partnership with <a href="https://pma.ipums.org/pma/">IPUMS PMA</a>. IPUMS provides census and survey products from around the world in an integrated format, making it easy to compare data from multiple countries. IPUMS PMA data are available free of charge, subject to terms and conditions: please <a href="https://pma.ipums.org/pma/register.shtml">register here</a> to request access to the data featured in this guide.<span id="fn2" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="2">PMA data for individual countries is also available at no cost from <a href="https://www.pmadata.org/">pmadata.org</a>. Please note that the variable names, value labels, numeric codes, and other metadata featured in this guide have been altered by IPUMS PMA to facilitate comparison across countries.</span></p>
+<p>The purpose of this manual is to provide guidance on the analysis of <strong>harmonized longitudinal data</strong> for a panel of women age 15-49 surveyed by PMA and published in partnership with <a href="https://pma.ipums.org/pma/">IPUMS PMA</a>. IPUMS provides census and survey products from around the world in an integrated format, making it easy to compare data from multiple countries. IPUMS PMA data are available free of charge, subject to terms and conditions: please <a href="https://pma.ipums.org/pma/register.shtml">register here</a> to request access to the data featured in this guide.<span id="fn2" class="footnote" data-pagedown-footnote-number="2" style="white-space: pre-line;">PMA data for individual countries is also available at no cost from <a href="https://www.pmadata.org/">pmadata.org</a>. Please note that the variable names, value labels, numeric codes, and other metadata featured in this guide have been altered by IPUMS PMA to facilitate comparison across countries.</span></p>
 <p>This manual provides reproducible coding examples in the statistical software program <a href="https://www.stata.com/">Stata</a>. You can download <code>.do</code> files containing all of the code needed to reproduce these examples on our <a href="">GitHub page</a>.</p>
 <p><strong>R users:</strong> a companion manual for IPUMS PMA longitudinal analysis is also available with coding examples written in R. Additionally, the <a href="https://tech.popdata.org/pma-data-hub/">IPUMS PMA data analysis blog</a> includes an online version of each chapter and posts on a range of other topics updated every two weeks.</p>
 <div id="ipums-pma-data-in-stata" class="section level2" number="1.1">
 <h2><span class="header-section-number">1.1</span> IPUMS PMA data in Stata</h2>
-<p>The first two chapters of this manual introduce new users to <a href="https://www.pmadata.org/data/survey-methodology">PMA longitudinal data</a> and the <a href="https://pma.ipums.org/pma/">IPUMS PMA website</a>, respectively. After demonstrating how to obtain an IPUMS PMA data extract, the remaining chapters feature extensive data analysis examples written in Stata.</p>
+<p>The first two chapters of this manual introduce new users to <a href="https://www.pmadata.org/data/survey-methodology">PMA longitudinal data</a> and the <a href="https://pma.ipums.org/pma/">IPUMS PMA website</a>, respectively. After demonstrating how to obtain an IPUMS PMA data extract, the remaining chapters feature extensive data analysis examples written in Stata. The accompanying <code>.do</code> files available for download from <a href="https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide">our GitHub site</a> include alternative sets of syntax for users who are running older versions of Stata.</p>
 <aside class="hex">
 <div>
 <a style="text-decoration: none;" href="https://www.stata.com/">
@@ -258,13 +258,116 @@ PMA has also published a guide to <strong>cross-sectional</strong> analysis in b
 (1996-2022)
 </div>
 </aside>
-<p>To follow along, you’ll need to purchase and download the appropriate version of Stata for your computer’s operating system at <a href="https://www.r-project.org/">stata.com</a>. Discounted licences are available for students and for faculty and staff at participating institutions: learn more <a href="https://www.stata.com/order/">here</a>. Several of the functions referenced in this manual have updated for <strong>Stata Version 17</strong>.</p>
+<p>To follow along, you’ll need to purchase and download the appropriate version of Stata for your computer’s operating system at <a href="https://www.r-project.org/">stata.com</a>. Discounted licences are available for students and for faculty and staff at participating institutions: learn more <a href="https://www.stata.com/order/">here</a>. Several of the functions referenced in this manual have been updated for <strong>Stata Version 17</strong>. In later chapters we use several user-written Stata commands that you can install by typing the following commands at the Stata prompt. You only need to do this step once on each computer.</p>
+<pre class="text"><code>ssc install heatplot,  replace
+ssc install palettes,  replace
+ssc install colrspace, replace
+net install grc1leg2.pkg</code></pre>
+<div id="setup" class="section level4 unnumbered">
+<h4>Setup</h4>
+<p>The guide will be most helpful if you reconstruct the data extracts that are used here and run the syntax in the <code>.do</code> files that accompany the text. There are several such files, all available from <a href="https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide">our GitHub repository</a>.</p>
+<p>The <strong>main</strong> program is named <code>IPUMS_PMA_Longitudinal_Analysis_Guide_For_Stata_Users.do</code> and it includes all of the syntax that you see in the guide as well as several bonus blocks of code that demonstrate alternative approaches to some of the tasks described here.</p>
+<p>For purposes of brevity in the guide, four repetitive blocks of code have been put into very small <code>.do</code> files and, rather than repeat that code over and over in the guide, we use the Stata <a href="https://www.stata.com/manuals/pinclude.pdf">include</a> syntax to accomplish with one line of code what would otherwise take more. In the manual, you will see code like this:</p>
+<pre class="text"><code>* Include the snippet of code that generates and labels the pop variable.
+include gen_pop.do</code></pre>
+<p>The four files that are incorporated in that manner are named:</p>
+<ul>
+<li><code>gen_pop.do</code></li>
+<li><code>label_pop_values.do</code></li>
+<li><code>gen_strata_recode.do</code></li>
+<li><code>label_chg_fpcurr.do</code></li>
+</ul>
+<p>The contents of these files are shown below:</p>
+<div class="page-break-after"></div>
+</div>
+<div id="save-as-gen_pop.do" class="section level4 unnumbered">
+<h4>Save as <code>gen_pop.do</code></h4>
+<pre class="text"><code>* Construct a new variable named pop and give it a 
+* unique value for each PMA population.
+
+gen pop = .
+replace pop = 1 if country == 1 // Burkina Faso
+replace pop = 2 if country == 2 &amp; geocd == 1 // Kinshasa
+replace pop = 3 if country == 2 &amp; geocd == 2 // Kongo Central
+replace pop = 4 if country == 7 // Kenya
+replace pop = 5 if country == 9 &amp; geong == 4 // Kano
+replace pop = 6 if country == 9 &amp; geong == 2 // Lagos
+
+label variable pop &quot;Population&quot;
+
+include label_pop_values.do</code></pre>
+</div>
+<div id="save-as-label_pop_values.do" class="section level4 unnumbered">
+<h4>Save as <code>label_pop_values.do</code></h4>
+<pre class="text"><code>label define pop ///
+           1 &quot;Burkina Faso&quot; ///
+           2 &quot;DRC-Kinshasa&quot; ///
+           3 &quot;DRC-Kongo Central&quot; ///
+           4 &quot;Kenya&quot; ///
+           5 &quot;Nigeria-Kano&quot; ///
+           6 &quot;Nigeria-Lagos&quot;, replace
+label values pop pop</code></pre>
+</div>
+<div id="save-as-gen_strata_recode.do" class="section level4 unnumbered">
+<h4>Save as <code>gen_strata_recode.do</code></h4>
+<pre class="text"><code>* Make a new variable named strata_recode and set it to strata_1 
+* everywhere except DRC and set it to geocd in DRC
+clonevar strata_recode = strata_1 
+replace  strata_recode = geocd if country == 2
+
+* Copy the value label from strata_1 into a new label named strata_recode
+* and update it with the labels from geocd
+
+label copy STRATA_1 strata_recode, replace
+label define strata_recode 1 &quot;Kinshasa, DRC&quot; 2 &quot;Kongo Central, DRC&quot;, modify
+
+* Use the new value label with the new variable
+label values strata_recode strata_recode
+*</code></pre>
+</div>
+<div id="save-as-label_chg_fpcurr.do" class="section level4 unnumbered">
+<h4>Save as <code>label_chg_fpcurr.do</code></h4>
+<pre class="text"><code>label define chg_fpcurr 1 &quot;Changed methods&quot; 2 &quot;Continued method&quot; ///
+                        3 &quot;Continued non-use&quot; 4 &quot;Started using&quot; ///
+                                    5 &quot;Stopped using&quot;, replace
+label values chg_fpcurr chg_fpcurr
+label var chg_fpcurr &quot;Phase 1 to 2 Family Planning Change Status&quot;</code></pre>
+</div>
+<div id="working-directory" class="section level4 unnumbered">
+<h4>Working Directory</h4>
+<p>To run successfully, you will create a folder for use as Stata’s <a href="https://www.stata.com/manuals/dcd.pdf">working directory</a>. Save the following files in that folder (all of which are available in our <a href="https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide/tree/main/stata_users_files">Stata folder on GitHub</a>):</p>
+<ul>
+<li>The five <code>.do</code> files listed above</li>
+<li><code>pma_sankey_template4.dta dataset</code></li>
+<li><code>sankey_plot_with_legend.ado</code></li>
+<li><code>sankey_plot_with_legend.sthlp</code></li>
+</ul>
+<p>The main <code>.do</code> file has one <a href="https://www.stata.com/manuals/dcd.pdf">cd</a> command in line 60. <strong>You will need to change the path in that line of the program to match your own working directory.</strong></p>
+</div>
+<div id="featured-data-extracts" class="section level4 unnumbered">
+<h4>Featured Data Extracts</h4>
+<p>In subsequent chapters, we will include instructions for requesting data extracts from IPUMS PMA that are identical those used in our analysis. These data are available at no cost, but you must register and adhere to terms of use at <a href="https://pma.ipums.org/pma/register.shtml">pma.ipums.org/register</a>.</p>
+<p>Each data extract that you request from IPUMS PMA is named with a unique number. For example, your very first extract will be named <code>pma_00001.dta</code>. In this guide we reference seven files, but your own file names may vary depending on the number of IPUMS PMA extracts you have requested previously.</p>
+<ul>
+<li><code>pma_00001.dta</code></li>
+<li><code>pma_00002.dta</code></li>
+<li><code>pma_00003.dta</code></li>
+<li><code>pma_00004.dta</code></li>
+<li><code>pma_00005.dta</code></li>
+<li><code>pma_00006.dta</code></li>
+<li><code>pma_00007.dta</code></li>
+</ul>
+<p>Save each data extract in the same working directory containing the Stata files described above.</p>
+<div class="page-break-after"></div>
+</div>
+<div id="learning-more" class="section level4 unnumbered">
+<h4>Learning More</h4>
 <p>For a general introduction to analysis of IPUMS PMA data in Stata, visit the <a href="https://pma.ipums.org/pma/support.shtml">IPUMS PMA Support</a> page, where you’ll find links to video tutorials and data exercises written for Stata users. Similar resources are available for users of R, SPSS, and SAS.</p>
 <p>Resources to learn about Stata include <a href="https://www.stata.com/">the company website</a>, official <a href="https://www.stata.com/support/faqs/">FAQs</a>, official <a href="https://blog.stata.com/">blog</a>, a vibrant <a href="https://statalist.org/">user forum</a>, official <a href="https://www.youtube.com/channel/UCVk4G4nEtBS4tLOyHqustDA">YouTube channel</a> and the Stata website’s own <a href="https://www.stata.com/support/faqs/resources/learning-about-stata/">list of resources</a>. <a href="https://www.stata-press.com/">Stata Press</a> publishes excellent books on how to use Stata. Four that we recommend are:</p>
 <ul>
 <li><a href="https://www.stata.com/bookstore/gentle-introduction-to-stata/">A Gentle Introduction to Stata, Sixth Edition</a> by Alan C. Acock, ISBN: 978-1-59718-269-0.</li>
 <li><a href="https://www.stata.com/bookstore/workflow-data-analysis-stata/">The Workflow of Data Analysis Using Stata</a> by J. Scott Long, ISBN: 978-1-59718-047-4.</li>
-<li><a href="https://www.stata.com/bookstore/visual-guide-to-stata-graphics/">A Visual Guide to Stata Graphics</a> by Michael N. Mitchell, ISBN: 978-1-59718-365-9.</li>
+<li><a href="https://www.stata.com/bookstore/visual-guide-to-stata-graphics/">A Visual Guide to Stata Graphics, Fourth Edition</a> by Michael N. Mitchell, ISBN: 978-1-59718-365-9.</li>
 <li><a href="https://www.stata.com/bookstore/introduction-stata-programming/">An Introduction to Stata Programming, Second Edition</a> by Christopher F. Baum, ISBN: 978-1-59718-150-1.</li>
 </ul>
 <p>The <a href="https://www.stata.com/features/documentation/">Stata documentation website</a> offers dedicated, detailed, and freely available reference manuals for each of the fields referenced in this document:</p>
@@ -277,10 +380,11 @@ PMA has also published a guide to <strong>cross-sectional</strong> analysis in b
 <p>One excellent private resource is <a href="https://medium.com/the-stata-guide">The Stata Guide</a> blog by <a href="https://asjadnaqvi.github.io/">Asjad Naqvi</a>. He shares clear explanations and code to make a variety of very handsome maps and graphics. The posts reside behind a paywall. You may read three of them for free per month, or pay a subscription fee to <a href="http://www.medium.com">medium.com</a> for unlimited access to his writing (and that of many other authors).</p>
 <p>Finally, for survey data analysis, we heartily recommend the text <a href="https://www.routledge.com/Applied-Survey-Data-Analysis/Heeringa-West-Berglund/p/book/9780367736118">Applied Survey Data Analysis (2ed)</a> by Heeringa, West, and Berglund, ISBN: 978-0-36773-611-8. It is a treasure trove of thoughtful insight and its <a href="https://websites.umich.edu/~surveymethod/asda/">companion website</a> shares datasets, code examples, and other resources for conducting analyses using a variety of software packages.</p>
 </div>
+</div>
 <div id="pma-background" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> PMA Background</h2>
 <p>Dating back to 2013, the original PMA survey design included high-frequency, <strong>cross-sectional</strong> samples of women and service delivery points collected from eleven countries participating in <a href="http://progress.familyplanning2020.org/">Family Planning 2020</a> (FP2020) - a global partnership that supports the rights of women and girls to decide for themselves whether, when, and how many children they want to have. These surveys were designed to monitor annual progress towards <a href="http://progress.familyplanning2020.org/measurement">FP2020 goals</a> via population-level estimates for several <a href="http://www.track20.org/pages/data_analysis/core_indicators/overview.php">core indicators</a>.</p>
-<p>Beginning in 2019, PMA surveys were redesigned under a renewed partnership called <a href="https://fp2030.org/">Family Planning 2030</a> (FP2030). These new surveys have been refocused on reproductive and sexual health indicators, and they feature a <strong>longitudinal panel</strong> of women of childbearing age. This design will allow researchers to measure contraceptive dynamics and changes in women’s fertility intentions over a <strong>three year period</strong> via annual in-person interviews.<span id="fn3" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="3">In addition to these three in-person surveys, PMA also conducted telephone interviews with panel members focused on emerging issues related to the COVID-19 pandemic in 2020. These telephone surveys are already available for several countries - the IPUMS PMA blog series on <a href="../../index.html#category:COVID-19">PMA COVID-19 surveys</a> covers this topic in detail.</span></p>
+<p>Beginning in 2019, PMA surveys were redesigned under a renewed partnership called <a href="https://fp2030.org/">Family Planning 2030</a> (FP2030). These new surveys have been refocused on reproductive and sexual health indicators, and they feature a <strong>longitudinal panel</strong> of women of childbearing age. This design will allow researchers to measure contraceptive dynamics and changes in women’s fertility intentions over a <strong>three year period</strong> via annual in-person interviews.<span id="fn3" class="footnote" data-pagedown-footnote-number="3" style="white-space: pre-line;">In addition to these three in-person surveys, PMA also conducted telephone interviews with panel members focused on emerging issues related to the COVID-19 pandemic in 2020. These telephone surveys are already available for several countries - the IPUMS PMA blog series on <a href="../../index.html#category:COVID-19">PMA COVID-19 surveys</a> covers this topic in detail.</span></p>
 <p>Questions on the redesigned survey cover topics like:</p>
 <ul>
 <li>awareness, perception, knowledge, and use of contraceptive methods</li>
@@ -479,9 +583,9 @@ x
 <aside>
 <strong>Resident enumerators</strong> are women over age 21 living in (or near) each EA who hold at least a high school diploma.
 </aside>
-<p>PMA uses a multi-stage clustered sample design, with stratification at the urban-rural level or by sub-region. Sample clusters - called <a href="https://pma.ipums.org/pma-action/variables/EAID#description_section">enumeration areas</a> (EAs) – are provided by the national statistics agency in each country.<span id="fn4" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="4"><a href="https://tech.popdata.org/pma-data-hub/posts/2021-10-15-nutrition-climate/PMA_displacement.pdf">Displaced GPS coordinates</a> for the centroid of each EA are available for most samples <a href="https://www.pmadata.org/data/request-access-datasets">by request</a> from PMA. IPUMS PMA provides shapefiles for PMA countries <a href="https://pma.ipums.org/pma/gis_boundary_files.shtml">here</a>.</span> These EAs are sampled using a <em>probability proportional to size</em> (PPS) method relative to the population distribution in each stratum.</p>
+<p>PMA uses a multi-stage clustered sample design, with stratification at the urban-rural level or by sub-region. Sample clusters - called <a href="https://pma.ipums.org/pma-action/variables/EAID#description_section">enumeration areas</a> (EAs) – are provided by the national statistics agency in each country.<span id="fn4" class="footnote" data-pagedown-footnote-number="4" style="white-space: pre-line;"><a href="https://tech.popdata.org/pma-data-hub/posts/2021-10-15-nutrition-climate/PMA_displacement.pdf">Displaced GPS coordinates</a> for the centroid of each EA are available for most samples <a href="https://www.pmadata.org/data/request-access-datasets">by request</a> from PMA. IPUMS PMA provides shapefiles for PMA countries <a href="https://pma.ipums.org/pma/gis_boundary_files.shtml">here</a>.</span> These EAs are sampled using a <em>probability proportional to size</em> (PPS) method relative to the population distribution in each stratum.</p>
 <div class="page-break-after"></div>
-<p>At Phase 1, 35 household dwellings were selected at random within each EA. Resident enumerators visited each dwelling and invited one household member to complete a <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Household-Questionnaire-English-2019.10.09.pdf">Household Questionnaire</a><span id="fn5" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="5">Questionnaires administered in each country may vary from this <strong>Core Household Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span> that includes a census of all household members and visitors who stayed there during the night before the interview. Female household members and visitors aged 15-49 were then invited to complete a subsequent Phase 1 <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Female-Questionnaire-English-2019.10.09.pdf">Female Questionnaire</a>.<span id="fn6" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="6">Questionnaires administered in each country may vary from this <strong>Core Female Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span></p>
+<p>At Phase 1, 35 household dwellings were selected at random within each EA. Resident enumerators visited each dwelling and invited one household member to complete a <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Household-Questionnaire-English-2019.10.09.pdf">Household Questionnaire</a><span id="fn5" class="footnote" data-pagedown-footnote-number="5" style="white-space: pre-line;">Questionnaires administered in each country may vary from this <strong>Core Household Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span> that includes a census of all household members and visitors who stayed there during the night before the interview. Female household members and visitors aged 15-49 were then invited to complete a subsequent Phase 1 <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Female-Questionnaire-English-2019.10.09.pdf">Female Questionnaire</a>.<span id="fn6" class="footnote" data-pagedown-footnote-number="6" style="white-space: pre-line;">Questionnaires administered in each country may vary from this <strong>Core Female Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span></p>
 <aside>
 <p><a href="https://pma.ipums.org/pma-action/variables/SAMEDWELLING#codes_section"><code>samedwelling</code></a> indicates whether a Phase 2 female respondent resided in her Phase 1 dwelling or a new one.</p>
 <a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN#codes_section"><code>panelwoman</code></a> indicates whether a Phase 2 household member completed the Phase 1 Female Questionnaire.
@@ -489,7 +593,7 @@ x
 <p>One year later, resident enumerators visited the same dwellings and administered a Phase 2 Household Questionnaire. A panel member in Phase 2 is any woman still age 15-49 who could be reached for a second Female Questionnaire, either because:</p>
 <ul>
 <li>she still lived there, or</li>
-<li>she had moved elsewhere within the study area,<span id="fn7" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="7">The “study area” is area within which resident enumerators should attempt to find panel women that have moved out of their Phase 1 dwelling. This may extend beyond the woman’s original EA as determined by in-country administrators - see <a href="https://www.pmadata.org/data/survey-methodology">PMA Phase 2 and Phase 3 Survey Protocol</a> for details.</span> but at least one member of the Phase 1 household remained and could help resident enumerators locate her new dwelling.<span id="fn8" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="8">In cases where no Phase 1 household members remained in the dwelling at Phase 2, women from the household are considered <strong>lost to follow-up</strong>. Chapter 3 covers this topic in detail.</span></li>
+<li>she had moved elsewhere within the study area,<span id="fn7" class="footnote" data-pagedown-footnote-number="7" style="white-space: pre-line;">The “study area” is area within which resident enumerators should attempt to find panel women that have moved out of their Phase 1 dwelling. This may extend beyond the woman’s original EA as determined by in-country administrators - see <a href="https://www.pmadata.org/data/survey-methodology">PMA Phase 2 and Phase 3 Survey Protocol</a> for details.</span> but at least one member of the Phase 1 household remained and could help resident enumerators locate her new dwelling.<span id="fn8" class="footnote" data-pagedown-footnote-number="8" style="white-space: pre-line;">In cases where no Phase 1 household members remained in the dwelling at Phase 2, women from the household are considered <strong>lost to follow-up</strong>. Chapter 3 covers this topic in detail.</span></li>
 </ul>
 <p>Additionally, resident enumerators administered the Phase 2 Female Questionnaire to <em>new</em> women in sampled households who:</p>
 <ul>
@@ -526,8 +630,8 @@ We will demonstrate how to request and download an IPUMS PMA data extract in Cha
 <aside>
 Variable names in a “wide” extract have a numeric suffix for their data collection phase. <a href="https://pma.ipums.org/pma-action/variables/resident#codes_section"><code>resident_1</code></a> is the Phase 1 version of <a href="https://pma.ipums.org/pma-action/variables/resident#codes_section"><code>resident</code></a>, while <a href="https://pma.ipums.org/pma-action/variables/resident#codes_section"><code>resident_2</code></a> comes from Phase 2.
 </aside>
-<p>For example, let’s consider a <strong>Wide</strong> format data extract containing Phase 1 and Phase 2 respondents to the Female Questionnaire from Burkina Faso. You’ll find the number of women who slept in the household before the Household Questionnaire for each phase reported in <a href="https://pma.ipums.org/pma-action/variables/resident#codes_section"><code>resident_1</code></a> and <a href="https://pma.ipums.org/pma-action/variables/resident#codes_section"><code>resident_2</code></a>:</p>
-<pre class="text"><code>use &quot;pma_00126.dta&quot;, clear
+<p>For example, let’s consider a <strong>Wide</strong> format data extract containing Phase 1 and Phase 2 respondents to the Female Questionnaire from Burkina Faso. You’ll find the number of women who slept in the household before the Household Questionnaire for each phase reported in <a href="https://pma.ipums.org/pma-action/variables/resident#codes_section"><code>resident_1</code></a> and <a href="https://pma.ipums.org/pma-action/variables/resident#codes_section"><code>resident_2</code></a>:<span id="fn9" class="footnote" data-pagedown-footnote-number="9" style="white-space: pre-line;">Stata’s <code>table</code> command was revised and extended in Stata Version 17, so some of the examples in this guide require you to have Stata Version 17 or after to run. The updated command yields nicer looking output than the older syntax, but in every case there is a corresponding syntax that will run in older versions of Stata. The .do-files that accompany this guide in <a href="https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide">its GitHub repository</a> check to see what version of Stata the user is running. If they are running v17 or after, it uses the updated <code>table</code> command. If they are running an older version, it uses syntax for the older <code>tabulate</code> command, which is often abbreviated with the syntax <code>tab</code>.</span></p>
+<pre class="text"><code>use pma_00006, clear 
 
 table ( resident_1 ) () (), nototals missing zerocounts</code></pre>
 <pre><code>
@@ -573,7 +677,7 @@ Resident type - Phase 1 |
 <p><img src="images/cases1.png" width="883" style="display: block; margin: auto;" /></p>
 <div class="page-break-after"></div>
 <p>We’ll further restrict our sample by selecting only cases where <a href="https://pma.ipums.org/pma-action/variables/resultfq#codes_section"><code>resultfq_2</code></a> shows that the woman also completed the Phase 2 questionnaire. Notice that, in addition to each of the value 1 through 10, there are several <strong>non-response codes</strong> numbered 90 through 99. You’ll see similar values repeated across all IPUMS PMA variables, except that they will be left-padded to match the maximum width of a particular variable (e.g. <code>9999</code> is used for <a href="https://pma.ipums.org/pma-action/variables/INTFQYEAR#codes_section"><code>intfqyear</code></a>, which represents a 4-digit year for the Female Interview).</p>
-<pre class="text"><code>use &quot;pma_00126.dta&quot;, clear
+<pre class="text"><code>use pma_00006, clear 
 
 tab resultfq_2, m</code></pre>
 <pre><code>         result of female questionnaire |      Freq.     Percent        Cum.
@@ -602,7 +706,7 @@ not interviewed (household questionnair |        192        2.83       86.88
 <p>A missing value (<code>.</code>) in an IPUMS extract indicates that a particular variable is not provided for a selected sample. In a <strong>Wide</strong> extract, it may also signify that a particular person was not included in the data from a particular phase. Here, a missing value (<code>.</code>) appearing in <a href="https://pma.ipums.org/pma-action/variables/resultfq#codes_section"><code>resultfq_2</code></a> indicates that a Female Respondent from Phase 1 was not found in Phase 2.</p>
 <div class="page-break-after"></div>
 <p>You can drop incomplete Phase 2 female responses as follows:</p>
-<pre class="text"><code>use &quot;pma_00126.dta&quot;, clear
+<pre class="text"><code>use pma_00006, clear 
 keep if resultfq_2 == 1
 tab resultfq_1 resultfq_2,m</code></pre>
 <pre><code>                      | result of
@@ -616,30 +720,30 @@ tab resultfq_1 resultfq_2,m</code></pre>
 ----------------------+-----------+----------
                 Total |     5,491 |     5,491 </code></pre>
 <p>Generally, we will combine both filtering steps together in a single function like so:</p>
-<pre class="text"><code>use &quot;pma_00126.dta&quot;, clear
+<pre class="text"><code>use pma_00006, clear 
 keep if inlist(resident_1,11,22) &amp; inlist(resident_2,11,22) &amp; resultfq_2  == 1</code></pre>
 <p>In subsequent analyses, we’ll use each analytic sample to show how PMA generates key indicators for <strong>contraceptive use status</strong> and <strong>family planning intentions and outcomes</strong>. The summary report for each country includes measures dis-aggregated by demographic variables like:</p>
 <ul>
 <li><a href="https://pma.ipums.org/pma-action/variables/MARSTAT#codes_section"><code>marstat</code></a> - marital status</li>
-<li><a href="https://pma.ipums.org/pma-action/variables/EDUCATT#codes_section"><code>educatt</code></a> and <a href="https://pma.ipums.org/pma-action/variables/EDUCATTGEN#codes_section"><code>educattgen</code></a> - highest attended level of education<span id="fn9" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="9">Levels in <a href="https://pma.ipums.org/pma-action/variables/EDUCATT#codes_section"><code>educatt</code></a> may vary by country; <a href="https://pma.ipums.org/pma-action/variables/EDUCATTGEN#codes_section"><code>educattgen</code></a> recodes country-specific levels in four general categories.</span></li>
+<li><a href="https://pma.ipums.org/pma-action/variables/EDUCATT#codes_section"><code>educatt</code></a> and <a href="https://pma.ipums.org/pma-action/variables/EDUCATTGEN#codes_section"><code>educattgen</code></a> - highest attended level of education<span id="fn10" class="footnote" data-pagedown-footnote-number="10" style="white-space: pre-line;">Levels in <a href="https://pma.ipums.org/pma-action/variables/EDUCATT#codes_section"><code>educatt</code></a> may vary by country; <a href="https://pma.ipums.org/pma-action/variables/EDUCATTGEN#codes_section"><code>educattgen</code></a> recodes country-specific levels in four general categories.</span></li>
 <li><a href="https://pma.ipums.org/pma-action/variables/AGE#codes_section"><code>age</code></a> - age</li>
-<li><a href="https://pma.ipums.org/pma-action/variables/WEALTHQ#codes_section"><code>wealthq</code></a> and <a href="https://pma.ipums.org/pma-action/variables/WEALTHT#codes_section"><code>wealtht</code></a> - household wealth quintile or tertile<span id="fn10" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="10">Households are divided into quintiles/tertiles relative to the distribution of an asset <a href="https://pma.ipums.org/pma-action/variables/SCORE#description_section"><code>score</code></a> weighted for all sampled households. For sub-nationally-representative samples (DRC and Nigeria), separate wealth distributions are calculated for each sampled region.</span></li>
-<li><a href="https://pma.ipums.org/pma-action/variables/URBAN#codes_section"><code>urban</code></a> and <a href="https://pma.ipums.org/pma-action/variables/SUBNATIONAL#codes_section"><code>subnational</code></a> - geographic location<span id="fn11" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="11"><a href="https://pma.ipums.org/pma-action/variables/SUBNATIONAL#codes_section"><code>subnational</code></a> includes sub-national regions for all sampled countries; country-specific variables are also available on the <a href="https://pma.ipums.org/pma-action/variables/group?id=hh_geo">household - geography</a> page.</span></li>
+<li><a href="https://pma.ipums.org/pma-action/variables/WEALTHQ#codes_section"><code>wealthq</code></a> and <a href="https://pma.ipums.org/pma-action/variables/WEALTHT#codes_section"><code>wealtht</code></a> - household wealth quintile or tertile<span id="fn11" class="footnote" data-pagedown-footnote-number="11" style="white-space: pre-line;">Households are divided into quintiles/tertiles relative to the distribution of an asset <a href="https://pma.ipums.org/pma-action/variables/SCORE#description_section"><code>score</code></a> weighted for all sampled households. For sub-nationally-representative samples (DRC and Nigeria), separate wealth distributions are calculated for each sampled region.</span></li>
+<li><a href="https://pma.ipums.org/pma-action/variables/URBAN#codes_section"><code>urban</code></a> and <a href="https://pma.ipums.org/pma-action/variables/SUBNATIONAL#codes_section"><code>subnational</code></a> - geographic location<span id="fn12" class="footnote" data-pagedown-footnote-number="12" style="white-space: pre-line;"><a href="https://pma.ipums.org/pma-action/variables/SUBNATIONAL#codes_section"><code>subnational</code></a> includes sub-national regions for all sampled countries; country-specific variables are also available on the <a href="https://pma.ipums.org/pma-action/variables/group?id=hh_geo">household - geography</a> page.</span></li>
 </ul>
 </div>
 <div id="survey-design-elements" class="section level2" number="1.5">
 <h2><span class="header-section-number">1.5</span> Survey Design Elements</h2>
 <p>Throughout this guide, we’ll demonstrate how to incorporate PMA sampling weights and information about its stratified cluster sampling procedure into your analysis. This section describes how to use survey weights, cluster IDs, and sample strata in Stata.</p>
 <p>Let’s return to the <strong>Wide</strong> data extract described in the previous section, which includes Phase 1 and Phase 2 <strong>Female Respondents</strong> from Burkina Faso. As a reminder: we’ll drop women who are non members of the <em>de facto</em> population and those who did not complete all or part the Female Questionnaire in both phases.</p>
-<pre class="text"><code>use &quot;pma_00126.dta&quot;, clear
+<pre class="text"><code>use pma_00006, clear 
 keep if inlist(resident_1,11,22) &amp; inlist(resident_2,11,22) &amp; resultfq_2  == 1</code></pre>
 <p>Whether you intend to work with a new <strong>Longitudinal</strong> or <strong>Cross-sectional</strong> data extract, you’ll find the same set of sampling weights available for all PMA Family Planning surveys dating back to 2013:</p>
 <aside>
-A fourth Family Planning survey weight, <a href="https://pma.ipums.org/pma-action/variables/POPWT#description_section"><code>popwt</code></a>, is currently available only for <strong>Cross-sectional</strong> data extracts.<span id="fn12" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="12"><a href="https://pma.ipums.org/pma-action/variables/POPWT#codes_section"><code>popwt</code></a> can be used to estimate population-level <em>counts</em> - <a href="https://pma.ipums.org/pma/population_weights.shtml">click here</a> or view <a href="https://www.youtube.com/watch?v=GnCq26t4zgM">this video</a> for details.</span>
+A fourth Family Planning survey weight, <a href="https://pma.ipums.org/pma-action/variables/POPWT#description_section"><code>popwt</code></a>, is currently available only for <strong>Cross-sectional</strong> data extracts.<span id="fn13" class="footnote" data-pagedown-footnote-number="13" style="white-space: pre-line;"><a href="https://pma.ipums.org/pma-action/variables/POPWT#codes_section"><code>popwt</code></a> can be used to estimate population-level <em>counts</em> - <a href="https://pma.ipums.org/pma/population_weights.shtml">click here</a> or view <a href="https://www.youtube.com/watch?v=GnCq26t4zgM">this video</a> for details.</span>
 </aside>
 <ul>
-<li><a href="https://pma.ipums.org/pma-action/variables/HQWEIGHT#description_section"><code>hqweight</code></a> can be used to generate cross-sectional population estimates from questions on the Household Questionnaire.<span id="fn13" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="13"><a href="https://pma.ipums.org/pma-action/variables/HQWEIGHT#codes_section"><code>hqweight</code></a> reflects the <a href="https://pma.ipums.org/pma/resources/documentation/weighting_memo.pdf">calculated selection probability</a> for a household in an EA, normalized at the population-level. Users intending to estimate population-level indicators for <em>households</em> should restrict their sample to one person per household via <a href="https://pma.ipums.org/pma-action/variables/LINENO#description_section"><code>lineno</code></a> - see <a href="https://pma.ipums.org/pma/weightguide.shtml#hh">household weighting guide</a> for details.</span></li>
-<li><a href="https://pma.ipums.org/pma-action/variables/FQWEIGHT#description_section"><code>fqweight</code></a> can be used to to generate cross-sectional population estimates from questions on the Female Questionnaire.<span id="fn14" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="14"><a href="https://pma.ipums.org/pma-action/variables/FQWEIGHT#codes_section"><code>fqweight</code></a> adjusts <a href="https://pma.ipums.org/pma-action/variables/HQWEIGHT#codes_section"><code>hqweight</code></a> for female non-response within the EA, normalized at the population-level - see <a href="https://pma.ipums.org/pma/weightguide.shtml#female">female weighting guide</a> for details.</span></li>
+<li><a href="https://pma.ipums.org/pma-action/variables/HQWEIGHT#description_section"><code>hqweight</code></a> can be used to generate cross-sectional population estimates from questions on the Household Questionnaire.<span id="fn14" class="footnote" data-pagedown-footnote-number="14" style="white-space: pre-line;"><a href="https://pma.ipums.org/pma-action/variables/HQWEIGHT#codes_section"><code>hqweight</code></a> reflects the <a href="https://pma.ipums.org/pma/resources/documentation/weighting_memo.pdf">calculated selection probability</a> for a household in an EA, normalized at the population-level. Users intending to estimate population-level indicators for <em>households</em> should restrict their sample to one person per household via <a href="https://pma.ipums.org/pma-action/variables/LINENO#description_section"><code>lineno</code></a> - see <a href="https://pma.ipums.org/pma/weightguide.shtml#hh">household weighting guide</a> for details.</span></li>
+<li><a href="https://pma.ipums.org/pma-action/variables/FQWEIGHT#description_section"><code>fqweight</code></a> can be used to to generate cross-sectional population estimates from questions on the Female Questionnaire.<span id="fn15" class="footnote" data-pagedown-footnote-number="15" style="white-space: pre-line;"><a href="https://pma.ipums.org/pma-action/variables/FQWEIGHT#codes_section"><code>fqweight</code></a> adjusts <a href="https://pma.ipums.org/pma-action/variables/HQWEIGHT#codes_section"><code>hqweight</code></a> for female non-response within the EA, normalized at the population-level - see <a href="https://pma.ipums.org/pma/weightguide.shtml#female">female weighting guide</a> for details.</span></li>
 <li><a href="https://pma.ipums.org/pma-action/variables/EAWEIGHT#description_section"><code>eaweight</code></a> can be used to compare the selection probability of a particular household with that of its EA.</li>
 </ul>
 <p>Additionally, PMA created a new weight, <a href="https://pma.ipums.org/pma-action/variables/PANELWEIGHT#description_section"><code>panelweight</code></a>,
@@ -662,7 +766,7 @@ Contraceptive user (Phase 1) |
 <aside>
 This is a lean <code>svyset</code> call. We recall that the default <code>vce</code> option is <code>vce(linearized)</code> and the default single-unit option is <code>(missing)</code>. Read the <code>svyset</code> documentation if you want to consider using other settings.
 </aside>
-<p>We use <a href="https://pma.ipums.org/pma-action/variables/eaid#codes_section"><code>eaid_1</code></a> as the cluster ID<span id="fn15" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="15">Because women are considered “lost to follow-up” if they moved outside the study area, <a href="https://pma.ipums.org/pma-action/variables/eaid#codes_section"><code>eaid_1</code></a> and <a href="https://pma.ipums.org/pma-action/variables/eaid#codes_section"><code>eaid_2</code></a> are identical for all panel members: you can use either one to identify sample clusters.</span> and <a href="https://pma.ipums.org/pma-action/variables/strata#codes_section"><code>strata_1</code></a> as the stratum ID.<span id="fn16" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="16">As with <a href="https://pma.ipums.org/pma-action/variables/EAID#codes_section"><code>eaid</code></a>, you may use either <a href="https://pma.ipums.org/pma-action/variables/STRATA#codes_section"><code>strata_1</code></a> or <a href="https://pma.ipums.org/pma-action/variables/STRATA#codes_section"><code>strata_2</code></a> if your analysis is restricted to panel members</span> <a href="https://pma.ipums.org/pma-action/variables/panelweight#codes_section"><code>panelweight</code></a> represents the survey weight. We also make a binary variable indicating which women were using contraception in both phases.</p>
+<p>We use <a href="https://pma.ipums.org/pma-action/variables/eaid#codes_section"><code>eaid_1</code></a> as the cluster ID<span id="fn16" class="footnote" data-pagedown-footnote-number="16" style="white-space: pre-line;">Because women are considered “lost to follow-up” if they moved outside the study area, <a href="https://pma.ipums.org/pma-action/variables/eaid#codes_section"><code>eaid_1</code></a> and <a href="https://pma.ipums.org/pma-action/variables/eaid#codes_section"><code>eaid_2</code></a> are identical for all panel members: you can use either one to identify sample clusters.</span> and <a href="https://pma.ipums.org/pma-action/variables/strata#codes_section"><code>strata_1</code></a> as the stratum ID.<span id="fn17" class="footnote" data-pagedown-footnote-number="17" style="white-space: pre-line;">As with <a href="https://pma.ipums.org/pma-action/variables/EAID#codes_section"><code>eaid</code></a>, you may use either <a href="https://pma.ipums.org/pma-action/variables/STRATA#codes_section"><code>strata_1</code></a> or <a href="https://pma.ipums.org/pma-action/variables/STRATA#codes_section"><code>strata_2</code></a> if your analysis is restricted to panel members</span> <a href="https://pma.ipums.org/pma-action/variables/panelweight#codes_section"><code>panelweight</code></a> represents the survey weight. We also make a binary variable indicating which women were using contraception in both phases.</p>
 <pre class="text"><code>gen cp_both = cp_1 == 1 &amp; cp_2 == 1 if cp_1 &lt; 90
 label variable cp_both &quot;Contraceptive user (Phases 1 &amp; 2)&quot;
 label define cp_both 1 &quot;Yes&quot; 0 &quot;No&quot;, replace
@@ -688,8 +792,8 @@ Number of PSUs   = 167            Population size = 5,215.6413
          No  |   .8122041    .012815      .7855839    .8362084
         Yes  |   .1877959    .012815      .1637916    .2144161
 --------------------------------------------------------------</code></pre>
-<p>This is our first look at Stata’s output for estimating proportions. The top of the output table lists the number of strata and PSUs (enumeration areas) in the dataset, along with the number of respondents in the sample and the sum of their weights (under the heading: Population size). The number of design degrees of freedom (df) is the number of PSUs minus the number of strata.<span id="fn17" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="17">Some survey materials guide analysts to only report results for estimates or tests where the relative standard error (100 x standard error of the estimate / the estimate itself) is no greater than 30% or where there are at least twelve degrees of freedom. See the Centers for Disease Control and Prevention’s <a href="https://www.cdc.gov/nchs/tutorials/nhanes-cms/variance/variance.htm">NHANES CMS tutorial</a>.︎</span></p>
-<p>The lower portion of the table lists the values of the outcome variable, or in this case their value labels: No and Yes. It lists the proportion of the population that are estimated to have each outcome, that proportion’s standard error, and a two-sided survey-adjusted confidence interval for the proportion. Stata’s default confidence interval is the so-called “logit interval” which is one of several possibilities.<span id="fn18" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="18">For now we will simply say that the default logit interval is a fine choice for most circumstances (see <a href="https://doi.org/10.1093/jssam/smv024">Dean &amp; Pagano (2015)</a> for discussion). To request a different kind of confidence interval, read about the options and specify what you want using the <code>citype()</code> option to the <code>svy: proportion</code> command (e.g., <code>citype(wilson)</code> or <code>citype(exact)</code>). If you estimate a proportion where the sample have either 0% or 100% of respondents with the outcome, then as of the time of this writing, neither Stata nor R’s <a href="http://r-survey.r-forge.r-project.org/survey/">survey</a> package will report a confidence interval. Here at Biostat Global Consulting, we have written programs in both Stata and R that yield meaningful confidence intervals for any proportion. Those programs are made freely available as part of software we have written for the World Health Organization. If you want to learn more about them, write to us at <a href="mailto:Dale.Rhoda@biostatglobal.com">Dale.Rhoda@biostatglobal.com</a> or <a href="mailto:Caitlin.Clary@biostatglobal.com">Caitlin.Clary@biostatglobal.com</a>.</span></p>
+<p>This is our first look at Stata’s output for estimating proportions. The top of the output table lists the number of strata and PSUs (enumeration areas) in the dataset, along with the number of respondents in the sample and the sum of their weights (under the heading: Population size). The number of design degrees of freedom (df) is the number of PSUs minus the number of strata.<span id="fn18" class="footnote" data-pagedown-footnote-number="18" style="white-space: pre-line;">Some survey materials guide analysts to only report results for estimates or tests where the relative standard error (100 x standard error of the estimate / the estimate itself) is no greater than 30% or where there are at least twelve degrees of freedom. See the Centers for Disease Control and Prevention’s <a href="https://www.cdc.gov/nchs/tutorials/nhanes-cms/variance/variance.htm">NHANES CMS tutorial</a>.︎</span></p>
+<p>The lower portion of the table lists the values of the outcome variable, or in this case their value labels: No and Yes. It lists the proportion of the population that are estimated to have each outcome, that proportion’s standard error, and a two-sided survey-adjusted confidence interval for the proportion. Stata’s default confidence interval is the so-called “logit interval” which is one of several possibilities.<span id="fn19" class="footnote" data-pagedown-footnote-number="19" style="white-space: pre-line;">For now we will simply say that the default logit interval is a fine choice for most circumstances (see <a href="https://doi.org/10.1093/jssam/smv024">Dean &amp; Pagano (2015)</a> for discussion). To request a different kind of confidence interval, read about the options and specify what you want using the <code>citype()</code> option to the <code>svy: proportion</code> command (e.g., <code>citype(wilson)</code> or <code>citype(exact)</code>). If you estimate a proportion where the sample have either 0% or 100% of respondents with the outcome, then as of the time of this writing, neither Stata nor R’s <a href="http://r-survey.r-forge.r-project.org/survey/">survey</a> package will report a confidence interval. Here at Biostat Global Consulting, we have written programs in both Stata and R that yield meaningful confidence intervals for any proportion. Those programs are made freely available as part of software we have written for the World Health Organization. If you want to learn more about them, write to us at <a href="mailto:Dale.Rhoda@biostatglobal.com">Dale.Rhoda@biostatglobal.com</a> or <a href="mailto:Caitlin.Clary@biostatglobal.com">Caitlin.Clary@biostatglobal.com</a>.</span></p>
 <p>Describing this output, we might say that “based on this survey sample of 5,207 women from Burkina Faso, we estimate that if the surveys were free from bias then about 18.8% women who were eligible to be sampled in the PMA surveys would be self-reported users of contraception in both Phases 1 and 2 (95% CI: 16.4-21.4%).”</p>
 </div>
 <div id="design-effect" class="section level3" number="1.5.2">
@@ -768,15 +872,15 @@ Number of PSUs   = 929                   Population size = 929
           1  |   .1872982   .0128073      .1634491     .213738
 --------------------------------------------------------------</code></pre>
 <p>Now let’s compare the CI width from the simple random sample with N=929 with that from the complex sample with N=5,207. That is: we’ll divide the difference between the upper and lower limits of our 95% confidence interval from the complex data by that of the simple random sample. We’ll see that it is approximately equal to <code>DEFT</code>.</p>
-<pre class="text"><code>di (.2144-.1638) / (.1987-.1774)</code></pre>
-<pre><code>2.3755869</code></pre>
-<p>It can be disheartening to know that the teams did all the work to interview 5,207 respondents and yet for this estimation that sample only has the statistical precision of a simple random sample of 929 respondents. The statistical penalty is because of both a clustering effect – spatial heterogeneity in the outcome across PSUs – and because of heterogeneity in the survey weights. In some survey reporting contexts you will be expected to report either <code>DEFF</code> or <code>DEFT</code>, or both. Be clear about which one you are reporting. The design effect will vary across outcomes, across strata, and across PMA Phases, so if it is of interest, estimate it anew for each analysis. You can learn more about the survey design effect in <a href="">materials on survey sampling statistics</a>.</p>
+<pre class="text"><code>di (.213738 - .1634491) / (.1986672 - .177417)</code></pre>
+<pre><code>2.3665142</code></pre>
+<p>It can be disheartening to know that the teams did all the work to interview 5,207 respondents and yet for this estimation that sample only has the statistical precision of a simple random sample of 929 respondents. The statistical penalty is because of both a clustering effect – spatial heterogeneity in the outcome across PSUs – and because of heterogeneity in the survey weights. In some survey reporting contexts you will be expected to report either <code>DEFF</code> or <code>DEFT</code>, or both. Be clear about which one you are reporting. The design effect will vary across outcomes, across strata, and across PMA Phases, so if it is of interest, estimate it anew for each analysis. You can learn more about the survey design effect in materials on survey sampling statistics, such as the excellent textbook <a href="https://websites.umich.edu/~surveymethod/asda/">Applied Survey Data Analysis</a>.</p>
 </div>
 <div id="sample-strata-for-drc" class="section level3" number="1.5.3">
 <h3><span class="header-section-number">1.5.3</span> Sample strata for DRC</h3>
 <p>This syntax and <code>svyset</code> command worked well for Burkina Faso, but take note: the variable <a href="https://pma.ipums.org/pma-action/variables/strata#codes_section"><code>strata</code></a> is not available for samples collected from DRC - Kinshasa or DRC - Kongo Central. If your extract includes any DRC sample, you’ll need to amend this variable to include a unique numeric code for each of those regions.</p>
 <p>For example, let’s look at a different wide extract, containing all of the samples included in this data release. Here, we again include only panel members who completed all or part of the female questionnaire in both phases, and who slept in the household during the night before the interview:</p>
-<pre class="text"><code>use &quot;pma_00153.dta&quot;, clear
+<pre class="text"><code>use pma_00007, clear 
 keep if inlist(resident_1,11,22) &amp; inlist(resident_2,11,22) &amp; resultfq_2  == 1</code></pre>
 <p>Notice that <a href="https://pma.ipums.org/pma-action/variables/strata#codes_section"><code>strata_1</code></a> lists the sample strata for all values of <a href="https://pma.ipums.org/pma-action/variables/country#codes_section"><code>country</code></a> except for DRC, where the variable is missing.</p>
 <pre class="text"><code>table ( strata_1 ) if country == 2, nototals missing zerocounts</code></pre>
@@ -934,7 +1038,7 @@ A video tour of the longitudinal extract system is available <a href="https://ww
 <p><a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN#codes_section"><code>panelwoman</code></a> indicates whether an individual is a member of the panel study.</p>
 <a href="https://pma.ipums.org/pma-action/variables/ELIGIBLE#codes_section"><code>eligible</code></a> indicates whether an individual was eligible for the female questionnaire.
 </aside>
-<p><strong>Female Respondents</strong> only includes women who completed <em>all or part</em> of a Female Questionnaire. <strong>This option selects all members of the panel study.</strong> In addition, it includes women who only participated in only one phase - we will demonstrate how to identify and drop these cases below.<span id="fn19" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="19">Women who completed all or part of the Female Questionnaire in <em>more than one phase</em> of the study are considered <strong>panel members</strong>. Women who completed it only at Phase 1 are included in a longitudinal extract, but they are not <strong>panel members</strong>. Likewise, women who completed it for the first time at Phase 2 are included, but are not <strong>panel members</strong> if they 1) will reach age 50 before Phase 3, or 2) declined the invitation to participate again in Phase 3.</span></p>
+<p><strong>Female Respondents</strong> only includes women who completed <em>all or part</em> of a Female Questionnaire. <strong>This option selects all members of the panel study.</strong> In addition, it includes women who only participated in only one phase - we will demonstrate how to identify and drop these cases below.<span id="fn20" class="footnote" data-pagedown-footnote-number="20" style="white-space: pre-line;">Women who completed all or part of the Female Questionnaire in <em>more than one phase</em> of the study are considered <strong>panel members</strong>. Women who completed it only at Phase 1 are included in a longitudinal extract, but they are not <strong>panel members</strong>. Likewise, women who completed it for the first time at Phase 2 are included, but are not <strong>panel members</strong> if they 1) will reach age 50 before Phase 3, or 2) declined the invitation to participate again in Phase 3.</span></p>
 <p><strong>Female Respondents and Female Non-respondents</strong> includes all women who were eligible to participate in a Female Questionnaire. Eligible women are those age 15-49 who were listed on the roster collected in a Household Questionnaire. If an eligible woman declined the Female Questionnaire or was not available, variables associated with that questionnaire will be coded “Not interviewed (female questionnaire)”.</p>
 <div class="page-break-after"></div>
 <aside>
@@ -1021,7 +1125,7 @@ A video tour of the longitudinal extract system is available <a href="https://ww
 <div id="long-data-structure" class="section level2" number="2.4">
 <h2><span class="header-section-number">2.4</span> Long Data Structure</h2>
 <p>We’ve downloaded a <strong>Long</strong> data extract (<strong>Female Respondents</strong> only), which we’ll now load into Stata as follows:</p>
-<pre class="text"><code>use &quot;pma_00119.dta&quot;, clear</code></pre>
+<pre class="text"><code>use pma_00002, clear </code></pre>
 <p>In a <strong>Long</strong> extract, data from each phase will be organized in <em>separate rows</em>. Here, responses from three panel members are shown:</p>
 <pre class="text"><code>sort fqinstid phase
 
@@ -1108,7 +1212,7 @@ pop         |
 <div id="wide-data-structure" class="section level2" number="2.5">
 <h2><span class="header-section-number">2.5</span> Wide Data Structure</h2>
 <p>We’ve also downloaded a <strong>Wide</strong> data extract (<strong>Female Respondents</strong> only), which we’ll load into Stata like so:</p>
-<pre class="text"><code>use &quot;pma_00116.dta&quot;, clear
+<pre class="text"><code>use pma_00001, clear 
 </code></pre>
 <p>In a <strong>Wide</strong> extract, all of the responses from one woman appear in the <em>same row</em>. The IPUMS PMA extract system appends a numeric suffix to each variable name corresponding with the phase from which it was drawn. Consider our three example panel members again:</p>
 <pre class="text"><code>sort fqinstid
@@ -1135,7 +1239,7 @@ list fqinstid age_1 age_2 panelwoman_1 panelwoman_2 ///
   | completed       31   not at home   not interviewed (female questionnaire) |
   +---------------------------------------------------------------------------+</code></pre>
 <p>In a <strong>Long</strong> extract, rows for the missing phase are dropped. In this example, the woman was “not at home” for the Phase 2 Female Questionnaire. When we select a <strong>Long</strong> extract containing only Female Respondents, her Phase 2 row is excluded automatically (it will be included if you request an extract containing Female Respondents and Female Non-respondents).</p>
-<pre class="text"><code>use &quot;pma_00119.dta&quot;, clear
+<pre class="text"><code>use pma_00002, clear 
 list phase age resultfq ///
      if fqinstid == &quot;0C8VQU6B03BXLAVVZ8SB90EKQ&quot;, noobs</code></pre>
 <pre><code>  +----------------------------+
@@ -1144,7 +1248,7 @@ list phase age resultfq ///
   | baseline    31   completed |
   +----------------------------+</code></pre>
 <p>The <strong>Inclusion Criteria for Analysis</strong> section in Chapter 1 shows how to identify members of the <em>de facto</em> population who completed the Female Questionnaire in both phases for a <strong>Wide</strong> extract. Those steps are repeated here:</p>
-<pre class="text"><code>use &quot;pma_00116.dta&quot;, clear
+<pre class="text"><code>use pma_00001, clear 
 keep if inlist(resident_1,11,22) &amp; inlist(resident_2,11,22) &amp; resultfq_2  == 1</code></pre>
 <p>Following these steps, each analytic sample contains the same number of cases shown in the final <strong>Long</strong> format extract above.</p>
 <pre class="text"><code>gen pop = .
@@ -1186,7 +1290,7 @@ pop         |
 <aside>
 We will revisit <code>reshape</code> when analyzing PMA Contraceptive Calendar data in Chapter 6.
 </aside>
-<pre class="text"><code>use &quot;pma_00116.dta&quot;, clear
+<pre class="text"><code>use pma_00001, clear 
 keep if resultfq_2 == 1 &amp; resultfq_1 != .
 
 keep if inlist(resident_1, 11, 22)
@@ -1241,7 +1345,7 @@ R code showing how to build a combined CONSORT diagram with <a href="https://ggp
 <p>Variables describing sample composition are located under the “Technical” topics heading. Our extract will contain all of the variables in the <a href="https://pma.ipums.org/pma-action/variables/group?id=tech_techvar">Technical Variables</a> and <a href="https://pma.ipums.org/pma-action/variables/group?id=tech_panel">Longitudinal Panel</a> subheadings shown:</p>
 <p><img src="images/technical.png" width="85%" style="display: block; margin: auto;" /></p>
 <p>Once you’ve finished selecting variables and downloaded an extract, load it into Stata like so:</p>
-<pre class="text"><code>use pma_00120, clear</code></pre>
+<pre class="text"><code>use pma_00003, clear</code></pre>
 <p>We mentioned in Chapter 1 that variables in a <strong>Wide</strong> extract include a numeric suffix corresponding with a data collection phase. For example, you’ll find two versions of <a href="https://pma.ipums.org/pma-action/variables/SAMPLE#codes_section"><code>sample</code></a>: <a href="https://pma.ipums.org/pma-action/variables/sample#codes_section"><code>sample_1</code></a> contains a numeric code for each Phase 1 sample, while <a href="https://pma.ipums.org/pma-action/variables/sample#codes_section"><code>sample_2</code></a> contains a numeric code for each Phase 2 sample.</p>
 <p>We also mentioned in Chapter 1 that IPUMS PMA combines sub-nationally representative samples for DRC (Kinshasa and Kongo Central) and Nigeria (Kano and Lagos) with one <a href="https://pma.ipums.org/pma-action/variables/SAMPLE#codes_section"><code>sample</code></a> code each. Here, we’ll separate those samples and abbreviate country names. Let’s call this variable <code>pop</code>.</p>
 <ul>
@@ -1282,7 +1386,7 @@ pop                 |
 </div>
 <div id="phase-1" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Phase 1</h2>
-<p>Phase 1 marks the beginning of the PMA panel study (baseline). As we’ve mentioned, it consists of two separate questionnaires administered in stages: first, resident enumerators visited 35 household dwellings selected at random within each sample cluster, or <strong>enumeration area</strong>. If a qualifying respondent was available, they were invited to complete a <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Household-Questionnaire-English-2019.10.09.pdf">Household Questionnaire</a><span id="fn20" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="20">Questionnaires administered in each country may vary from this <strong>Core Household Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span> including a census of all household members and visitors who stayed there during the night before the interview. If this census included any women aged 15-49, the enumerator would later return to the household and invite each eligible woman to complete a <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Female-Questionnaire-English-2019.10.09.pdf">Female Questionnaire</a><span id="fn21" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="21">Questionnaires administered in each country may vary from this <strong>Core Female Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span> and participate in the three-year panel study.</p>
+<p>Phase 1 marks the beginning of the PMA panel study (baseline). As we’ve mentioned, it consists of two separate questionnaires administered in stages: first, resident enumerators visited 35 household dwellings selected at random within each sample cluster, or <strong>enumeration area</strong>. If a qualifying respondent was available, they were invited to complete a <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Household-Questionnaire-English-2019.10.09.pdf">Household Questionnaire</a><span id="fn21" class="footnote" data-pagedown-footnote-number="21" style="white-space: pre-line;">Questionnaires administered in each country may vary from this <strong>Core Household Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span> including a census of all household members and visitors who stayed there during the night before the interview. If this census included any women aged 15-49, the enumerator would later return to the household and invite each eligible woman to complete a <a href="https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Female-Questionnaire-English-2019.10.09.pdf">Female Questionnaire</a><span id="fn22" class="footnote" data-pagedown-footnote-number="22" style="white-space: pre-line;">Questionnaires administered in each country may vary from this <strong>Core Female Questionnaire</strong> - <a href="https://pma.ipums.org/pma/enum_materials.shtml">click here</a> for details.</span> and participate in the three-year panel study.</p>
 <p>We’ll take a look at the inclusion criteria and missing data codes for each questionnaire, in turn.</p>
 <div id="household-questionnaire" class="section level3" number="3.2.1">
 <h3><span class="header-section-number">3.2.1</span> Household Questionnaire</h3>
@@ -1320,7 +1424,7 @@ result of household questionnaire |
 Across samples, 96.35% of households completed all or part of the Phase 1 Household Questionnaire.
 </aside>
 <pre class="text"><code>preserve
-use pma_00120, clear
+use pma_00003, clear
 
 drop if missing(hhid_1) // focus on Phase 1
 bysort hhid_1: keep if _n == 1 // keep one row per household
@@ -1441,7 +1545,7 @@ pop                 |
   Nigeria-Kano      |      1,127
   Nigeria-Lagos     |      1,507
 --------------------------------</code></pre>
-<p>Enumerators invited these women to participate in Phase 2 of the panel study one year later. Only women who agreed to participate at that time are considered panel members at Phase 2, as shown in <a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN#codes_section"><code>panelwoman_2</code></a>.<span id="fn22" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="22">Women who completed the Phase 1 Female Questionnaire but declined to participate in the panel were given an opportunity to join the panel again at Phase 2 (if eligible). They are not panel members as shown in <a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN#codes_section"><code>panelwoman_2</code></a>, but they may be listed as such in <a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN_3#codes_section"><code>panelwoman_3</code></a> if they agree to participation in the panel going forward.</span></p>
+<p>Enumerators invited these women to participate in Phase 2 of the panel study one year later. Only women who agreed to participate at that time are considered panel members at Phase 2, as shown in <a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN#codes_section"><code>panelwoman_2</code></a>.<span id="fn23" class="footnote" data-pagedown-footnote-number="23" style="white-space: pre-line;">Women who completed the Phase 1 Female Questionnaire but declined to participate in the panel were given an opportunity to join the panel again at Phase 2 (if eligible). They are not panel members as shown in <a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN#codes_section"><code>panelwoman_2</code></a>, but they may be listed as such in <a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN_3#codes_section"><code>panelwoman_3</code></a> if they agree to participation in the panel going forward.</span></p>
 <aside>
 Total number of women, per sample, who consented at Phase 1 to the Phase 2 follow-up
 </aside>
@@ -1476,7 +1580,7 @@ tab surveywilling_1 if completed_fq1 == 1</code></pre>
 </div>
 <div id="phase-2" class="section level2" number="3.3">
 <h2><span class="header-section-number">3.3</span> Phase 2</h2>
-<p>Both questionnaires were administered again in Phase 2, approximately one year after Phase 1. Resident enumerators visited the same dwellings where Phase 1 interviews occurred; if the woman’s household had moved elsewhere within the study area,<span id="fn23" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="23">The “study area” is area within which resident enumerators should attempt to find panel women that have moved out of their Phase 1 dwelling. This may extend beyond the woman’s original EA as determined by in-country administrators - see <a href="https://www.pmadata.org/data/survey-methodology">PMA Phase 2 and Phase 3 Survey Protocol</a> for details.</span> enumerators used local contacts to find its new location. If found, they administered a Household Questionnaire including an updated household roster.</p>
+<p>Both questionnaires were administered again in Phase 2, approximately one year after Phase 1. Resident enumerators visited the same dwellings where Phase 1 interviews occurred; if the woman’s household had moved elsewhere within the study area,<span id="fn24" class="footnote" data-pagedown-footnote-number="24" style="white-space: pre-line;">The “study area” is area within which resident enumerators should attempt to find panel women that have moved out of their Phase 1 dwelling. This may extend beyond the woman’s original EA as determined by in-country administrators - see <a href="https://www.pmadata.org/data/survey-methodology">PMA Phase 2 and Phase 3 Survey Protocol</a> for details.</span> enumerators used local contacts to find its new location. If found, they administered a Household Questionnaire including an updated household roster.</p>
 <p>As we’ve mentioned, any woman aged 15-49 listed on the Phase 2 household roster was eligible to complete a Phase 2 Female Questionnaire. However, only women who completed all or part of a Phase 1 Female Questionnaire are considered members of the panel in <a href="https://pma.ipums.org/pma-action/variables/PANELWOMAN#codes_section"><code>panelwoman_2</code></a>.</p>
 <div id="household-questionnaire-1" class="section level3" number="3.3.1">
 <h3><span class="header-section-number">3.3.1</span> Household Questionnaire</h3>
@@ -1704,7 +1808,7 @@ Chapter 5 includes code you can use to reproduce the <strong>alluvial plots</str
 <li><a href="https://pma.ipums.org/pma-action/variables/EAID#codes_section"><code>eaid</code></a> - Enumeration area (preselected)</li>
 </ul>
 <p>Download your data extract and load it into Stata:</p>
-<pre class="text"><code>use &quot;pma_00121.dta&quot;, clear</code></pre>
+<pre class="text"><code>use pma_00004, clear </code></pre>
 <p>Chapter 1 describes <strong>Inclusion Criteria for Analysis</strong>: to summarise, we’ll be focusing on members of the <em>de facto</em> population who participated in both phases of the panel study (excluding a small number of women marked “NIU (not in universe)” for a key measure of current contraceptive use recorded in <a href="https://pma.ipums.org/pma-action/variables/CP#codes_section"><code>cp</code></a>).</p>
 <pre class="text"><code>keep if inlist(resident_1,11,22) &amp; inlist(resident_2,11,22)
 keep if resultfq_2 == 1
@@ -1804,7 +1908,7 @@ yes DRC-Kongo Central  |   .7303977   .0342418      .6581781    .7921768
 </div>
 <div id="significance-test" class="section level2" number="4.2">
 <h2><span class="header-section-number">4.2</span> Significance Test</h2>
-<p>Continuing with the previous example, we will now demonstrate how to calculate a Rao-Scott chi-square test for significant differences between the estimated population proportions for Burkina Faso and the proportions we would <em>expect</em> to observe if Phase 2 outcomes were statistically independent from Phase 1 conditions.<span id="fn24" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="24">See Stata help for <a href="https://www.stata.com/manuals/svysvytabulatetwoway.pdf"><code>svy: tab</code></a> and the references there for more information.</span></p>
+<p>Continuing with the previous example, we will now demonstrate how to calculate a Rao-Scott chi-square test for significant differences between the estimated population proportions for Burkina Faso and the proportions we would <em>expect</em> to observe if Phase 2 outcomes were statistically independent from Phase 1 conditions.<span id="fn25" class="footnote" data-pagedown-footnote-number="25" style="white-space: pre-line;">See Stata help for <a href="https://www.stata.com/manuals/svysvytabulatetwoway.pdf"><code>svy: tab</code></a> and the references there for more information.</span></p>
 <pre class="text"><code>svy, subpop(if pop == 1): tab cp_1 cp_2 , row ci nomarginals pearson null</code></pre>
 <pre><code>Number of strata =   1                            Number of obs   =      5,207
 Number of PSUs   = 167                            Population size = 5,215.6413
@@ -1865,8 +1969,8 @@ Key: Column proportion
 <div id="data-visualization" class="section level2" number="4.3">
 <h2><span class="header-section-number">4.3</span> Data Visualization</h2>
 <p>We’ll use simple <strong>grouped bar charts</strong> to show population estimates for each proportion calculated throughout the remainder of this chapter. We’ll also include <strong>error bars</strong> representing a 95% confidence interval for each proportion.</p>
-<p>For example, let’s consider how to visualize the two tables produced by <code>svy: proportion</code> in the previous section. It is possible to make a barchart in Stata starting with what we might call <em>raw data</em> in memory using the <a href="https://www.stata.com/manuals/g-2graphbar.pdf"><code>graph bar</code></a> command. It may be combined with <code>aweight</code> and <code>by</code> and <code>over</code> options to include a weighted sub-graph for each country and each level of Phase 1 contraception use. But it will not show confidence intervals, so in this chapter we take a different approach and use the more versatile <a href="https://www.stata.com/manuals/g-2graphtwoway.pdf"><code>graph twoway</code></a> family of commands to build up the figure that we want. Specifically, we use <a href="https://www.stata.com/manuals/g-2graphtwowaybar.pdf"><code>twoway bar</code></a> <a href="https://www.stata.com/manuals/g-2graphtwowayrcap.pdf"><code>twoway rcap</code></a> to plot bars and confidence intervals, respectively.</p>
-<p>But for <code>graph twoway</code> we cannot plot directly from the raw data. We need to construct a new dataset with one row per bar in the bar chart that stores the survey estimated proportions and confidence interval limits or bounds. There are two ways to construct that dataset: a) using stored output from commands like those shown in the previous section,<span id="fn25" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="25">In addition to display in the Stata log window, the table of results obtained above is stored by Stata for optional downstream use. The .do-file that accompanies this book includes code to access the results and wrangle them into a dataset to use for plotting. (The results are stored as a matrix that may be brought into memory, but needs to be transposed and needs to have several ID variables re-instated before it is ready for plotting, so there are several data management steps involved.) </span> or b) by writing a short program to construct the dataset row-by-row.</p>
+<p>For example, let’s consider how to visualize the two tables produced by <code>svy: proportion</code> in the previous section. It is possible to make a barchart in Stata starting with what we might call <em>raw data</em> in memory using the <a href="https://www.stata.com/manuals/g-2graphbar.pdf"><code>graph bar</code></a> command. It may be combined with <code>aweight</code> and <code>by</code> and <code>over</code> options to include a weighted sub-graph for each country and each level of Phase 1 contraception use. But it will not show confidence intervals, so in this chapter we take a different approach and use the more versatile <a href="https://www.stata.com/manuals/g-2graphtwoway.pdf"><code>graph twoway</code></a> family of commands to build up the figure that we want. Specifically, we use <a href="https://www.stata.com/manuals/g-2graphtwowaybar.pdf"><code>twoway bar</code></a> and <a href="https://www.stata.com/manuals/g-2graphtwowayrcap.pdf"><code>twoway rcap</code></a> to plot bars and confidence intervals, respectively.</p>
+<p>But for <code>graph twoway</code> we cannot plot directly from the raw data. We need to construct a new dataset with one row per bar in the bar chart that stores the survey estimated proportions and confidence interval limits or bounds. There are two ways to construct that dataset: a) using stored output from commands like those shown in the previous section,<span id="fn26" class="footnote" data-pagedown-footnote-number="26" style="white-space: pre-line;">In addition to display in the Stata log window, the table of results obtained above is stored by Stata for optional downstream use. The .do-file that accompanies this book includes code to access the results and wrangle them into a dataset to use for plotting. (The results are stored as a matrix that may be brought into memory, but needs to be transposed and needs to have several ID variables re-instated before it is ready for plotting, so there are several data management steps involved.) </span> or b) by writing a short program to construct the dataset row-by-row.</p>
 <aside>
 A full tutorial on the family of post commands is beyond the scope of this chapter – they are quite useful and worth taking some time to understand – the Stata documentation for them is <a href="https://www.stata.com/manuals/ppostfile.pdf">here</a>.
 </aside>
@@ -1909,18 +2013,14 @@ twoway (bar estimate cp_1, horizontal  ///
 <p><img src="images/f4_01.png" width="85%" style="display: block; margin: auto;" /></p>
 <div class="page-break-after"></div>
 <p>And finally, we incorporate some additional syntax to bring more aspects of the aesthetics under our control:</p>
-<pre class="text"><code>* Additional aesthetic options           
-twoway (bar estimate cp_1 if cp_1 == 1 &amp; cp_2 == 1, ///
-          color(blue*.5) horizontal ylabel(0(1)1,valuelabel angle(0) nogrid) ///
-          xlabel(0(20)100)) ///
-       (bar estimate cp_1 if cp_1 == 0 &amp; cp_2 == 1, ///
-          color(orange*.5) horizontal) ///
-       (rcap lcb ucb cp_1 if cp_2 == 1, horizontal lcolor(black)) ///
-       ,  by(pop, graphregion(color(white)) legend(off) note(&quot;&quot;)) ///
-          subtitle(,lcolor(white) fcolor(white)) ///
-          xtitle(Contraceptive user (Phase 2) (%)) ///
-          xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
-          name(nicer1, replace)</code></pre>
+<pre class="text"><code>twoway (bar estimate cp_1 if cp_2 == 1 , ///
+              color(blue*.5) horizontal barwidth(0.9) ///
+              ylabel(0(1)1,valuelabel angle(0) nogrid) ///
+              xlabel(0(20)100)) ///
+    (rcap lcb ucb cp_1 if cp_2 == 1, horizontal lcolor(black)) ///
+            ,  by(pop, graphregion(color(white)) legend(off) note(&quot;&quot;)) ///                 subtitle(,lcolor(white) fcolor(white)) ///
+       xtitle(Contraceptive user (Phase 2) (%)) ///
+       xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) </code></pre>
 <p><img src="images/f4_02.png" width="85%" style="display: block; margin: auto;" /></p>
 </div>
 <div id="contraceptive-use-or-non-use" class="section level2" number="4.4">
@@ -1940,7 +2040,7 @@ replace fpstatus_2 = 2 if pregnant_2 != 1 &amp; cp_2 == 0
 label define status 1 &quot;Pregnant&quot; 3 &quot;Using FP&quot; 2 &quot;Not Using FP&quot;
 label values fpstatus_1 status
 label values fpstatus_2 status</code></pre>
-<p>Examining the first dozen rows of the dataset below, we see that <code>fpstatus</code> is “Pregnant” for pregnant women, and indicates contraceptive use otherwise.</p>
+<p>Examining the first dozen rows of the dataset below, we see that <code>fpstatus</code> is “Pregnant” for pregnant women, and indicates contraceptive use status otherwise.</p>
 <pre class="text"><code>list pregnant_1 cp_1 fpstatus_1 pregnant_2 cp_2 fpstatus_2 in 1/12, noobs sep(12)</code></pre>
 <pre><code>  +-----------------------------------------------------------------+
   | pregna~1   cp_1     fpstatus_1   pregna~2   cp_2     fpstatus_2 |
@@ -1994,12 +2094,12 @@ label define pop 1 &quot;Burkina Faso&quot; 2 &quot;DRC-Kinshasa&quot; 3 &quot;D
 label values pop pop
 
 label variable fpstatus_1 &quot;Family Planning Status (Phase 1)&quot;
-label variable fpstatus_2 &quot;Family Planning Status (Phase 2)&quot;</code></pre>
+label variable fpstatus_2 &quot;Family Planning Status (Phase 2)&quot;
+label define status2 1 &quot;Pregnant in Phase 1&quot; 3 &quot;Using FP in Phase 1&quot; 2 &quot;Not Using FP in Phase 1&quot;, replace
+label values fpstatus_1 status2</code></pre>
 <div class="page-break-after"></div>
 <p>And next, we build a bar chart with customized aesthetic options.</p>
-<pre class="text"><code>label define status2 1 &quot;Pregnant in Phase 1&quot; 3 &quot;Using FP in Phase 1&quot; 2 &quot;Not Using FP in Phase 1&quot;, replace
-label values fpstatus_1 status2
-twoway (bar estimate fpstatus_2 if fpstatus_2 == fpstatus_1, ///
+<pre class="text"><code>twoway (bar estimate fpstatus_2 if fpstatus_2 == fpstatus_1, ///
         color(blue*.5) horizontal ///
         ylabel(1(1)3,valuelabel angle(0) nogrid) ///
         xlabel(0(20)100)) ///
@@ -2028,7 +2128,7 @@ twoway (bar estimate fpstatus_2 if fpstatus_2 == fpstatus_1, ///
 <p>PMA surveys also ask contraceptive users to indicate which method they are currently using at each phase of the study. If a woman reports using more than one method, <a href="https://pma.ipums.org/pma-action/variables/FPCURREFFMETH#codes_section"><code>fpcurreffmeth</code></a> shows her most <em>effective</em> currently used method. These responses are combined with detailed information about use of the lactational amenorrhea method (LAM), emergency contraception, or injectable type in <a href="https://pma.ipums.org/pma-action/variables/FPCURREFFMETHRC#codes_section"><code>fpcurreffmethrc</code></a>. PMA reports use <a href="https://pma.ipums.org/pma-action/variables/FPCURREFFMETHRC#codes_section"><code>fpcurreffmethrc</code></a> to determine whether each woman’s most effective current method is a short-acting, long-acting, or traditional method.</p>
 <p>Long-acting methods include:</p>
 <ul>
-<li>IUDs</li>
+<li>intrauterine devices (IUDs)</li>
 <li>implants</li>
 <li>male sterilization</li>
 <li>female sterilization</li>
@@ -2040,7 +2140,7 @@ twoway (bar estimate fpstatus_2 if fpstatus_2 == fpstatus_1, ///
 <li>emergency contraception</li>
 <li>male condoms</li>
 <li>female condoms</li>
-<li>LAM</li>
+<li>lactation amenorrhea method (LAM)</li>
 <li>diaphragm</li>
 <li>foam/jelly</li>
 <li>standard days method</li>
@@ -2236,7 +2336,7 @@ label var chg_fpcurr = &quot;Phase 1 to 2 Family Planning Change Status&quot;</c
 </div>
 <div id="education-level" class="section level3" number="4.6.2">
 <h3><span class="header-section-number">4.6.2</span> Education level</h3>
-<p>The variable <a href="https://pma.ipums.org/pma-action/variables/EDUCATTGEN#codes_section"><code>educattgen</code></a> standardizes educational categories across countries.<span id="fn26" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="26">See <a href="https://pma.ipums.org/pma-action/variables/EDUCATT#codes_section"><code>educatt</code></a> for country-specific codes.</span> To match PMA reports, we’ll recode <a href="https://pma.ipums.org/pma-action/variables/EDUCATTGEN#codes_section"><code>educattgen</code></a> into just three groups in <code>cat_educattgen_2</code>.</p>
+<p>The variable <a href="https://pma.ipums.org/pma-action/variables/EDUCATTGEN#codes_section"><code>educattgen</code></a> standardizes educational categories across countries.<span id="fn27" class="footnote" data-pagedown-footnote-number="27" style="white-space: pre-line;">See <a href="https://pma.ipums.org/pma-action/variables/EDUCATT#codes_section"><code>educatt</code></a> for country-specific codes.</span> To match PMA reports, we’ll recode <a href="https://pma.ipums.org/pma-action/variables/EDUCATTGEN#codes_section"><code>educattgen</code></a> into just three groups in <code>cat_educattgen_2</code>.</p>
 <ul>
 <li><code>cat_educattgen_2</code> - Phase 2 education level (3 categories)</li>
 </ul>
@@ -2290,7 +2390,8 @@ label var chg_fpcurr = &quot;Phase 1 to 2 Family Planning Change Status&quot;</c
         ,  by(pop chg_fpcurr, graphregion(color(white)) ///
               note(&quot;&quot;) col(5) legend(off) ) ///
            subtitle(,size(small) lcolor(white) fcolor(white)) ///
-           xtitle(&quot;Changes in Family Planning Status, Phase 1 to Phase 2&quot;, size(small)) ///
+           xtitle(&quot;Changes in Family Planning Status, Phase 1 to Phase 2&quot;, ///
+                    size(small)) ///
            xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
            ytitle(&quot;&quot;)</code></pre>
 <p><img src="images/f4_07.png" width="90%" style="display: block; margin: auto;" /></p>
@@ -2453,7 +2554,8 @@ label var chg_fpcurr &quot;Phase 1 to 2 Family Planning Change Status&quot;</cod
               note(&quot;Estimates across each row of the figure sum to 100%.&quot;, ///
                      size(vsmall)) col(5) legend(off) ) ///
            subtitle(,size(small) lcolor(white) fcolor(white)) ///
-           xtitle(&quot;Changes in Family Planning Status, Phase 1 to Phase 2&quot;, size(small)) ///
+           xtitle(&quot;Changes in Family Planning Status, Phase 1 to Phase 2&quot;, ///
+                    size(small)) ///
            xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
            ytitle(&quot;&quot;)</code></pre>
 <p><img src="images/f4_09.png" width="90%" style="display: block; margin: auto;" /></p>
@@ -2696,8 +2798,8 @@ label values pop pop</code></pre>
 </div>
 <div id="limitations" class="section level2" number="4.8">
 <h2><span class="header-section-number">4.8</span> Limitations</h2>
-<p>As we’ve seen, <strong>grouped bar charts</strong> give us a simple way to identify clear differences between Phase 2 outcomes for subgroups defined by baseline family planning conditions or key demographic features. Additionally, when we <strong>facet</strong> populations of interest on the same axis, we can easily compare differences between subgroups for many samples in a single figure.</p>
-<p>One drawback to this approach is that it’s more conservative than formal statistical tests. We are not able to easily spot differences near the conventional 95% certainty threshold. However, we demonstrated how you can adapt our code to conduct formal hypothesis tests like the Rao-Scott chi-square test for proportions in a complex survey sample.</p>
+<p>As we’ve seen, <strong>grouped bar charts</strong> give us a simple way to identify clear differences between Phase 2 outcomes for subgroups defined by baseline family planning conditions or key demographic features. Additionally, when we use the <code>by</code> option to plot several populations of interest on the same axis, we can easily compare differences between subgroups for many samples in a single figure.</p>
+<p>One drawback to using graphical confidence interval overlap as a substitute for hypothesis tests is that it’s more conservative than formal statistical tests. We are not able to easily spot differences near the conventional 95% certainty threshold. However, we demonstrated how you can adapt our code to conduct formal hypothesis tests like the Rao-Scott chi-square test for proportions in a complex survey sample.</p>
 <p>Another drawback to this approach is that we’ve been unable to showcase estimates for the proportion of responses at any <em>one</em> phase of the study. For example, in our last figure, we estimated that about 35% of women who <em>planned to use</em> contraception within the year at Phase 1 did so at Phase 2; our figure does not show how many women planned to use contraception within the year <em>as a share of the Phase 1 population</em>.</p>
 <p>To better understand the change over time relative to the size of each subgroup in our analysis, we’ll turn to a slightly more complicated data visualization method. In Chapter 5, we’ll show how to create <strong>alluvial plots</strong>, like those shown in the first two pages of each PMA report.</p>
 </div>
@@ -2720,7 +2822,7 @@ label values pop pop</code></pre>
 <div id="chapter-setup-2" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> Chapter Setup</h2>
 <p>Recall that our analysis in Chapter 4 concerned only <em>de facto</em> panel members who completed all or part of the Female Questionnaire in both Phase 1 and Phase 2. We also excluded women who are marked “NIU (not in universe)” for a key measure concerning current contraceptive use (<a href="https://pma.ipums.org/pma-action/variables/CP#codes_section"><code>cp</code></a>). As a reminder, you can load the extract into Stata and select relevant cases like so:</p>
-<pre class="text"><code>use pma_00121, clear
+<pre class="text"><code>use pma_00004, clear
 
 * Filter data
 keep if resultfq_2 == 1
@@ -3088,7 +3190,7 @@ save post5_sankey, replace</code></pre>
     sankey_plot_with_legend x1 y00 x2 y11, ///
         width0(width) adjust extra color(color) label0(label0) ///
         xsize(10) ysize(6) labcolor(edkblue*2) labsize(small) ///
-        legend( on order(1 &quot;Pregnant&quot; 4 &quot;Not Using FP&quot; 7 &quot;Using FP&quot;) cols(1) ///
+        legend( on order(1 &quot;Pregnant&quot; 4 &quot;Not Using FP&quot; 7 &quot;Using FP&quot;) rows(1) ///
           pos(3) region(lcolor(white)) size(small) symxsize(small) symysize(medium) ) ///
         xlabel(none) ///
         title(&quot;`country&#39;&quot;, size(medium)) ///
@@ -3096,15 +3198,15 @@ save post5_sankey, replace</code></pre>
         name(sub_`i&#39;, replace)
 }</code></pre>
 <p>And finally, we combine them into a single figure.</p>
-<pre class="text"><code>grc1leg2 sub_1 sub_2 sub_3 sub_4 sub_5 sub_6, row(2) legend(f5_07) lrow(1) ///
+<pre class="text"><code>grc1leg2 sub_1 sub_2 sub_3 sub_4 sub_5 sub_6, row(2) legend(f5_07) ///
         title(&quot;Changes in Contraceptive Use or Non-Use&quot;, size(medium)) ///
         subtitle(&quot;Women aged 15-49: PMA Phase 1 to Phase 2&quot;, size(medsmall)) ///
         graphregion(color(white))</code></pre>
 <p><img src="images/f5_07.png" width="100%" style="display: block; margin: auto;" /></p>
 <aside class="nudge_down">
-Values may not add to 100% due to rounding (values rounded to 0% are not labelled).
+Values may not add to 100% due to rounding.
 </aside>
-<p>Now, it’s very easy to identify the proportion of women at each phase <em>and</em> the proportion who switched or maintained their status between phases. If possible, we recommend aligning alluvial plots for every sample in a single row as shown: this allows the readers to visually compare the relative size of strata and alluvia across samples.</p>
+<p>Now, it’s very easy to identify the proportion of women at each phase <em>and</em> the proportion who switched or maintained their status between phases. If possible, we recommend aligning alluvial plots for every sample in a single figure as shown: this allows the readers to visually compare the relative size of strata and alluvia across samples.</p>
 </div>
 </div>
 <div id="contraceptive-calendar" class="section level1" number="6">
@@ -3189,7 +3291,7 @@ we will parse the comma-delimited string from each country into multiple columns
 <li><a href="https://pma.ipums.org/pma-action/variables/FQINSTID#codes_section"><code>fqinstid</code></a> - Unique ID for female questionnaire</li>
 <li><a href="https://pma.ipums.org/pma-action/variables/RESIDENT#codes_section"><code>resident</code></a> - Household residence / membership</li>
 <li><a href="https://pma.ipums.org/pma-action/variables/INTFQMON#codes_section"><code>intfqmon</code></a> &amp; <a href="https://pma.ipums.org/pma-action/variables/INTFQYEAR#codes_section"><code>intfqyear</code></a> - Date of Female Questionnaire interview</li>
-<li><a href="https://pma.ipums.org/pma-action/variables/FPCURREFFMETHRC#codes_section"><code>fpcurreffmethrc</code></a> - Most effective current family planning method (recoded<span id="fn27" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="27">The related variable <a href="https://pma.ipums.org/pma-action/variables/FPCURREFFMETH#codes_section"><code>fpcurreffmeth</code></a> reports the most effective method reported by each woman. In <a href="https://pma.ipums.org/pma-action/variables/FPCURREFFMETHRC#codes_section"><code>fpcurreffmethrc</code></a>, these responses are combined with detailed information about her use of the lactational amenorrhea method (LAM), emergency contraception, or specific types of injectable methods.</span>)</li>
+<li><a href="https://pma.ipums.org/pma-action/variables/FPCURREFFMETHRC#codes_section"><code>fpcurreffmethrc</code></a> - Most effective current family planning method (recoded<span id="fn28" class="footnote" data-pagedown-footnote-number="28" style="white-space: pre-line;">The related variable <a href="https://pma.ipums.org/pma-action/variables/FPCURREFFMETH#codes_section"><code>fpcurreffmeth</code></a> reports the most effective method reported by each woman. In <a href="https://pma.ipums.org/pma-action/variables/FPCURREFFMETHRC#codes_section"><code>fpcurreffmethrc</code></a>, these responses are combined with detailed information about her use of the lactational amenorrhea method (LAM), emergency contraception, or specific types of injectable methods.</span>)</li>
 <li><a href="https://pma.ipums.org/pma-action/variables/PREGNANT#codes_section"><code>pregnant</code></a> - Current pregnancy status</li>
 <li><a href="https://pma.ipums.org/pma-action/variables/UNMETYN#codes_section"><code>unmetyn</code></a> - Total unmet need</li>
 <li><a href="https://pma.ipums.org/pma-action/variables/FPPLANVAL#codes_section"><code>fpplanval</code></a> - When will start using FP method in the future - value</li>
@@ -3203,7 +3305,7 @@ we will parse the comma-delimited string from each country into multiple columns
 <li><a href="https://pma.ipums.org/pma-action/variables/FPBEGINUSEMO#codes_section"><code>fpbeginusemo</code></a> &amp; <a href="https://pma.ipums.org/pma-action/variables/FPBEGINUSEYR#codes_section"><code>fpbeginuseyr</code></a> - Date of adoption for currently used family planning method</li>
 </ul>
 <p>We’ll load the data extract into Stata and, following the <strong>Inclusion Criteria for Analysis</strong> described in Chapter 1, we’ll drop cases for women who did not complete the Female Questionnaire or were not members of the <em>de facto</em> population in both phases.</p>
-<pre class="text"><code>use pma_00122, clear
+<pre class="text"><code>use pma_00005, clear
 keep if resultfq_1 == 1 &amp; resultfq_2 == 1
 keep if resident_1 == 11 | resident_1 == 22
 keep if resident_2 == 11 | resident_2 == 22</code></pre>
@@ -3456,6 +3558,7 @@ rename calendarngwhy_ calendarngwhy
 rename calstart_ calstart
 rename calstop_ calstop</code></pre>
 <p>For example, the first three rows are shown: the first row is for the woman with <code>id == 1</code> in <code>phase == 1</code>, while the second row is her <code>phase == 2</code> record. The data for the woman with <code>id == 2</code> begins in row three, as so on.</p>
+<div class="page-break-after"></div>
 <pre class="text"><code>list in 1/3</code></pre>
 <div style="font-size: 0.8em">
 <pre><code>     +---------------------------------------------------------------------------------+
@@ -3762,7 +3865,7 @@ empty_fpstatu |
 <li><code>calmissing</code> - Indicates whether a blank calendar cannot be completed from other variables</li>
 </ul>
 <p>We’ll begin by attaching all of the <code>cmc</code> variables we created above (except <code>intfqcmc</code>) along with the variables <a href="https://pma.ipums.org/pma-action/variables/PREGNANT#codes_section"><code>pregnant</code></a> and <a href="https://pma.ipums.org/pma-action/variables/FPCURREFFMETHRC#codes_section"><code>fpcurreffmethrc</code></a>. In order to match the format of <code>cals</code>, we’ll again use <code>reshape long</code> to create separate rows for the dates collected from each <code>phase</code>.</p>
-<pre class="text"><code> post6_filtered_dataset, clear
+<pre class="text"><code>use post6_filtered_dataset, clear
 keep id *cmc* pregnant* fpcurreffmethrc*
 drop intfq*
 * reshape to long
@@ -3798,6 +3901,7 @@ drop criteria
 * relocate calstart
 order calstart , after(calmissing)</code></pre>
 <p>Let’s take a look at the woman in row 6, where we previously saw a blank string.</p>
+<div class="page-break-after"></div>
 <pre class="text"><code>list in 6</code></pre>
 <div style="font-size: 0.8em">
 <pre><code>     +----------------------------------------------------------------------------------+
@@ -3977,6 +4081,7 @@ forvalues n = 1/`num&#39; {
 }
 
 drop l1 l2 l value</code></pre>
+<div class="page-break-after"></div>
 <pre class="text"><code>. list in 1</code></pre>
 <div style="font-size: 0.8em">
 <pre><code>     +-----------------------------------------------------------------------------------+
@@ -4008,9 +4113,9 @@ drop l1 l2 l value</code></pre>
 <p>As you can see, this produced 48 columns named <code>value48</code> to <code>value1</code>, where <code>value1</code> is the earliest month in chronological time. You’ll notice some empty or missing strings for women whose calendar included empty placeholders (e.g. <code>,,,,,,,3,3,3...</code>).</p>
 <p>We’ll now <code>reshape</code> again, placing each month into a single column temporarily called <code>value</code>. The label in <code>name</code> describes whether a particular <code>value</code> originated in the <code>fpstatus</code> or <code>whystop</code> calendar. We strip the numeric suffix from each column to create <code>month</code>, which indicates the sequential month associated with each <code>value</code>.</p>
 <pre class="text"><code>* reshape to long again by value
-reshape long value, i(id phase name) j(month)
-
-list in 1/5</code></pre>
+reshape long value, i(id phase name) j(month)</code></pre>
+<div class="page-break-after"></div>
+<pre class="text"><code>list in 1/5</code></pre>
 <div style="font-size: 0.7em">
 <pre><code>     +----------------------------------------------------------------------------------------------------------+
   1. |     id      |     phase      |         name      |     month      |     calstart      |     country      |
@@ -4076,8 +4181,9 @@ replace fpstatus_2 = trim(fpstatus_2)
 drop if missing(fpstatus_1) &amp; fpstatus_2 == &quot;&quot;</code></pre>
 <p>In its final format, <code>cals</code> contains one row for every month covered by the contraceptive calendar from either Phase 1 or Phase 2. You’ll notice that the two calendars contain overlapping months, as with the dates between <code>calcmc</code> 1417 and 1442 for the first woman shown below.</p>
 <pre class="text"><code>* sort by id and descending by calcmc
-gsort id -calcmc
-list in 1/40, noobs</code></pre>
+gsort id -calcmc</code></pre>
+<div class="page-break-after"></div>
+<pre class="text"><code>list in 1/40, noobs</code></pre>
 <div style="font-size: 0.8em">
 <pre><code>  +---------------------------------------------------------+
   | id   calcmc   fpstat~1   whysto~1   fpstat~2   whysto~2 |
@@ -4157,7 +4263,8 @@ save post6_nonusers, replace</code></pre>
 
 capture postclose toplot
 tempfile postout
-postfile toplot unmetyn_1 fpplanyr_1 country margin_u margin_f joint using `postout&#39;, replace
+postfile toplot unmetyn_1 fpplanyr_1 country margin_u margin_f joint using ///
+  `postout&#39;, replace
 
 levelsof country, local(clist)
 foreach j in `clist&#39; {
@@ -4185,10 +4292,14 @@ use `postout&#39;, clear
 label define country 1 &quot;BF&quot; 2 &quot;CD&quot; 7 &quot;KE&quot; 9 &quot;NG&quot;, replace
 label values country country
 
-gen     margin_f_label = &quot;Plan 1 Yr &quot;     + string(round(margin_f,1.1)) + &quot;%&quot; if fpplanyr_1 == 1
-replace margin_f_label = &quot;No Plan 1 Yr &quot;  + string(round(margin_f,1.1)) + &quot;%&quot; if fpplanyr_1 == 0
-gen     margin_u_label = &quot;Unmet Need &quot;    + string(round(margin_u,1.1)) + &quot;%&quot; if unmetyn_1 == 1
-replace margin_u_label = &quot;No Unmet Need &quot; + string(round(margin_u,1.1)) + &quot;%&quot; if unmetyn_1 == 0</code></pre>
+gen     margin_f_label = &quot;Plan 1 Yr &quot;     + string(round(margin_f,1.1)) + &quot;%&quot; ///
+  if fpplanyr_1 == 1
+replace margin_f_label = &quot;No Plan 1 Yr &quot;  + string(round(margin_f,1.1)) + &quot;%&quot; ///
+ if fpplanyr_1 == 0
+gen     margin_u_label = &quot;Unmet Need &quot;    + string(round(margin_u,1.1)) + &quot;%&quot; ///
+  if unmetyn_1 == 1
+replace margin_u_label = &quot;No Unmet Need &quot; + string(round(margin_u,1.1)) + &quot;%&quot; ///
+  if unmetyn_1 == 0</code></pre>
 <div class="page-break-after"></div>
 <p>Before we begin our analysis, let’s see the proportion of <code>nonusers</code> in each country who had unmet need or plans to adopt a family planning method within one year at Phase 1.</p>
 <pre class="text"><code>    
@@ -4210,8 +4321,11 @@ foreach c in 1 2 7 9 {
 * Combine them together
 graph combine hm1 hm2 hm7 hm9, ///
     rows(2) ///
-    title(&quot;Non-users: Unmet Need and Intentions to Adopt a Method within 1 Year&quot;, size(medium)) ///
-    subtitle(&quot;Unweighted percentage among sampled women not currently using any method at Phase 1&quot;, size(small)) ///
+    title(&quot;Non-users: Unmet Need and Intentions to Adopt a Method within 1 Year&quot;, ///
+            size(medium)) ///
+    subtitle(&quot;Unweighted percentage among sampled women ///
+             not currently using any method at Phase 1&quot;, ///
+               size(small)) ///
     note(&quot;Percentages in each plot sum to 100%.&quot;, size(vsmall)) ///
     graphregion(color(white))</code></pre>
 <p><img src="images/f6_01.png" width="100%" style="display: block; margin: auto;" /></p>
@@ -4291,7 +4405,7 @@ replace interact_1 = &quot;Unmet Need, No Plan 1 Yr&quot;    if unmetyn_1 == 1 &
 replace interact_1 = &quot;No Unmet Need, Plan 1 Yr&quot;    if unmetyn_1 == 0 &amp; fpplanyr_1 == 1
 replace interact_1 = &quot;No Unmet Need, No Plan 1 Yr&quot; if unmetyn_1 == 0 &amp; fpplanyr_1 == 0
 save post6_survival,replace</code></pre>
-<p>To run the survival time statistics (sts) or time-to-event analysis commands in Stata, we generate a variable that indicates whether the respondent experienced the event of interest. In our case, if <code>rc</code> is not 1, then they adopted a family planning methods, so our variable that indicates they had the event will be <code>notrc</code>. Similarly, generate a variable indicating the time when they entered observation in the study. Stata’s survival analysis commands do not expect to see failures in the very first period of observation, but this dataset has quite a few women who were not using contraception at the time of the Phase 1 interview but who remember adopting it that very month (<code>mo = 0</code>) so we increment the <code>mo</code> variable by one month (in these instances, women may have adopted a method just days or a few weeks after the Phast 1 interview, but before a full month had passed).</p>
+<p>To run the survival time statistics (sts) or time-to-event analysis commands in Stata, we generate a variable that indicates whether the respondent experienced the event of interest. In our case, if <code>rc</code> is not 1, then they adopted a family planning methods, so our variable that indicates they had the event will be <code>notrc</code>. Stata’s survival analysis commands do not expect to see failures in the very first period of observation, but this dataset has quite a few women who were not using contraception at the time of the Phase 1 interview but who remember adopting it that very month (<code>mo = 0</code>) so we use the <code>stset</code> command’s <code>origin(min)</code> option to indicate that the participants entered observation before month 0 and could indeed fail during that first time period (in these instances, women may have adopted a method just days or a few weeks after the Phase 1 interview, but before a full month had passed).</p>
 <pre class="text"><code>gen notrc = !rc</code></pre>
 <div class="page-break-after"></div>
 <p>Now we tell Stata how to treat this data with survival analysis commands, using the <a href="https://www.stata.com/manuals/ststset.pdf"><code>stset</code> command</a>. The arguments here indicate that <code>mo</code> is the time variable, and that <code>notrc</code> is the variable that indicates which participants experienced the event of interest. The command returns a summary of what it sees in the dataset.</p>
@@ -4367,13 +4481,13 @@ Note: Net lost equals the number lost minus the number who entered.</code></pre>
 </div>
 <p>The column <code>At risk</code> shows the total number of non-users remaining after the number of months passed in <code>time</code>. The column <code>Failure function</code> shows the estimated probability that a randomly selected woman would adopt a form of contraception in that month. The final two columns report a 95% confidence interval by default.</p>
 <p>For example, row 1 shows that there were 2245 women in the Phase 1 Burkina Faso sample who were not using family planning and did not meet PMA criteria for “unmet need”. Among these, <code>Fail</code> shows that 157 adopted a family planning method within one month following the Phase 1 interview. If 7.0% adopted a method, then 93.0% of the group remain in the <code>At risk</code> pool before one month had passed.</p>
-<p>Below that, row 16 shows that there were 632 women in the Phase 1 Burkina Faso sample who were not using family planning, but <em>did</em> meet PMA criteria for “unmet need”. Among these, <code>Fail</code> shows that 86 adopted a family planning method less than one month after the interview: this leaves 86.4% of the group remaining before one month had passed.<span id="fn28" class="footnote" style="white-space: pre-line;" data-pagedown-footnote-number="28">As a reminder: these estimates are not weighted, and the confidence intervals do not account for the PMA cluster sampling procedure.</span></p>
-<p>We’ll produce a “time-to-event” plot by inverting the probabilities reported in <code>Failure function</code> and its accompanying confidence interval. This plot uses <a href="https://www.stata.com/manuals/ststsgraph.pdf"><code>sts graph</code></a> to draw two step-wise functions: one for those with unmet need at Phase 1 and those with no unmet need. The command also shows a shaded confidence interval for each step. The code constructs a separate figure for each country and uses the <code>grc1leg</code> command to combine the figures into a single figure and show only a single legend.</p>
+<p>Below that, row 16 shows that there were 632 women in the Phase 1 Burkina Faso sample who were not using family planning, but <em>did</em> meet PMA criteria for “unmet need”. Among these, <code>Fail</code> shows that 86 adopted a family planning method less than one month after the interview: this leaves 86.4% of the group remaining before one month had passed.<span id="fn29" class="footnote" data-pagedown-footnote-number="29" style="white-space: pre-line;">As a reminder: these estimates are not weighted, and the confidence intervals do not account for the PMA cluster sampling procedure.</span></p>
+<p>We’ll produce a “time-to-event” plot by graphing the probabilities reported in <code>Failure function</code> and its accompanying confidence interval. This plot uses <a href="https://www.stata.com/manuals/ststsgraph.pdf"><code>sts graph</code></a> to draw two step-wise functions: one for those with unmet need at Phase 1 and those with no unmet need. The command also shows a shaded confidence interval for each step. The code constructs a separate figure for each country and uses the <code>grc1leg2</code> command to combine the figures into a single figure and show only a single legend.</p>
 <pre class="text"><code>sts graph if co == 1, failure by(unmetyn_1 ) ylabel(0(.2)1.0, angle(0)) ///
 ci title(Burkina Faso, size(small)) graphregion(color(white))  ///
 yline(1,lcolor(ltblue*.5) lwidth(thin)) legend(size(small) symxsize(small) ///
 symysize(small) region(lcolor(none)) order(1 &quot;No unmet need&quot; 3 &quot;Unmet need&quot;) ///
-row(1)) name(hm1, replace) xtitle(Months After Phase 1 Interview, size(small)) 
+row(1)) name(hm1, replace) xtitle(Months After Phase 1 Interview, size(small)) ///
 sts graph if co == 2, failure by(unmetyn_1 ) ylabel(0(.2)1.0, angle(0)) ///
 ci title(DR Congo, size(small))     graphregion(color(white))   ///
 yline(1,lcolor(ltblue*.5) lwidth(thin)) ///
@@ -4393,7 +4507,7 @@ yline(1,lcolor(ltblue*.5) lwidth(thin)) legend(size(small) symxsize(small) ///
 symysize(small) region(lcolor(none)) order(1 &quot;No unmet need&quot; 3 &quot;Unmet need&quot;) ///
 row(1)) name(hm4, replace) xtitle(Months After Phase 1 Interview, size(small))
 
-grc1leg  hm1 hm2 hm3 hm4, rows(2) graphregion(color(white)) legend(hm1) ///
+grc1leg2  hm1 hm2 hm3 hm4, rows(2) graphregion(color(white)) legend(hm1) ///
 title(Predicted Time to FP Adoption by Phase 1 Unmet Need Status, size(small)) ///
 xcommon ycommon</code></pre>
 <p><img src="images/f6_02.png" width="100%" style="display: block; margin: auto;" /></p>
@@ -4424,7 +4538,7 @@ yline(1,lcolor(ltblue*.5) lwidth(thin)) legend(size(small) symxsize(small) ///
 symysize(small) region(lcolor(none)) order(1 &quot;No plan 1yr&quot; 3 &quot;Plan 1yr&quot;) ///
 row(1)) name(hm4, replace) xtitle(Months After Phase 1 Interview, size(small))
 
-grc1leg  hm1 hm2 hm3 hm4, rows(2) graphregion(color(white)) legend(hm1) ///
+grc1leg2  hm1 hm2 hm3 hm4, rows(2) graphregion(color(white)) legend(hm1) ///
 title(Predicted Time to FP Adoption by Intentions Within 1 Year of Phase 1, ///
 size(small)) xcommon ycommon</code></pre>
 <p><img src="images/f6_03.png" width="100%" style="display: block; margin: auto;" /></p>
@@ -4466,7 +4580,7 @@ order(9 &quot;No need; No plan&quot; 10 &quot;No need; Plan 1yr&quot; 11 &quot;U
  12 &quot;Unmet need; Plan 1yr&quot; )) name(hm4, replace) ///
  xtitle(Months After Phase 1 Interview, size(small))
 
-grc1leg  hm1 hm2 hm3 hm4, rows(2) graphregion(color(white)) legend(hm1) ///
+grc1leg2  hm1 hm2 hm3 hm4, rows(2) graphregion(color(white)) legend(hm1) ///
 title(Predicted Time to FP Adoption by Phase 1 Intentions and Unmet Need, ///
 size(small)) xcommon ycommon</code></pre>
 <p><img src="images/f6_04.png" width="100%" style="display: block; margin: auto;" /></p>

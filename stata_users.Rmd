@@ -29,32 +29,28 @@ source("utilities.r")
 
 # Preface {.front-matter .unnumbered}
 
-The work was commissioned and funded by the Family Planning Team at the Bill & Melinda Gates Foundation. The examples here are directly based on the companion [IPUMS PMA Blog](https://tech.popdata.org/pma-data-hub/), with R examples developed by Matt Gunther and IPUMS PMA documentation by Devon Kristiansen under the management of Kathryn Grace, PhD and Elizabeth Heger Boyle, PhD at IPUMS PMA, University of Minnesota. The Stata version and statistical consulting were provided by Mia Yu, Dale Rhoda, and Caitlin Clary at [Biostat Global Consulting](http://www.biostatglobal.com/). These authors are grateful for helpful reviews & comments from Philip Anglewicz, PhD; Linnea Zimmerman, PhD, and Aisha Siewe at Johns Hopkins University. Thanks also to Nina Brooks, PhD and Finn Roberts for code contributions and review.
+This guide was commissioned and funded by the Family Planning Team at the Bill & Melinda Gates Foundation. The examples here are directly based on the companion [IPUMS PMA data analysis blog](https://tech.popdata.org/pma-data-hub/), with R examples developed by Matt Gunther and IPUMS PMA documentation by Devon Kristiansen under the management of Kathryn Grace, PhD and Elizabeth Heger Boyle, PhD at IPUMS PMA, University of Minnesota. The Stata version and statistical consulting were provided by Mia Yu and Dale Rhoda at [Biostat Global Consulting](http://www.biostatglobal.com/). These authors are grateful for helpful reviews & comments from Philip Anglewicz, PhD; Linnea Zimmerman, PhD, and Aisha Siewe at Johns Hopkins University. Thanks also to Caitlin Clary, PhD, Nina Brooks, PhD, and Finn Roberts for code contributions and review.
 
-<h4>
-Suggested Citation
-</h4>
+#### Suggested Citation {.unnumbered}
+
 TBD 
 
-<h4>
-Source Code
-</h4>
+#### Source Code {.unnumbered}
+
 This manual is open source. It was constructed from [R Markdown](https://rmarkdown.rstudio.com/) files with the `r funlink(pagedown)` package for R.^[`r funlink(pagedown)` © Xie, Yihui et al. (MIT)] These files are available on our [GitHub repository](), where you will also find `.r` and `.do` files containing the code shown in this manual. 
 
 The IPUMS PMA data files referenced in this manual are also available at no cost, but you must register and adhere to terms of use at [pma.ipums.org/register](https://pma.ipums.org/pma/register.shtml). Dataset access is granted only for non-commercial purposes. Users must register an account with IPUMS, request access to data from particular countries, and describe their intended use for the data. Users who have been approved for access to certain countries may submit justification to expand their access to other countries. 
 
 [La version française du formulaire d'inscription](https://pma.ipums.org/pma/formulaire_d_inscription.shtml)
 
-<h4>
-Hyperlinks 
-</h4>
+#### Hyperlinks {.unnumbered}
+
 Hyperlinks to IPUMS PMA variable documentation, relevant R and Stata documentation, and various other resources are highlighted [in pink]() throughout this manual. If the reader prefers a printed version, they are recommended to compile the manual from source files on our GitHub repository, changing the `r funlink(pagedown)` option described [here](https://pagedown.rbind.io/#links). **Warning:** this will add additional footnotes to the document, and may impact pagination. 
 
 \newpage 
 
-<h4>
-Acronyms
-</h4>
+#### Acronyms {.unnumbered}
+
   - BMGF -	[Bill & Melinda Gates Foundation](https://www.gatesfoundation.org/)
   - CI	- confidence interval
   - CMC	- century month code
@@ -79,7 +75,7 @@ Acronyms
   - PPS -	probability proportional to size
   - SAS	- [statistical analysis system](https://www.sas.com/) (statistical software)
   - SPSS	- [statistical package for social sciences](https://www.ibm.com/spss) (statistical software)
-  
+
 # Introduction
 
 [Performance Monitoring for Action (PMA)](https://www.pmadata.org/) uses innovative mobile technology to support low-cost, rapid-turnaround surveys that monitor key health and development indicators.
@@ -100,7 +96,7 @@ This manual provides reproducible coding examples in the statistical software pr
 
 ## IPUMS PMA data in Stata
 
-The first two chapters of this manual introduce new users to [PMA longitudinal data](https://www.pmadata.org/data/survey-methodology) and the [IPUMS PMA website](https://pma.ipums.org/pma/), respectively. After demonstrating how to obtain an IPUMS PMA data extract, the remaining chapters feature extensive data analysis examples written in Stata. 
+The first two chapters of this manual introduce new users to [PMA longitudinal data](https://www.pmadata.org/data/survey-methodology) and the [IPUMS PMA website](https://pma.ipums.org/pma/), respectively. After demonstrating how to obtain an IPUMS PMA data extract, the remaining chapters feature extensive data analysis examples written in Stata. The accompanying `.do` files available for download from [our GitHub site](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide) include alternative sets of syntax for users who are running older versions of Stata.
 
 <aside class="hex">
 ```{r, eval=TRUE, echo=FALSE}
@@ -108,7 +104,128 @@ hex("stata")
 ```
 </aside>
 
-To follow along, you'll need to purchase and download the appropriate version of Stata for your computer's operating system at [stata.com](https://www.r-project.org/). Discounted licences are available for students and for faculty and staff at participating institutions: learn more [here](https://www.stata.com/order/). Several of the functions referenced in this manual have updated for **Stata Version 17**. 
+To follow along, you'll need to purchase and download the appropriate version of Stata for your computer's operating system at [stata.com](https://www.r-project.org/). Discounted licences are available for students and for faculty and staff at participating institutions: learn more [here](https://www.stata.com/order/). Several of the functions referenced in this manual have been updated for **Stata Version 17**. In later chapters we use several user-written Stata commands that you can install by typing the following commands at the Stata prompt. You only need to do this step once on each computer.
+
+```{stata}
+ssc install heatplot,  replace
+ssc install palettes,  replace
+ssc install colrspace, replace
+net install grc1leg2.pkg
+```
+
+#### Setup {.unnumbered}
+
+The guide will be most helpful if you reconstruct the data extracts that are used here and run the syntax in the `.do` files that accompany the text.  There are several such files, all available from [our GitHub repository](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide).
+
+The **main** program is named `IPUMS_PMA_Longitudinal_Analysis_Guide_For_Stata_Users.do` and it includes all of the syntax that you see in the guide as well as several bonus blocks of code that demonstrate alternative approaches to some of the tasks described here.
+
+For purposes of brevity in the guide, four repetitive blocks of code have been put into very small `.do` files and, rather than repeat that code over and over in the guide, we use the Stata [include](https://www.stata.com/manuals/pinclude.pdf) syntax to accomplish with one line of code what would otherwise take more. In the manual, you will see code like this:
+
+```{stata}
+* Include the snippet of code that generates and labels the pop variable.
+include gen_pop.do
+```
+
+The four files that are incorporated in that manner are named:
+
+  - `gen_pop.do`
+  - `label_pop_values.do` 
+  - `gen_strata_recode.do` 
+  - `label_chg_fpcurr.do`
+  
+The contents of these files are shown below:
+
+\newpage 
+
+#### Save as `gen_pop.do`  {.unnumbered}
+
+```{stata}
+* Construct a new variable named pop and give it a 
+* unique value for each PMA population.
+
+gen pop = .
+replace pop = 1 if country == 1 // Burkina Faso
+replace pop = 2 if country == 2 & geocd == 1 // Kinshasa
+replace pop = 3 if country == 2 & geocd == 2 // Kongo Central
+replace pop = 4 if country == 7 // Kenya
+replace pop = 5 if country == 9 & geong == 4 // Kano
+replace pop = 6 if country == 9 & geong == 2 // Lagos
+
+label variable pop "Population"
+
+include label_pop_values.do
+```
+
+#### Save as `label_pop_values.do` {.unnumbered}
+
+```{stata}
+label define pop ///
+           1 "Burkina Faso" ///
+           2 "DRC-Kinshasa" ///
+           3 "DRC-Kongo Central" ///
+           4 "Kenya" ///
+           5 "Nigeria-Kano" ///
+           6 "Nigeria-Lagos", replace
+label values pop pop
+```
+
+#### Save as `gen_strata_recode.do` {.unnumbered}
+
+```{stata}
+* Make a new variable named strata_recode and set it to strata_1 
+* everywhere except DRC and set it to geocd in DRC
+clonevar strata_recode = strata_1 
+replace  strata_recode = geocd if country == 2
+
+* Copy the value label from strata_1 into a new label named strata_recode
+* and update it with the labels from geocd
+
+label copy STRATA_1 strata_recode, replace
+label define strata_recode 1 "Kinshasa, DRC" 2 "Kongo Central, DRC", modify
+
+* Use the new value label with the new variable
+label values strata_recode strata_recode
+```
+
+#### Save as `label_chg_fpcurr.do` {.unnumbered}
+
+```{stata}
+label define chg_fpcurr 1 "Changed methods" 2 "Continued method" ///
+                        3 "Continued non-use" 4 "Started using" ///
+					            	5 "Stopped using", replace
+label values chg_fpcurr chg_fpcurr
+label var chg_fpcurr "Phase 1 to 2 Family Planning Change Status"
+```
+
+#### Working Directory {.unnumbered}
+
+To run successfully, you will create a folder for use as Stata's [working directory](https://www.stata.com/manuals/dcd.pdf). Save the following files in that folder (all of which are available in our [Stata folder on GitHub](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide/tree/main/stata_users_files)):
+
+  - The five `.do` files listed above
+  - `pma_sankey_template4.dta dataset`
+  - `sankey_plot_with_legend.ado`
+  - `sankey_plot_with_legend.sthlp`
+
+The main `.do` file has one [cd](https://www.stata.com/manuals/dcd.pdf) command in line 60. **You will need to change the path in that line of the program to match your own working directory.**
+
+#### Featured Data Extracts {.unnumbered}
+
+In subsequent chapters, we will include instructions for requesting data extracts from IPUMS PMA that are identical those used in our analysis. These data are available at no cost, but you must register and adhere to terms of use at [pma.ipums.org/register](https://pma.ipums.org/pma/register.shtml). 
+
+Each data extract that you request from IPUMS PMA is named with a unique number. For example, your very first extract will be named `pma_00001.dta`. In this guide we reference seven files, but your own file names may vary depending on the number of IPUMS PMA extracts you have requested previously. 
+
+  - `pma_00001.dta`
+  - `pma_00002.dta`
+  - `pma_00003.dta`
+  - `pma_00004.dta`
+  - `pma_00005.dta`
+  - `pma_00006.dta`
+  - `pma_00007.dta`
+  
+Save each data extract in the same working directory containing the Stata files described above.
+
+\newpage 
+#### Learning More {.unnumbered}
 
 For a general introduction to analysis of IPUMS PMA data in Stata, visit the [IPUMS PMA Support](https://pma.ipums.org/pma/support.shtml) page, where you'll find links to video tutorials and data exercises written for Stata users. Similar resources are available for users of R, SPSS, and SAS. 
 
@@ -116,7 +233,7 @@ Resources to learn about Stata include [the company website](https://www.stata.c
 
   - [A Gentle Introduction to Stata, Sixth Edition](https://www.stata.com/bookstore/gentle-introduction-to-stata/) by Alan C. Acock, ISBN: 978-1-59718-269-0.
   - [The Workflow of Data Analysis Using Stata]( https://www.stata.com/bookstore/workflow-data-analysis-stata/) by J. Scott Long, ISBN: 978-1-59718-047-4.
-  - [A Visual Guide to Stata Graphics]( https://www.stata.com/bookstore/visual-guide-to-stata-graphics/) by Michael N. Mitchell, ISBN: 978-1-59718-365-9.
+  - [A Visual Guide to Stata Graphics, Fourth Edition]( https://www.stata.com/bookstore/visual-guide-to-stata-graphics/) by Michael N. Mitchell, ISBN: 978-1-59718-365-9.
   - [An Introduction to Stata Programming, Second Edition]( https://www.stata.com/bookstore/introduction-stata-programming/) by Christopher F. Baum, ISBN: 978-1-59718-150-1.
 
 The [Stata documentation website](https://www.stata.com/features/documentation/) offers dedicated, detailed, and freely available reference manuals for each of the fields referenced in this document:
@@ -256,10 +373,10 @@ Panel data in these reports is limited to the *de facto* population of women who
 Variable names in a "wide" extract have a numeric suffix for their data collection phase. `r stata_link(resident_1)` is the Phase 1 version of `r stata_link(resident)`, while `r stata_link(resident_2)` comes from Phase 2. 
 </aside>
 
-For example, let's consider a **Wide** format data extract containing Phase 1 and Phase 2 respondents to the Female Questionnaire from Burkina Faso. You'll find the number of women who slept in the household before the Household Questionnaire for each phase reported in `r stata_link(resident_1)` and `r stata_link(resident_2)`:
+For example, let's consider a **Wide** format data extract containing Phase 1 and Phase 2 respondents to the Female Questionnaire from Burkina Faso. You'll find the number of women who slept in the household before the Household Questionnaire for each phase reported in `r stata_link(resident_1)` and `r stata_link(resident_2)`:^[Stata's `table` command was revised and extended in Stata Version 17, so some of the examples in this guide require you to have Stata Version 17 or after to run.  The updated command yields nicer looking output than the older syntax, but in every case there is a corresponding syntax that will run in older versions of Stata.  The .do-files that accompany this guide in [its GitHub repository](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide) check to see what version of Stata the user is running.  If they are running v17 or after, it uses the updated `table` command.  If they are running an older version, it uses syntax for the older `tabulate` command, which is often abbreviated with the syntax `tab`.]
 
 ```{stata}
-use "pma_00126.dta", clear
+use pma_00006, clear 
 
 table ( resident_1 ) () (), nototals missing zerocounts
 ```
@@ -332,7 +449,7 @@ knitr::include_graphics("images/cases1.png")
 We'll further restrict our sample by selecting only cases where `r stata_link(resultfq_2)` shows that the woman also completed the Phase 2 questionnaire. Notice that, in addition to each of the value 1 through 10, there are several **non-response codes** numbered 90 through 99. You'll see similar values repeated across all IPUMS PMA variables, except that they will be left-padded to match the maximum width of a particular variable (e.g. `9999` is used for `r stata_link(INTFQYEAR)`, which represents a 4-digit year for the Female Interview). 
 
 ```{stata}
-use "pma_00126.dta", clear
+use pma_00006, clear 
 
 tab resultfq_2, m
 ```
@@ -369,7 +486,7 @@ A missing value (`.`) in an IPUMS extract indicates that a particular variable i
 You can drop incomplete Phase 2 female responses as follows:
 
 ```{stata}
-use "pma_00126.dta", clear
+use pma_00006, clear 
 keep if resultfq_2 == 1
 tab resultfq_1 resultfq_2,m
 ```
@@ -389,7 +506,7 @@ tab resultfq_1 resultfq_2,m
 Generally, we will combine both filtering steps together in a single function like so:
 
 ```{stata}
-use "pma_00126.dta", clear
+use pma_00006, clear 
 keep if inlist(resident_1,11,22) & inlist(resident_2,11,22) & resultfq_2  == 1
 ```
 
@@ -408,7 +525,7 @@ Throughout this guide, we'll demonstrate how to incorporate PMA sampling weights
 Let's return to the **Wide** data extract described in the previous section, which includes Phase 1 and Phase 2 **Female Respondents** from Burkina Faso. As a reminder: we'll drop women who are non members of the *de facto* population and those who did not complete all or part the Female Questionnaire in both phases. 
 
 ```{stata}
-use "pma_00126.dta", clear
+use pma_00006, clear 
 keep if inlist(resident_1,11,22) & inlist(resident_2,11,22) & resultfq_2  == 1
 ```
 
@@ -615,13 +732,13 @@ Number of PSUs   = 929                   Population size = 929
 Now let’s compare the CI width from the simple random sample with N=929 with that from the complex sample with N=5,207. That is: we'll divide the difference between the upper and lower limits of our 95% confidence interval from the complex data by that of the simple random sample. We'll see that it is approximately equal to `DEFT`.
 
 ```{stata}
-di (.2144-.1638) / (.1987-.1774)
+di (.213738 - .1634491) / (.1986672 - .177417)
 ```
 ```
-2.3755869
+2.3665142
 ```
 
-It can be disheartening to know that the teams did all the work to interview 5,207 respondents and yet for this estimation that sample only has the statistical precision of a simple random sample of 929 respondents. The statistical penalty is because of both a clustering effect – spatial heterogeneity in the outcome across PSUs – and because of heterogeneity in the survey weights. In some survey reporting contexts you will be expected to report either `DEFF` or `DEFT`, or both. Be clear about which one you are reporting. The design effect will vary across outcomes, across strata, and across PMA Phases, so if it is of interest, estimate it anew for each analysis. You can learn more about the survey design effect in [materials on survey sampling statistics](). 
+It can be disheartening to know that the teams did all the work to interview 5,207 respondents and yet for this estimation that sample only has the statistical precision of a simple random sample of 929 respondents. The statistical penalty is because of both a clustering effect – spatial heterogeneity in the outcome across PSUs – and because of heterogeneity in the survey weights. In some survey reporting contexts you will be expected to report either `DEFF` or `DEFT`, or both. Be clear about which one you are reporting. The design effect will vary across outcomes, across strata, and across PMA Phases, so if it is of interest, estimate it anew for each analysis. You can learn more about the survey design effect in materials on survey sampling statistics, such as the excellent textbook [Applied Survey Data Analysis](https://websites.umich.edu/~surveymethod/asda/). 
 
 ### Sample strata for DRC
 
@@ -630,7 +747,7 @@ This syntax and `svyset` command worked well for Burkina Faso, but take note: th
 For example, let’s look at a different wide extract, containing all of the samples included in this data release. Here, we again include only panel members who completed all or part of the female questionnaire in both phases, and who slept in the household during the night before the interview: 
 
 ```{stata}
-use "pma_00153.dta", clear
+use pma_00007, clear 
 keep if inlist(resident_1,11,22) & inlist(resident_2,11,22) & resultfq_2  == 1
 ```
 
@@ -1014,7 +1131,7 @@ htmltools::img(
 We've downloaded a **Long** data extract (**Female Respondents** only), which we'll now load into Stata as follows:
 
 ```{stata}
-use "pma_00119.dta", clear
+use pma_00002, clear 
 ```
 
 In a **Long** extract, data from each phase will be organized in *separate rows*. Here, responses from three panel members are shown: 
@@ -1136,7 +1253,7 @@ pop         |
 We've also downloaded a **Wide** data extract (**Female Respondents** only), which we'll load into Stata like so: 
 
 ```{stata}
-use "pma_00116.dta", clear
+use pma_00001, clear 
 
 ```
 
@@ -1184,7 +1301,7 @@ list resultfq_1 age_1 resultfq_2 age_2 ///
 In a **Long** extract, rows for the missing phase are dropped. In this example, the woman was "not at home" for the Phase 2 Female Questionnaire. When we select a **Long** extract containing only Female Respondents, her Phase 2 row is excluded automatically (it will be included if you request an extract containing Female Respondents and Female Non-respondents). 
 
 ```{stata}
-use "pma_00119.dta", clear
+use pma_00002, clear 
 list phase age resultfq ///
      if fqinstid == "0C8VQU6B03BXLAVVZ8SB90EKQ", noobs
 ```
@@ -1200,7 +1317,7 @@ list phase age resultfq ///
 The **Inclusion Criteria for Analysis** section in Chapter 1 shows how to identify members of the *de facto* population who completed the Female Questionnaire in both phases for a **Wide** extract. Those steps are repeated here: 
 
 ```{stata}
-use "pma_00116.dta", clear
+use pma_00001, clear 
 keep if inlist(resident_1,11,22) & inlist(resident_2,11,22) & resultfq_2  == 1
 ```
 
@@ -1255,7 +1372,7 @@ We will revisit `reshape` when analyzing PMA Contraceptive Calendar data in Chap
 </aside>
 
 ```{stata}
-use "pma_00116.dta", clear
+use pma_00001, clear 
 keep if resultfq_2 == 1 & resultfq_1 != .
 
 keep if inlist(resident_1, 11, 22)
@@ -1341,7 +1458,7 @@ knitr::include_graphics("images/technical.png")
 Once you've finished selecting variables and downloaded an extract, load it into Stata like so:
 
 ```{stata}
-use pma_00120, clear
+use pma_00003, clear
 ```
 
 We mentioned in Chapter 1 that variables in a **Wide** extract include a numeric suffix corresponding with a data collection phase. For example, you'll find two versions of `r stata_link(SAMPLE)`: `r stata_link(sample_1)` contains a numeric code for each Phase 1 sample, while `r stata_link(sample_2)` contains a numeric code for each Phase 2 sample.
@@ -1448,7 +1565,7 @@ Across samples, 96.35% of households completed all or part of the Phase 1 Househ
 
 ```{stata}
 preserve
-use pma_00120, clear
+use pma_00003, clear
 
 drop if missing(hhid_1) // focus on Phase 1
 bysort hhid_1: keep if _n == 1 // keep one row per household
@@ -1964,7 +2081,7 @@ Following the steps outlined in Chapter 2, you'll need to request a `.dta` (Stat
 Download your data extract and load it into Stata:
 
 ```{stata}
-use "pma_00121.dta", clear
+use pma_00004, clear 
 ```
 
 Chapter 1 describes **Inclusion Criteria for Analysis**: to summarise, we'll be focusing on members of the *de facto* population who participated in both phases of the panel study (excluding a small number of women marked "NIU (not in universe)" for a key measure of current contraceptive use recorded in `r stata_link(CP)`). 
@@ -2179,7 +2296,7 @@ This time, the value in `D-B (null)` is `0.0694`, so we fail to reject the null 
 
 We'll use simple **grouped bar charts** to show population estimates for each proportion calculated throughout the remainder of this chapter. We'll also include **error bars** representing a 95% confidence interval for each proportion. 
 
-For example, let's consider how to visualize the two tables produced by `svy: proportion` in the previous section. It is possible to make a barchart in Stata starting with what we might call *raw data* in memory using the [`graph bar`](https://www.stata.com/manuals/g-2graphbar.pdf) command. It may be combined with `aweight` and `by` and `over` options to include a weighted sub-graph for each country and each level of Phase 1 contraception use. But it will not show confidence intervals, so in this chapter we take a different approach and use the more versatile [`graph twoway`](https://www.stata.com/manuals/g-2graphtwoway.pdf) family of commands to build up the figure that we want. Specifically, we use [`twoway bar`](https://www.stata.com/manuals/g-2graphtwowaybar.pdf) [`twoway rcap`](https://www.stata.com/manuals/g-2graphtwowayrcap.pdf) to plot bars and confidence intervals, respectively.
+For example, let's consider how to visualize the two tables produced by `svy: proportion` in the previous section. It is possible to make a barchart in Stata starting with what we might call *raw data* in memory using the [`graph bar`](https://www.stata.com/manuals/g-2graphbar.pdf) command. It may be combined with `aweight` and `by` and `over` options to include a weighted sub-graph for each country and each level of Phase 1 contraception use. But it will not show confidence intervals, so in this chapter we take a different approach and use the more versatile [`graph twoway`](https://www.stata.com/manuals/g-2graphtwoway.pdf) family of commands to build up the figure that we want. Specifically, we use [`twoway bar`](https://www.stata.com/manuals/g-2graphtwowaybar.pdf) and [`twoway rcap`](https://www.stata.com/manuals/g-2graphtwowayrcap.pdf) to plot bars and confidence intervals, respectively.
 
 But for `graph twoway` we cannot plot directly from the raw data.  We need to construct a new dataset with one row per bar in the bar chart that stores the survey estimated proportions and confidence interval limits or bounds. There are two ways to construct that dataset: a) using stored output from commands like those shown in the previous section,^[In addition to display in the Stata log window, the table of results obtained above is stored by Stata for optional downstream use. The .do-file that accompanies this book includes code to access the results and wrangle them into a dataset to use for plotting.  (The results are stored as a matrix that may be brought into memory, but needs to be transposed and needs to have several ID variables re-instated before it is ready for plotting, so there are several data management steps involved.) ] or b) by writing a short program to construct the dataset row-by-row. 
 
@@ -2247,18 +2364,14 @@ knitr::include_graphics("images/f4_01.png")
 And finally, we incorporate some additional syntax to bring more aspects of the aesthetics under our control:
 
 ```{stata}
-* Additional aesthetic options           
-twoway (bar estimate cp_1 if cp_1 == 1 & cp_2 == 1, ///
-          color(blue*.5) horizontal ylabel(0(1)1,valuelabel angle(0) nogrid) ///
-          xlabel(0(20)100)) ///
-       (bar estimate cp_1 if cp_1 == 0 & cp_2 == 1, ///
-          color(orange*.5) horizontal) ///
-       (rcap lcb ucb cp_1 if cp_2 == 1, horizontal lcolor(black)) ///
-       ,  by(pop, graphregion(color(white)) legend(off) note("")) ///
-          subtitle(,lcolor(white) fcolor(white)) ///
-          xtitle(Contraceptive user (Phase 2) (%)) ///
-          xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
-          name(nicer1, replace)
+twoway (bar estimate cp_1 if cp_2 == 1 , ///
+              color(blue*.5) horizontal barwidth(0.9) ///
+              ylabel(0(1)1,valuelabel angle(0) nogrid) ///
+              xlabel(0(20)100)) ///
+	(rcap lcb ucb cp_1 if cp_2 == 1, horizontal lcolor(black)) ///
+            ,  by(pop, graphregion(color(white)) legend(off) note("")) ///          	   subtitle(,lcolor(white) fcolor(white)) ///
+ 	   xtitle(Contraceptive user (Phase 2) (%)) ///
+	   xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) 
 ```
 
 ```{r, eval = TRUE, echo = FALSE}
@@ -2290,7 +2403,7 @@ label values fpstatus_1 status
 label values fpstatus_2 status
 ```
 
-Examining the first dozen rows of the dataset below, we see that `fpstatus` is "Pregnant" for pregnant women, and indicates contraceptive use otherwise. 
+Examining the first dozen rows of the dataset below, we see that `fpstatus` is "Pregnant" for pregnant women, and indicates contraceptive use status otherwise. 
 
 ```{stata}
 list pregnant_1 cp_1 fpstatus_1 pregnant_2 cp_2 fpstatus_2 in 1/12, noobs sep(12)
@@ -2354,6 +2467,8 @@ label values pop pop
 
 label variable fpstatus_1 "Family Planning Status (Phase 1)"
 label variable fpstatus_2 "Family Planning Status (Phase 2)"
+label define status2 1 "Pregnant in Phase 1" 3 "Using FP in Phase 1" 2 "Not Using FP in Phase 1", replace
+label values fpstatus_1 status2
 ```
  
 \newpage 
@@ -2361,8 +2476,6 @@ label variable fpstatus_2 "Family Planning Status (Phase 2)"
 And next, we build a bar chart with customized aesthetic options. 
 
 ```{stata}
-label define status2 1 "Pregnant in Phase 1" 3 "Using FP in Phase 1" 2 "Not Using FP in Phase 1", replace
-label values fpstatus_1 status2
 twoway (bar estimate fpstatus_2 if fpstatus_2 == fpstatus_1, ///
         color(blue*.5) horizontal ///
         ylabel(1(1)3,valuelabel angle(0) nogrid) ///
@@ -2397,7 +2510,7 @@ PMA surveys also ask contraceptive users to indicate which method they are curre
 
 Long-acting methods include:
 
-  * IUDs
+  * intrauterine devices (IUDs)
   * implants
   * male sterilization 
   * female sterilization
@@ -2409,7 +2522,7 @@ Short-acting methods include:
   * emergency contraception 
   * male condoms
   * female condoms
-  * LAM
+  * lactation amenorrhea method (LAM)
   * diaphragm
   * foam/jelly
   * standard days method
@@ -2704,7 +2817,8 @@ twoway (bar estimate cat_educattgen_2 , ///
         ,  by(pop chg_fpcurr, graphregion(color(white)) ///
               note("") col(5) legend(off) ) ///
            subtitle(,size(small) lcolor(white) fcolor(white)) ///
-           xtitle("Changes in Family Planning Status, Phase 1 to Phase 2", size(small)) ///
+           xtitle("Changes in Family Planning Status, Phase 1 to Phase 2", ///
+                    size(small)) ///
            xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
            ytitle("")
 ```
@@ -2896,7 +3010,8 @@ twoway (bar estimate cat_birthevent_2 , ///
               note("Estimates across each row of the figure sum to 100%.", ///
                      size(vsmall)) col(5) legend(off) ) ///
            subtitle(,size(small) lcolor(white) fcolor(white)) ///
-           xtitle("Changes in Family Planning Status, Phase 1 to Phase 2", size(small)) ///
+           xtitle("Changes in Family Planning Status, Phase 1 to Phase 2", ///
+                    size(small)) ///
            xline(20 40 60 80 100, lcolor(gs15) lwidth(vthin)) ///
            ytitle("")
 ```
@@ -3194,9 +3309,9 @@ knitr::include_graphics("images/f4_12.png")
 
 ## Limitations 
 
-As we've seen, **grouped bar charts** give us a simple way to identify clear differences between Phase 2 outcomes for subgroups defined by baseline family planning conditions or key demographic features. Additionally, when we **facet** populations of interest on the same axis, we can easily compare differences between subgroups for many samples in a single figure. 
+As we've seen, **grouped bar charts** give us a simple way to identify clear differences between Phase 2 outcomes for subgroups defined by baseline family planning conditions or key demographic features. Additionally, when we use the `by` option to plot several populations of interest on the same axis, we can easily compare differences between subgroups for many samples in a single figure. 
 
-One drawback to this approach is that it's more conservative than formal statistical tests. We are not able to easily spot differences near the conventional 95% certainty threshold. However, we demonstrated how you can adapt our code to conduct formal hypothesis tests like the Rao-Scott chi-square test for proportions in a complex survey sample.
+One drawback to using graphical confidence interval overlap as a substitute for hypothesis tests is that it's more conservative than formal statistical tests. We are not able to easily spot differences near the conventional 95% certainty threshold. However, we demonstrated how you can adapt our code to conduct formal hypothesis tests like the Rao-Scott chi-square test for proportions in a complex survey sample.
 
 Another drawback to this approach is that we've been unable to showcase estimates for the proportion of responses at any *one* phase of the study. For example, in our last figure, we estimated that about 35% of women who *planned to use* contraception within the year at Phase 1 did so at Phase 2; our figure does not show how many women planned to use contraception within the year *as a share of the Phase 1 population*. 
 
@@ -3226,7 +3341,7 @@ Chapter 5 digs into  some of the other data visualization tools that are commonl
 Recall that our analysis in Chapter 4 concerned only *de facto* panel members who completed all or part of the Female Questionnaire in both Phase 1 and Phase 2. We also excluded women who are marked "NIU (not in universe)" for a key measure concerning current contraceptive use (`r stata_link(CP)`). As a reminder, you can load the extract into Stata and select relevant cases like so:  
 
 ```{stata}
-use pma_00121, clear
+use pma_00004, clear
 
 * Filter data
 keep if resultfq_2 == 1
@@ -3685,7 +3800,7 @@ forvalues i = 1/6 {
     sankey_plot_with_legend x1 y00 x2 y11, ///
         width0(width) adjust extra color(color) label0(label0) ///
         xsize(10) ysize(6) labcolor(edkblue*2) labsize(small) ///
-        legend( on order(1 "Pregnant" 4 "Not Using FP" 7 "Using FP") cols(1) ///
+        legend( on order(1 "Pregnant" 4 "Not Using FP" 7 "Using FP") rows(1) ///
           pos(3) region(lcolor(white)) size(small) symxsize(small) symysize(medium) ) ///
         xlabel(none) ///
         title("`country'", size(medium)) ///
@@ -3697,7 +3812,7 @@ forvalues i = 1/6 {
 And finally, we combine them into a single figure. 
 
 ```{stata}
-grc1leg2 sub_1 sub_2 sub_3 sub_4 sub_5 sub_6, row(2) legend(f5_07) lrow(1) ///
+grc1leg2 sub_1 sub_2 sub_3 sub_4 sub_5 sub_6, row(2) legend(f5_07) ///
         title("Changes in Contraceptive Use or Non-Use", size(medium)) ///
         subtitle("Women aged 15-49: PMA Phase 1 to Phase 2", size(medsmall)) ///
         graphregion(color(white))
@@ -3708,10 +3823,10 @@ knitr::include_graphics("images/f5_07.png")
 ```
 
 <aside class="nudge_down">
-Values may not add to 100% due to rounding (values rounded to 0% are not labelled).
+Values may not add to 100% due to rounding.
 </aside>
 
-Now, it's very easy to identify the proportion of women at each phase *and* the proportion who switched or maintained their status between phases. If possible, we recommend aligning alluvial plots for every sample in a single row as shown: this allows the readers to visually compare the relative size of strata and alluvia across samples. 
+Now, it's very easy to identify the proportion of women at each phase *and* the proportion who switched or maintained their status between phases. If possible, we recommend aligning alluvial plots for every sample in a single figure as shown: this allows the readers to visually compare the relative size of strata and alluvia across samples. 
 
 
 # Contraceptive Calendar
@@ -3825,7 +3940,7 @@ We've selected all of the calendar variables listed above, plus these additional
 We'll load the data extract into Stata and, following the **Inclusion Criteria for Analysis** described in Chapter 1, we'll drop cases for women who did not complete the Female Questionnaire or were not members of the *de facto* population in both phases. 
 
 ```{stata}
-use pma_00122, clear
+use pma_00005, clear
 keep if resultfq_1 == 1 & resultfq_2 == 1
 keep if resident_1 == 11 | resident_1 == 22
 keep if resident_2 == 11 | resident_2 == 22
@@ -4031,6 +4146,7 @@ rename calstop_ calstop
 
 For example, the first three rows are shown: the first row is for the woman with `id == 1` in `phase == 1`, while the second row is her `phase == 2` record. The data for the woman with `id == 2` begins in row three, as so on. 
 
+\newpage 
 ```{stata}
 list in 1/3
 ```
@@ -4384,7 +4500,7 @@ Note, however, that it is *not* possible to complete calendars for women who exp
 We'll begin by attaching all of the `cmc` variables we created above (except `intfqcmc`) along with the variables `r stata_link(PREGNANT)` and `r stata_link(FPCURREFFMETHRC)`. In order to match the format of `cals`, we'll again use `reshape long` to create separate rows for the dates collected from each `phase`. 
 
 ```{stata}
- post6_filtered_dataset, clear
+use post6_filtered_dataset, clear
 keep id *cmc* pregnant* fpcurreffmethrc*
 drop intfq*
 * reshape to long
@@ -4427,6 +4543,7 @@ order calstart , after(calmissing)
 
 Let's take a look at the woman in row 6, where we previously saw a blank string. 
 
+\newpage 
 ```{stata}
 list in 6
 ```
@@ -4662,6 +4779,7 @@ forvalues n = 1/`num' {
 drop l1 l2 l value
 ```
 
+\newpage 
 ```{stata}
 . list in 1
 ```
@@ -4704,7 +4822,10 @@ We'll now `reshape` again, placing each month into a single column temporarily c
 ```{stata}
 * reshape to long again by value
 reshape long value, i(id phase name) j(month)
+```
 
+\newpage
+```{stata}
 list in 1/5
 ```
 <div style="font-size: 0.7em">
@@ -4787,6 +4908,10 @@ In its final format, `cals` contains one row for every month covered by the cont
 ```{stata}
 * sort by id and descending by calcmc
 gsort id -calcmc
+```
+
+\newpage
+```{stata}
 list in 1/40, noobs
 ```
 <div style="font-size: 0.8em">
@@ -4882,7 +5007,8 @@ svyset _n, strata(country)
 
 capture postclose toplot
 tempfile postout
-postfile toplot unmetyn_1 fpplanyr_1 country margin_u margin_f joint using `postout', replace
+postfile toplot unmetyn_1 fpplanyr_1 country margin_u margin_f joint using ///
+  `postout', replace
 
 levelsof country, local(clist)
 foreach j in `clist' {
@@ -4910,10 +5036,14 @@ use `postout', clear
 label define country 1 "BF" 2 "CD" 7 "KE" 9 "NG", replace
 label values country country
 
-gen     margin_f_label = "Plan 1 Yr "     + string(round(margin_f,1.1)) + "%" if fpplanyr_1 == 1
-replace margin_f_label = "No Plan 1 Yr "  + string(round(margin_f,1.1)) + "%" if fpplanyr_1 == 0
-gen     margin_u_label = "Unmet Need "    + string(round(margin_u,1.1)) + "%" if unmetyn_1 == 1
-replace margin_u_label = "No Unmet Need " + string(round(margin_u,1.1)) + "%" if unmetyn_1 == 0
+gen     margin_f_label = "Plan 1 Yr "     + string(round(margin_f,1.1)) + "%" ///
+  if fpplanyr_1 == 1
+replace margin_f_label = "No Plan 1 Yr "  + string(round(margin_f,1.1)) + "%" ///
+ if fpplanyr_1 == 0
+gen     margin_u_label = "Unmet Need "    + string(round(margin_u,1.1)) + "%" ///
+  if unmetyn_1 == 1
+replace margin_u_label = "No Unmet Need " + string(round(margin_u,1.1)) + "%" ///
+  if unmetyn_1 == 0
 ```
 
 \newpage 
@@ -4940,8 +5070,11 @@ foreach c in 1 2 7 9 {
 * Combine them together
 graph combine hm1 hm2 hm7 hm9, ///
     rows(2) ///
-    title("Non-users: Unmet Need and Intentions to Adopt a Method within 1 Year", size(medium)) ///
-    subtitle("Unweighted percentage among sampled women not currently using any method at Phase 1", size(small)) ///
+    title("Non-users: Unmet Need and Intentions to Adopt a Method within 1 Year", ///
+            size(medium)) ///
+    subtitle("Unweighted percentage among sampled women ///
+             not currently using any method at Phase 1", ///
+               size(small)) ///
     note("Percentages in each plot sum to 100%.", size(vsmall)) ///
     graphregion(color(white))
 ```
@@ -5055,7 +5188,7 @@ replace interact_1 = "No Unmet Need, No Plan 1 Yr" if unmetyn_1 == 0 & fpplanyr_
 save post6_survival,replace
 ```
 
-To run the survival time statistics (sts) or time-to-event analysis commands in Stata, we generate a variable that indicates whether the respondent experienced the event of interest.  In our case, if `rc` is not 1, then they adopted a family planning methods, so our variable that indicates they had the event will be `notrc`.  Similarly, generate a variable indicating the time when they entered observation in the study.  Stata's survival analysis commands do not expect to see failures in the very first period of observation, but this dataset has quite a few women who were not using contraception at the time of the Phase 1 interview but who remember adopting it that very month (`mo = 0`) so we increment the `mo` variable by one month (in these instances, women may have adopted a method just days or a few weeks after the Phast 1 interview, but before a full month had passed). 
+To run the survival time statistics (sts) or time-to-event analysis commands in Stata, we generate a variable that indicates whether the respondent experienced the event of interest.  In our case, if `rc` is not 1, then they adopted a family planning methods, so our variable that indicates they had the event will be `notrc`. Stata’s survival analysis commands do not expect to see failures in the very first period of observation, but this dataset has quite a few women who were not using contraception at the time of the Phase 1 interview but who remember adopting it that very month (`mo = 0`) so we use the `stset` command's `origin(min)` option to indicate that the participants entered observation before month 0 and could indeed fail during that first time period (in these instances, women may have adopted a method just days or a few weeks after the Phase 1 interview, but before a full month had passed).
 
 ```{stata}
 gen notrc = !rc
@@ -5153,14 +5286,14 @@ For example, row 1 shows that there were 2245 women in the Phase 1 Burkina Faso 
 
 Below that, row 16 shows that there were 632 women in the Phase 1 Burkina Faso sample who were not using family planning, but *did* meet PMA criteria for "unmet need". Among these, `Fail` shows that 86 adopted a family planning method less than one month after the interview: this leaves 86.4% of the group remaining before one month had passed.^[As a reminder: these estimates are not weighted, and the confidence intervals do not account for the PMA cluster sampling procedure.] 
 
-We'll produce a "time-to-event" plot by inverting the probabilities reported in `Failure function` and its accompanying confidence interval. This plot uses [`sts graph`](https://www.stata.com/manuals/ststsgraph.pdf) to draw two step-wise functions: one for those with unmet need at Phase 1 and those with no unmet need.  The command also shows a shaded confidence interval for each step. The code constructs a separate figure for each country and uses the `grc1leg` command to combine the figures into a single figure and show only a single legend.
+We'll produce a "time-to-event" plot by graphing the probabilities reported in `Failure function` and its accompanying confidence interval. This plot uses [`sts graph`](https://www.stata.com/manuals/ststsgraph.pdf) to draw two step-wise functions: one for those with unmet need at Phase 1 and those with no unmet need.  The command also shows a shaded confidence interval for each step. The code constructs a separate figure for each country and uses the `grc1leg2` command to combine the figures into a single figure and show only a single legend.
 
 ```{stata}
 sts graph if co == 1, failure by(unmetyn_1 ) ylabel(0(.2)1.0, angle(0)) ///
 ci title(Burkina Faso, size(small)) graphregion(color(white))  ///
 yline(1,lcolor(ltblue*.5) lwidth(thin)) legend(size(small) symxsize(small) ///
 symysize(small) region(lcolor(none)) order(1 "No unmet need" 3 "Unmet need") ///
-row(1)) name(hm1, replace) xtitle(Months After Phase 1 Interview, size(small)) 
+row(1)) name(hm1, replace) xtitle(Months After Phase 1 Interview, size(small)) ///
 sts graph if co == 2, failure by(unmetyn_1 ) ylabel(0(.2)1.0, angle(0)) ///
 ci title(DR Congo, size(small))     graphregion(color(white))   ///
 yline(1,lcolor(ltblue*.5) lwidth(thin)) ///
@@ -5180,7 +5313,7 @@ yline(1,lcolor(ltblue*.5) lwidth(thin)) legend(size(small) symxsize(small) ///
 symysize(small) region(lcolor(none)) order(1 "No unmet need" 3 "Unmet need") ///
 row(1)) name(hm4, replace) xtitle(Months After Phase 1 Interview, size(small))
 
-grc1leg  hm1 hm2 hm3 hm4, rows(2) graphregion(color(white)) legend(hm1) ///
+grc1leg2  hm1 hm2 hm3 hm4, rows(2) graphregion(color(white)) legend(hm1) ///
 title(Predicted Time to FP Adoption by Phase 1 Unmet Need Status, size(small)) ///
 xcommon ycommon
 ```
@@ -5220,7 +5353,7 @@ yline(1,lcolor(ltblue*.5) lwidth(thin)) legend(size(small) symxsize(small) ///
 symysize(small) region(lcolor(none)) order(1 "No plan 1yr" 3 "Plan 1yr") ///
 row(1)) name(hm4, replace) xtitle(Months After Phase 1 Interview, size(small))
 
-grc1leg  hm1 hm2 hm3 hm4, rows(2) graphregion(color(white)) legend(hm1) ///
+grc1leg2  hm1 hm2 hm3 hm4, rows(2) graphregion(color(white)) legend(hm1) ///
 title(Predicted Time to FP Adoption by Intentions Within 1 Year of Phase 1, ///
 size(small)) xcommon ycommon
 ```
@@ -5271,7 +5404,7 @@ order(9 "No need; No plan" 10 "No need; Plan 1yr" 11 "Unmet need; No plan" ///
  12 "Unmet need; Plan 1yr" )) name(hm4, replace) ///
  xtitle(Months After Phase 1 Interview, size(small))
 
-grc1leg  hm1 hm2 hm3 hm4, rows(2) graphregion(color(white)) legend(hm1) ///
+grc1leg2  hm1 hm2 hm3 hm4, rows(2) graphregion(color(white)) legend(hm1) ///
 title(Predicted Time to FP Adoption by Phase 1 Intentions and Unmet Need, ///
 size(small)) xcommon ycommon
 ```

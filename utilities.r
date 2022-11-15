@@ -109,7 +109,7 @@ stata_link <- function(varname, tab = codes){
 funlink <- function(fun, alt_text = NULL) {
   
   fun <- deparse(substitute(fun))
-
+  
   stopifnot(length(fun) == 1)
   
   is_fun <- stringr::str_detect(fun, "::")
@@ -121,7 +121,7 @@ funlink <- function(fun, alt_text = NULL) {
   } else {
     display_name <- stringr::str_split(fun, "::")[[1]][2]
   }
-
+  
   url <- downlit::autolink_url(fun)
   
   if (is.na(url)) {
@@ -174,5 +174,4 @@ hex <- function(pkg){
     ))
   }
 }
-
 

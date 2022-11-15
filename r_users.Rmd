@@ -27,32 +27,28 @@ source("utilities.r")
 
 # Preface {.front-matter .unnumbered}
 
-The work was commissioned and funded by the Family Planning Team at the Bill & Melinda Gates Foundation. The examples here are directly based on the companion [IPUMS PMA Blog](https://tech.popdata.org/pma-data-hub/), with R examples developed by Matt Gunther and IPUMS PMA documentation by Devon Kristiansen under the management of Kathryn Grace, PhD and Elizabeth Heger Boyle, PhD at IPUMS PMA, University of Minnesota. The Stata version and statistical consulting were provided by Mia Yu, Dale Rhoda, and Caitlin Clary at [Biostat Global Consulting](http://www.biostatglobal.com/). These authors are grateful for helpful reviews & comments from Philip Anglewicz, PhD; Linnea Zimmerman, PhD, and Aisha Siewe at Johns Hopkins University. Thanks also to Nina Brooks, PhD and Finn Roberts for code contributions and review. 
+This guide was commissioned and funded by the Family Planning Team at the Bill & Melinda Gates Foundation. The examples here are directly based on the companion [IPUMS PMA data analysis blog](https://tech.popdata.org/pma-data-hub/), with R examples developed by Matt Gunther and IPUMS PMA documentation by Devon Kristiansen under the management of Kathryn Grace, PhD and Elizabeth Heger Boyle, PhD at IPUMS PMA, University of Minnesota. The Stata version and statistical consulting were provided by Mia Yu and Dale Rhoda at [Biostat Global Consulting](http://www.biostatglobal.com/). These authors are grateful for helpful reviews & comments from Philip Anglewicz, PhD; Linnea Zimmerman, PhD, and Aisha Siewe at Johns Hopkins University. Thanks also to Caitlin Clary, PhD, Nina Brooks, PhD, and Finn Roberts for code contributions and review.
 
-<h4>
-Suggested Citation
-</h4>
+#### Suggested Citation {.unnumbered}
+
 TBD 
 
-<h4>
-Source Code
-</h4>
+#### Source Code {.unnumbered}
+
 This manual is open source. It was constructed from [R Markdown](https://rmarkdown.rstudio.com/) files with the `r funlink(pagedown)` package for R.^[`r funlink(pagedown)` © Xie, Yihui et al. (MIT)] These files are available on our [GitHub repository](), where you will also find `.r` and `.do` files containing the code shown in this manual. 
 
 The IPUMS PMA data files referenced in this manual are also available at no cost, but you must register and adhere to terms of use at [pma.ipums.org/register](https://pma.ipums.org/pma/register.shtml). Dataset access is granted only for non-commercial purposes. Users must register an account with IPUMS, request access to data from particular countries, and describe their intended use for the data. Users who have been approved for access to certain countries may submit justification to expand their access to other countries. 
 
 [La version française du formulaire d'inscription](https://pma.ipums.org/pma/formulaire_d_inscription.shtml)
 
-<h4>
-Hyperlinks 
-</h4>
+#### Hyperlinks {.unnumbered}
+
 Hyperlinks to IPUMS PMA variable documentation, relevant R and Stata documentation, and various other resources are highlighted [in pink]() throughout this manual. If the reader prefers a printed version, they are recommended to compile the manual from source files on our GitHub repository, changing the `r funlink(pagedown)` option described [here](https://pagedown.rbind.io/#links). **Warning:** this will add additional footnotes to the document, and may impact pagination. 
 
 \newpage 
 
-<h4>
-Acronyms
-</h4>
+#### Acronyms {.unnumbered}
+
   - BMGF -	[Bill & Melinda Gates Foundation](https://www.gatesfoundation.org/)
   - CI	- confidence interval
   - CMC	- century month code
@@ -1743,7 +1739,7 @@ PMA surveys also ask contraceptive users to indicate which method they are curre
 
 Long-acting methods include:
 
-  * IUDs
+  * intrauterine devices (IUDs)
   * implants
   * male sterilization 
   * female sterilization
@@ -1755,7 +1751,7 @@ Short-acting methods include:
   * emergency contraception 
   * male condoms
   * female condoms
-  * LAM
+  * lactation amenorrhea method (LAM)
   * diaphragm
   * foam/jelly
   * standard days method
@@ -2222,7 +2218,7 @@ In every population, Phase 1 non-users who planned to adopt a method by Phase 2 
 
 As we've seen, **grouped bar charts** give us a simple way to identify clear differences between Phase 2 outcomes for subgroups defined by baseline family planning conditions or key demographic features. Additionally, when we **facet** populations of interest on the same axis, we can easily compare differences between subgroups for many samples in a single figure. 
 
-One drawback to this approach is that it's more conservative than formal statistical tests. We are not able to easily spot differences near the conventional 95% certainty threshold. However, we demonstrated how you can adapt our code to conduct formal hypothesis tests like the [Rao-Scott chi-square test](https://rdrr.io/cran/survey/man/svychisq.html) for proportions in a complex survey sample.
+One drawback to using graphical confidence interval overlap as a substitute for hypothesis tests is that it's more conservative than formal statistical tests. We are not able to easily spot differences near the conventional 95% certainty threshold. However, we demonstrated how you can adapt our code to conduct formal hypothesis tests like the [Rao-Scott chi-square test](https://rdrr.io/cran/survey/man/svychisq.html) for proportions in a complex survey sample.
 
 Another drawback to this approach is that we've been unable to showcase estimates for the proportion of responses at any *one* phase of the study. For example, in our last figure, we estimated that about 35% of women who *planned to use* contraception within the year at Phase 1 did so at Phase 2; our figure does not show how many women planned to use contraception within the year *as a share of the Phase 1 population*. 
 
