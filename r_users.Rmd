@@ -31,7 +31,7 @@ This guide was commissioned and funded by the Family Planning Team at the Bill &
 
 #### Suggested Citation {.unnumbered}
 
-TBD 
+Matt Gunther, Mia Yu, Dale Rhoda, and Devon Kristiansen. *IPUMS PMA Longitudinal Analysis Guide for R Users* (November 2022). Minneapolis, MN: IPUMS. [pma.ipums.org](https://pma.ipums.org/pma/)
 
 #### Source Code {.unnumbered}
 
