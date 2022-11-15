@@ -507,7 +507,8 @@ tab resultfq_1 resultfq_2,m
 Generally, we will combine both filtering steps together in a single function like so:
 
 ```{stata}
-use pma_00006, clear 
+use pma_00001, clear 
+keep if sample_1 == 85409
 keep if inlist(resident_1,11,22) & inlist(resident_2,11,22) & resultfq_2  == 1
 ```
 
@@ -527,6 +528,7 @@ Let's return to the **Wide** data extract described in the previous section, whi
 
 ```{stata}
 use pma_00001, clear 
+keep if sample_1 == 85409
 keep if inlist(resident_1,11,22) & inlist(resident_2,11,22) & resultfq_2  == 1
 ```
 
@@ -849,7 +851,7 @@ svyset eaid_1, strata(strata_recode) weight(panelweight)
 
 For Stata to estimate the proportion for each population, we will use the `over(varname)` option where `varname` needs to be an integer variable - preferably with a value label. 
 
-So, we construct a new variable named `pop` and give it a unique value for each PMA population.
+So, we construct a new variable named `pop` and give it a unique value for each PMA population.^[We re-generate this `pop` variable several times through this guide, so we have saved `pop`-related commands above in a code snippet named `gen_pop.do`, which can be called via `include gen_pop.do`. Likewise, we apply this variable label several times in a snippet named `label_pop_values.do`, which can be called via `include label_pop_values.do`.]
 
 ```{stata}
 gen pop = .
@@ -911,9 +913,7 @@ Yes DRC-Kongo Central  |   .2681881   .0287314      .2156321    .3281938
 # Longitudinal Data Extracts
 
 ```{r, eval=TRUE, echo=FALSE}
-knitr::opts_chunk$set(
-  out.width = "85%"
-)
+knitr::opts_chunk$set(out.width = "85%")
 ```
 
 This chapter provides a guided tour of the [IPUMS PMA data extract system](https://pma.ipums.org/pma/). While you may also access the original data directly from our partners at [PMA](https://www.pmadata.org/), harmonized data from IPUMS have a few additional features. For instance, you can request an extract that: 
@@ -1169,7 +1169,7 @@ We mentioned above that you'll also include responses from some non-panel member
 
 ```{stata}
 gen non_panel = fqinstid == ""
-label define fqinstid_blank 0 "fqinstid is not blank" 1 "fqinstid is blank"
+label define fqinstid_blank 0 "fqinstid is not blank" 1 "fqinstid is blank", replace
 label values non_panel fqinstid_blank
 label variable panelwoman "Woman in the panel"
 table (phase panelwoman) (non_panel), nototals missing
@@ -1216,6 +1216,7 @@ Following these steps, you can check the size of each analytic sample like so:
 ```{stata}
 * Include the code snippet that makes the pop variable
 include gen_pop.do
+table ( pop ) ( phase) ( ), nototals missing
 ```
 ```
 --------------------------------------------------
@@ -1305,27 +1306,12 @@ use pma_00004, clear
 keep if inlist(resident_1,11,22) & inlist(resident_2,11,22) & resultfq_2  == 1
 ```
 
+\newpage 
 Following these steps, each analytic sample contains the same number of cases shown in the final **Long** format extract above. 
 
 ```{stata}
-gen pop = .
-replace pop = 1 if country == 1 // Burkina Faso
-replace pop = 2 if country == 2 & geocd == 1 // Kinshasa
-replace pop = 3 if country == 2 & geocd == 2 // Kongo Central
-replace pop = 4 if country == 7 // Kenya
-replace pop = 5 if country == 9 & geong == 4 // Kano
-replace pop = 6 if country == 9 & geong == 2 // Lagos
-
-label define pop ///
-  1 "Burkina Faso" ///
-  2 "DRC-Kinshasa" ///
-  3 "DRC-Kongo Central" ///
-  4 "Kenya" ///
-  5 "Nigeria-Kano" ///
-  6 "Nigeria-Lagos", replace
-
-label values pop pop
-           
+* Include the code snippet that makes the pop variable
+include gen_pop.do
 table ( pop ) ( ), nototals missing
 ```
 
@@ -1459,16 +1445,6 @@ We'll combine the `r stata_link(COUNTRY)` name for each sample together with the
 * Include the code snippet that makes the pop variable
 include gen_pop.do
 
-label define pop ///
-  1 "Burkina Faso" ///
-  2 "DRC-Kinshasa" ///
-  3 "DRC-Kongo Central" ///
-  4 "Kenya" ///
-  5 "Nigeria-Kano" ///
-  6 "Nigeria-Lagos", replace
-
-label values pop pop
-
 table ( pop ) ( ) ( ), nototals missing
 ```
 
@@ -1571,6 +1547,7 @@ Total number of Phase 1 household members, per sample
 It is also often useful to exclude non-interviewed households when calculating **person-level statistics**. In the first row of our CONSORT diagram above, we drop these households before we count the total number of sampled Phase 1 household members. 
 
 ```{stata}
+restore
 table (pop) if inlist(resulthq_1,1,5), nototals missing
 ```
 ```
@@ -1591,6 +1568,7 @@ pop                 |
 
 IPUMS PMA uses a **non-response code** labeled "Not interviewed (household questionnaire)" for variables related to questions that were only relevant if the Household Questionnaire was fully or partly completed. This includes  `r stata_link(ELIGIBLE_1)`, which indicates whether a particular household member was a woman aged 15-49 at Phase 1, and therefore eligible for the Phase 1 Female Questionnaire. If the household was not interviewed, eligibility for the Female Questionnaire could not be determined.
 
+\newpage 
 ```{stata}
 table ( resulthq_1 eligible_1) () (), nototals missing
 ```
@@ -1628,12 +1606,12 @@ result of household questionnaire     |
   absent extended period              |
     eligible female respondent        |
       not interviewed                 |        296
-  .                                             |          
-    eligible female respondent                  |          
-      .                                         |     98,687      
+  .                                   |          
+    eligible female respondent        |          
+      .                               |     98,687      
 --------------------------------------+-----------  
 ```
-
+\newpage
 `r stata_link(RESULTLFQ_1)` shows the result of the Female Questionnaire for eligible women. The **non-response code** "NIU (not in universe)" is used for household members who were not eligible. 
 
 ```{stata}
@@ -2072,6 +2050,8 @@ Chapter 1 describes **Inclusion Criteria for Analysis**: to summarise, we'll be 
 keep if inlist(resident_1,11,22) & inlist(resident_2,11,22)
 keep if resultfq_2 == 1
 keep if cp_1 < 90 & cp_2 <90
+label variable cp_1  "Contraceptive user (Phase 1)"
+label variable cp_2  "Contraceptive user (Phase 2)"
 ```
 
 Recall that only the Burkina Faso and Kenya samples are **nationally representative**. Samples from DRC represent regions identified by `r stata_link(GEOCD)`, while samples from Nigeria represent regions identified by `r stata_link(GEONG)`. In order to distinguish each population of interest, we'll again define a custom variable `pop` that shows each sample's `r stata_link(COUNTRY)` label concatenated with each of these regions where appropriate. 
@@ -2081,16 +2061,6 @@ Recall that only the Burkina Faso and Kenya samples are **nationally representat
 ```{stata}
 * Include the code snippet that makes the pop variable
 include gen_pop.do
-
-label define pop ///
-  1 "Burkina Faso" ///
-  2 "DRC-Kinshasa" ///
-  3 "DRC-Kongo Central" ///
-  4 "Kenya" ///
-  5 "Nigeria-Kano" ///
-  6 "Nigeria-Lagos", replace
-
-label values pop pop
 ```
 
 We'll be using survey design information to derive population estimates throughout this chapter, so we'll also need to use `r stata_link(GEOCD)` to update `r stata_link(STRATA_1)` for DRC samples. As in Chapter 1, we create `strata_recode` using unique numeric codes from `r stata_link(STRATA_1)`, except that we also include unique identifiers for each sampled region in `r stata_link(GEOCD)`.
@@ -2100,13 +2070,6 @@ We'll be using survey design information to derive population estimates througho
 ```{stata}
 * Include the code snippet that makes the strata_recode variable
 include gen_strata_recode.do
-```
-
-Here, we labels the variables `r stata_link(CP_1)` and `r stata_link(CP_2)`.
-
-```{stata}
-label variable cp_1  "Contraceptive user (Phase 1)"
-label variable cp_2  "Contraceptive user (Phase 2)"
 ```
 
 Finally, Chapter 1 demonstrates how to use survey design information to estimate the proportion of women in each population `pop` who were using a contraceptive method both at Phase 1 and at Phase 2. Let's revisit that example again, expect that we'll now estimate the proportion of users and non-users alike. 
@@ -2385,6 +2348,9 @@ replace fpstatus_2 = 2 if pregnant_2 != 1 & cp_2 == 0
 label define status 1 "Pregnant" 3 "Using FP" 2 "Not Using FP"
 label values fpstatus_1 status
 label values fpstatus_2 status
+
+label variable fpstatus_1 "Family planning status at Phase 1"
+label variable fpstatus_2 "Family planning status at Phase 2"
 ```
 
 Examining the first dozen rows of the dataset below, we see that `fpstatus` is "Pregnant" for pregnant women, and indicates contraceptive use status otherwise. 
@@ -3325,16 +3291,6 @@ include gen_pop.do
 * Include the code snippet that makes the strata_recode variable
 include gen_strata_recode.do
 
-label define pop ///
-  1 "Burkina Faso" ///
-  2 "DRC-Kinshasa" ///
-  3 "DRC-Kongo Central" ///
-  4 "Kenya" ///
-  5 "Nigeria-Kano" ///
-  6 "Nigeria-Lagos", replace
-
-label values pop pop
-
 gen fpstatus_1 = 1 if pregnant_1 == 1
 replace fpstatus_1 = 3 if pregnant_1 != 1 & cp_1 == 1
 replace fpstatus_1 = 2 if pregnant_1 != 1 & cp_1 == 0
@@ -3741,7 +3697,7 @@ forvalues i = 1/6 {
         width0(width) adjust extra color(color) label0(label0) ///
         xsize(10) ysize(6) labcolor(edkblue*2) labsize(small) ///
         legend( on order(1 "Pregnant" 4 "Not Using FP" 7 "Using FP") cols(1) ///
-          pos(3) region(lcolor(white)) size(small) symxsize(small) symysize(medium) ) ///
+          pos(6) region(lcolor(white)) size(small) symxsize(small) symysize(medium) ) ///
         xlabel(none) ///
         title("`country'", size(medium)) ///
         graphregion(color(white)) yscale(lstyle(none)) xscale(lstyle(none)) ///
@@ -4294,7 +4250,7 @@ list in 1/8
 Lastly, we can drop any row where `country` does not match the value in `country_cal`. The first few rows show that each woman now occupies only two rows apiece. 
 
 ```{stata}
-keep if upper(country) == country_cat
+keep if upper(country) == country_cal
 list in 1/6
 ```
 <div style="font-size: 0.8em">

@@ -15,18 +15,27 @@
 *
 *
 * The Stata syntax to match the R results was developed by Mia Yu and
-* Dale Rhoda and Caitlin Clary at Biostat Global Consulting 
+* Dale Rhoda and Caitlin Clary at Biostat Global Consulting. 
 * (www.biostatglobal.com)
 *
 * Contact us with questions about the Stata syntax:
 * Dale.Rhoda@biostatglobal.com, Mia.Yu@biostatglobal.com
 *
 * This code is featured in a PDF guide entitled
-* IPUMS PMA Longitudinal Analysis Guide - For Stata Users
+* IPUMS PMA Longitudinal Analysis Guide For Stata Users
 * 
-* Available at <insert URL here>
+* Available at:
 * https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide/blob/main/stata_users.pdf
 *
+* ==============================================================================
+*
+* CD to the working diretory that holds the relevant datasets, and
+* the .do-files that are sometimes "included" in this program as well 
+* as the program named sankey_plot_with_legend.ado.
+*
+
+cd "Q:/BMGF - PMA IPUMS FP Blog Posts/PMA 2022 longitudinal guide - Stata files"
+
 * ==============================================================================
 *
 * Revision history
@@ -36,6 +45,8 @@
 * 2022-11-14    Dale Rhoda      Assembled chapter files into a single .do-file
 *                               and developed two .do files to be included
 *                               for oft-repeated code snippets 
+* 2022-11-15	  Dale Rhoda		  Changed dataset filenames to 01-07 and updated
+*                               the code for Chapter 3 to match Matt's layout.
 *
 * ==============================================================================
 *
@@ -50,14 +61,7 @@
 * ssc install colrspace, replace
 * net install grc1leg2.pkg
 *
-* ==============================================================================
-*
-* CD to the working diretory that holds the relevant datasets, and
-* the .do-files that are sometimes "included" in this program as well 
-* as the program named sankey_plot_with_legend.ado.
-*
 
-cd "Q:/BMGF - PMA IPUMS FP Blog Posts/PMA 2022 longitudinal guide - Stata files"
 
 * Open a log file
 
@@ -69,19 +73,19 @@ log using IPUMS_PMA_Longitudinal_Analysis_log.txt, text replace
 * ==============================================================================
 * ==============================================================================
 *
-**# Chapter 1
+**# Chapter 1 - Introduction
 *
 * ==============================================================================
 * ==============================================================================
 * ==============================================================================
 *
 * The code for Chapter 1 requires two datasets to be present in the current
-* working directory: pma_00126 and pma_00153.  
+* working directory: pma_00001 and pma_00002.  
 *
 * ==============================================================================
 *
 
-use pma_00126, clear
+use pma_00001, clear
 
 keep if sample_1 == 85409
 
@@ -108,20 +112,20 @@ else tab resident_1 resident_2, missing
 
 ************************************************************
 
-use pma_00126, clear
+use pma_00001, clear
 keep if sample_1 == 85409
 tab resultfq_2, m
 
 ************************************************************
 
-use pma_00126, clear
+use pma_00001, clear
 keep if sample_1 == 85409
 keep if resultfq_2 == 1
 tab resultfq_1 resultfq_2,m
 
 ************************************************************
 
-use pma_00126, clear
+use pma_00001, clear
 keep if sample_1 == 85409
 keep if inlist(resident_1,11,22) & inlist(resident_2,11,22) & resultfq_2 == 1
 
@@ -181,7 +185,7 @@ di (.213738 - .1634491) / (.1986672 - .1774417)
 
 ************************************************************
 
-use pma_00153, clear
+use pma_00002, clear
 
 keep if inlist(resident_1,11,22) & inlist(resident_2,11,22) & resultfq_2 == 1 & ///
   cp_1 < 90 & cp_2 < 90
@@ -278,7 +282,7 @@ svy : proportion cp_both , over(pop)
         * This block of code is not in the chapter, but it explores the % of 
         * contraceptive users in phase 1 and phase 2 and then in phases 1 and 2.
 
-        use pma_00126, clear
+        use pma_00001, clear
 
         keep if sample_1 ==  85409 | sample_2 ==  85412
 
@@ -328,19 +332,19 @@ svy : proportion cp_both , over(pop)
 * ==============================================================================
 * ==============================================================================
 *
-**# Chapter #2
+**# Chapter #2 - Longitudinal Data Extracts
 *
 * ==============================================================================
 * ==============================================================================
 * ==============================================================================
 * 
 * The code for Chapter 2 requires two datasets to be present in the 
-* working directory: pma_00126 and pma_00153.  
+* working directory: pma_00003 and pma_00004.  
 *
 * ==============================================================================
 
 * Import the long format data
-use pma_00119, clear
+use pma_00003, clear
 
 ************************************************************
 
@@ -392,7 +396,7 @@ else tab pop phase, missing
 ************************************************************
 
 * Import the wide format data
-use pma_00116, clear
+use pma_00004, clear
 * show the data for the same FQINSTID to show the difference 
 * between long and wide data
 list fqinstid age_1 age_2 panelwoman_1 panelwoman_2 ///
@@ -409,14 +413,14 @@ list resultfq_1 age_1 resultfq_2 age_2 ///
 
 ************************************************************
 
-use pma_00119, clear
+use pma_00003, clear
 list phase age resultfq ///
      if fqinstid == "0C8VQU6B03BXLAVVZ8SB90EKQ", noobs
 
 ************************************************************
 
 * import wide data again
-use pma_00116, clear
+use pma_00004, clear
 
 *filter the wide data to drop who didn't get interviewed in 
 * phase 1 or didn't complete phase 2
@@ -434,7 +438,7 @@ else tab pop, missing
 
 ************************************************************
 
-use pma_00116, clear
+use pma_00004, clear
 keep if resultfq_2 == 1 & resultfq_1 != .
 
 keep if inlist(resident_1, 11, 22)
@@ -450,216 +454,188 @@ rename pregnant_ pregnant
 * ==============================================================================
 * ==============================================================================
 *
-**# Chapter #3
+**# Chapter #3 - Panel Membership
 *
 * ==============================================================================
 * ==============================================================================
 * ==============================================================================
 
 * The code for Chapter 3 requires two datasets to be present in the working 
-* directory: pma_00120.  
+* directory: pma_00005.  
 *
 * ==============================================================================
 
-use pma_00120, clear
+use pma_00005, clear
 
 * Include the code snippet that makes the pop variable
 include gen_pop.do
 
-if `c(userversion)' >= 17 {
+if `c(userversion)' >= 17 {  // user is running Stata v17 or higher
+	
+    * Overview of pop
     table ( pop ) ( ) ( ), nototals missing
-
+	
+	* Phase 1 HH q'aire
     table ( resulthq_1 ) () (), nototals missing
 
-    table ( resulthq_2 ) () (), nototals missing
-    table ( samedwelling_2 ) () (), nototals missing
-    table ( samedwelling_2 hhtype_2) () (), nototals missing
-    table ( hhmemstat_2 ) () (), nototals missing
-    table ( hhpanelp2_2 ) () (), nototals missing
-    table ( resultfq_2 ) () (), nototals missing
+	************************************************************
+	* What portion of HH completed all or part of the Phase 1 HH q'aire
+	preserve
+	use pma_00005, clear
+	drop if missing(hhid_1) // focus on Phase 1
+	bysort hhid_1: keep if _n == 1 // keep one row per household
+	gen completed = inlist(resulthq_1,1,5) // all or part of Phase I HH q
+	tab completed
+	restore
+	************************************************************
+	
+	* Exclude non-interviewed HHs
+	table (pop) if inlist(resulthq_1,1,5), nototals missing
+	
+	* HH q'aire results by eligibility status
+	table ( resulthq_1 eligible_1) () (), nototals missing
+	
+	* Result of the Female q'aire
+	table (resultfq_1), nototals missing
+	
+	* Proportion of eligible women who completed the Phase 1 Female q'aire
+	gen completed_fq1 = inlist(resultfq_1,1,5)
+	tab completed_fq1 if eligible_1 == 1
+	
+	* Eligible to participate in the panel study at Phase 1
+	table (pop) if completed_fq1 == 1, nototals missing
+	
+	* Women willing to participate in the panel study
+	table ( pop ) if surveywilling_1 == 1, nototals missing
+	
+	* Note that some women had no response or a missing response
+	tab surveywilling_1 if completed_fq1 == 1
+	
+	* Phase 2 HH q'aire
+	table ( resulthq_2 ) () (), nototals missing
+	
+	* Phase 2 lived in same dwelling as in Phase 1
+	table ( samedwelling_2 ) () (), nototals missing
+	
+	* By HH type at Phase 2
+	table ( samedwelling_2 hhtype_2) () (), nototals missing
+	
+	* Was Phase 1 HH member listed on the HH roster for Phase 2
+	table ( hhmemstat_2 ) () (), nototals missing
+	
+	* Panel 1 women living in this dwelling at Phase 2
+	table ( hhpanelp2_2 ) () (), nototals missing
+	
+	* Phase 2 Female q'aire
+	table ( resultfq_2 ) () (), nototals missing
+	
+	* Proportion of women who compleded Phase 2 Female q'aire
+	* who were *also* available at Phase 1
+	tab panelwoman_2 if resultfq_2 == 1
+	
+    * Check the proportion of potential panel members from Phase 1
+	* who completed the Phase 2 Female q'aire
+	gen check = resultfq_2 == 1 if ///
+	surveywilling_1 == 1 & age_1< 49 & !missing(resultfq_2)
+	tab check if surveywilling_1 == 1 & age_1< 49, missing
+
+	* Total number of potential panel members per Phase 1 sample
+	* that ultimately completed a Phase 2 Female q'aire
+	keep if surveywilling_1 == 1 & age_1 < 49
+	table ( pop ) if resultfq_2 == 1, nototals missing	
 }
-else {
+
+else {  // users running an older version of Stata 
+
+    * Overview of pop
     tab pop, missing
+	
+	* Phase 1 HH q'aire
     tab resulthq_1, missing
-    tab resulthq_2, missing
-    tab samedwelling_2, missing
-    bysort hhtype_2: tab samedwelling_2, missing
-    tab hhmemstat_2, missing
-    tab hhpanelp2_2, missing
-    tab resultfq_2, missing
+
+	************************************************************
+	* What portion of HH completed all or part of the Phase 1 HH q'aire
+	preserve
+	use pma_00005, clear
+	drop if missing(hhid_1) // focus on Phase 1
+	bysort hhid_1: keep if _n == 1 // keep one row per household
+	gen completed = inlist(resulthq_1,1,5) // all or part of Phase I HH q
+	tab completed
+	restore
+	************************************************************
+	
+	* Exclude non-interviewed HHs
+	tab pop if inlist(resulthq_1,1,5), missing
+	
+	* HH q'aire results by eligibility status
+	bysort eligible_1: tab resulthq_1, missing
+	
+	* Result of the Female q'aire
+	tab resultfq_1, missing
+	
+	* Proportion of eligible women who completed the Phase 1 Female q'aire
+	gen completed_fq1 = inlist(resultfq_1,1,5)
+	tab completed_fq1 if eligible_1 == 1
+	
+	* Eligible to participate in the panel study at Phase 1
+	tab pop if completed_fq1 == 1,missing
+	
+	* Women willing to participate in the panel study
+	tab pop if surveywilling_1 == 1, missing
+	
+	* Note that some women had no response or a missing response
+	tab surveywilling_1 if completed_fq1 == 1
+	
+	* Phase 2 HH q'aire
+	tab resulthq_2, missing
+	
+	* Phase 2 lived in same dwelling as in Phase 1
+	tab samedwelling_2, missing
+	
+	* By HH type at Phase 2
+	bysort hhtype_2: tab samedwelling_2, missing
+	
+	* Was Phase 1 HH member listed on the HH roster for Phase 2
+	tab hhmemstat_2, missing
+	
+	* Panel 1 women living in this dwelling at Phase 2
+	tab hhpanelp2_2, missing
+	
+	* Phase 2 Female q'aire
+	tab resultfq_2, missing
+	
+	* Proportion of women who compleded Phase 2 Female q'aire
+	* who were *also* available at Phase 1
+	tab panelwoman_2 if resultfq_2 == 1
+	
+    * Check the proportion of potential panel members from Phase 1
+	* who completed the Phase 2 Female q'aire
+	gen check = resultfq_2 == 1 if ///
+	surveywilling_1 == 1 & age_1< 49 & !missing(resultfq_2)
+	tab check if surveywilling_1 == 1 & age_1< 49, missing
+
+	* Total number of potential panel members per Phase 1 sample
+	* that ultimately completed a Phase 2 Female q'aire
+	keep if surveywilling_1 == 1 & age_1 < 49
+	tab pop if resultfq_2 == 1, missing		
 }
-tab panelwoman_2 if resultfq_2 == 1
-
-gen check = resultfq_2 == 1  if surveywilling_1 == 1 & age_1< 49 & !missing(resultfq_2)
-
-if `c(userversion)' >= 17 table  ( check ) if surveywilling_1 == 1 & age_1 < 49, nototals missing 
-else tab check if surveywilling_1 == 1 & age_1 < 49, missing
-
-preserve
-
-************************************************************
-
-use pma_00120, clear
-drop if missing(hhid_1) // focus on Phase 1
-bysort hhid_1: keep if _n == 1 // keep one row per household
-gen completed = inlist(resulthq_1,1,5) // all or part of Phase I HH q
-tab completed
-
-************************************************************
-
-restore
-
-* Step 1
-* group the data by pop and gen new var step = 1 and keep
-sort pop
-gen step = 1
-gen keep = resulthq_1 == 1 | resulthq_1 == 5
-* generate a new table where keep == true only and tab step keep (group by pop)
-if `c(userversion)' >= 17 table (pop) ( step keep ) () if keep == 1, nototals missing zerocounts
-else bysort step keep: tab pop, missing
-
-* These counts correspond to those at the top of the figure labeled
-* Phase 1 household members
-
-************************************************************
-
-* Step 2
-* filter hh so that only have keep == true then update the step var to 2 and keep var
-keep if keep == 1
-replace step = 2
-drop keep
-gen keep = eligible_1 == 1
-* tab step and keep, with the new tab table generate label (group by pop)
-if `c(userversion)' >= 17 table (pop) ( step keep ) (), nototals missing zerocounts
-else bysort step keep: tab pop, missing
-
-* These counts correspond to those in the figure labeled
-* Not eligible for Phase 1 FQ
-
-************************************************************
-
-* Step 3
-* filter hh to only have keep == true then update the step var to 3 and keep var
-keep if keep == 1
-replace step = 3
-drop keep
-gen keep = resultfq_1 == 1 | resultfq_1 == 5
-* tab step and keep, with the new tab table generate label (group by pop)
-if `c(userversion)' >= 17 table (pop) ( step keep ) (), nototals missing zerocounts
-else bysort step keep: tab pop, missing
-
-* These counts correspond to those in the figure labeled
-* Completed all / part of Phase 1 FQ
-
-************************************************************
-
-* Step 4
-* filter hh to only have keep == true then update the step var to 4 and keep var
-keep if keep == 1
-replace step = 4
-drop keep
-gen keep = surveywilling_1 == 1
-* tab step and keep, with the new tab table generate label (group by pop)
-if `c(userversion)' >= 17 table (pop) ( step keep ) (), nototals missing zerocounts
-else bysort step keep: tab pop, missing
-
-* These counts correspond to those in the figure labeled
-* Consented at Phase 1 to Phase 2 follow-up
-
-************************************************************
-
-* Step 5
-* filter hh to only have keep == true then update the step var to 5 and keep var
-keep if keep == 1
-replace step = 5
-drop keep
-gen keep = age_1 < 49
-* tab step and keep, with the new tab table generate label (group by pop)
-if `c(userversion)' >= 17 table (pop) ( step keep ) (), nototals missing zerocounts
-else bysort step keep: tab pop, missing
-
-* These counts correspond to those in the figure labeled
-* Women aged 15-49 at Phase 2
-
-************************************************************
-
-* Step 6
-* filter hh to only have keep == true then update the step var to 6 and keep var; also update samedw var
-keep if keep == 1
-replace step = 6
-drop keep
-gen keep = resulthq_2 == 1
-gen samedw = samedwelling_2 == 1
-*update samedw
-replace samedw = 1 if keep == 0 
-*table step and keep
-if `c(userversion)' >= 17 table (pop samedw) ( step keep ) (), nototals missing zerocounts
-else bysort step keep: tab pop, missing
-
-* These counts correspond to those in the figure labeled
-* Completed all the Phase 2 HQ survey
-
-************************************************************
-
-* Step 7
-* Filter hh to only have keep == true then update the step var to 7 and keep var
-keep if keep == 1
-replace step = 7
-drop keep
-gen keep = hhmemstat_2 == 1 | hhmemstat_2 == 99
-*tab step and keep, with the new tab table generate n (as string) and label
-if `c(userversion)' >= 17 table (pop samedw) ( step keep ) (), nototals missing zerocounts
-else bysort step keep: tab pop samedw, missing
-
-* These counts correspond to those in the figure labeled
-* Resident in dwelling
-
-************************************************************
-
-* Step 8
-* filter hh to only have keep == true then update the step var to 8 and keep var
-keep if keep == 1
-replace step = 8
-drop keep
-gen keep = resultfq_2 == 1
-*tab step and keep, with the new tab table generate n (as string) and label
-if `c(userversion)' >= 17 table (pop samedw) ( step keep ) (), nototals missing zerocounts
-else bysort step keep: tab pop samedw, missing
-
-* These counts correspond to those in the figure 
-* Completed all the Phase 2 FQ survey
-
-************************************************************
-
-* Step 9
-* filter hh to only have keep == true then update the step var to 9 and keep = TRUE
-keep if keep == 1
-replace step = 9
-drop keep
-gen keep = 1
-*tab step and keep, with the new tab table generate n (as string) and label
-if `c(userversion)' >= 17 table (pop) ( step keep ) (), nototals missing zerocounts
-else bysort step keep: tab pop, missing
-
-* These counts correspond to those in the figure labeled
-* Panel Members at Phase 2
 
 * ==============================================================================
 * ==============================================================================
 * ==============================================================================
 *
-**# Chapter #4
+**# Chapter #4 - Family Planning Indicators
 *
 * ==============================================================================
 * ==============================================================================
 * ==============================================================================
 
 * The code for Chapter 4 requires two datasets to be present in the working 
-* directory: pma_00121.  
+* directory: pma_00006.  
 
 * ==============================================================================
 
-use pma_00121, clear
+use pma_00006, clear
 
 * keep de facto in both phases data only
 keep if inlist(resident_1,11,22) & inlist(resident_2,11,22)
@@ -1516,18 +1492,18 @@ capture erase post4_prepped.dta
 * ==============================================================================
 * ==============================================================================
 *
-**# Chapter #5
+**# Chapter #5 - Advanced Data Visualization
 *
 * ==============================================================================
 * ==============================================================================
 * ==============================================================================
 *
 * The code for Chapter 5 requires two datasets to be present in the working 
-* directory: pma_00121 and pma_sankey_template4.  
+* directory: pma_00006 and pma_sankey_template4.  
 *
 * ==============================================================================
 
-use pma_00121, clear
+use pma_00006, clear
 
 * Filter data
 keep if resultfq_2 == 1
@@ -1878,7 +1854,7 @@ forvalues i = 1/6 {
         width0(width) adjust extra color(color) label0(label0) ///
         xsize(10) ysize(6) labcolor(edkblue*2) labsize(small) ///
         legend( on order(1 "Pregnant" 4 "Not Using FP" 7 "Using FP") rows(1) ///
-          pos(3) region(lcolor(white)) size(small) symxsize(small) ///
+          pos(6) region(lcolor(white)) size(small) symxsize(small) ///
           symysize(medium) ) ///
         xlabel(none) ///
         title("`country'", size(medium)) ///
@@ -1895,7 +1871,9 @@ grc1leg2 sub_1 sub_2 sub_3 sub_4 sub_5 sub_6, row(2) legend(sub_1) ///
         
 graph export f5_07.png, width(2000) replace
 
-graph drop  sub_1 sub_2 sub_3 sub_4 sub_5 sub_6
+* We do not drop these six sub-plots here as the user may wish to look
+* at them carefully in Stata's graph viewer.
+*graph drop  sub_1 sub_2 sub_3 sub_4 sub_5 sub_6
 
 * Cleanup
 capture erase post5_prepped.dta
@@ -1912,18 +1890,18 @@ capture erase post5_sankey_6.dta
 * ==============================================================================
 * ==============================================================================
 *
-**# Chapter #6
+**# Chapter #6 - Contraceptive Calendar
 * 
 * ==============================================================================
 * ==============================================================================
 * ==============================================================================
 *
 * The code for Chapter 6 requires two datasets to be present in the working
-* directory: pma_00122.  
+* directory: pma_00007.  
 *
 * ==============================================================================
 
-use pma_00122, clear
+use pma_00007, clear
 
 * Filter the data to keep only who complete FQ and belong to de facto population
 keep if resultfq_1 == 1 & resultfq_2 == 1
