@@ -35,7 +35,7 @@ Matt Gunther, Mia Yu, Dale Rhoda, and Devon Kristiansen. *IPUMS PMA Longitudinal
 
 #### Source Code {.unnumbered}
 
-This manual is open source. It was constructed from [R Markdown](https://rmarkdown.rstudio.com/) files with the `r funlink(pagedown)` package for R.^[`r funlink(pagedown)` © Xie, Yihui et al. (MIT)] These files are available on our [GitHub repository](), where you will also find `.r` and `.do` files containing the code shown in this manual. 
+The code provided in this manual is open source ([© MPL 2.0](https://www.mozilla.org/en-US/MPL/2.0/)). This manual was constructed from [R Markdown](https://rmarkdown.rstudio.com/) files with the `r funlink(pagedown)` package for R.^[`r funlink(pagedown)` © Xie, Yihui et al. (MIT)] These files are available on our [GitHub repository](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide), where you will also find `.r` and `.do` files containing the code shown in this manual. 
 
 The IPUMS PMA data files referenced in this manual are also available at no cost, but you must register and adhere to terms of use at [pma.ipums.org/register](https://pma.ipums.org/pma/register.shtml). Dataset access is granted only for non-commercial purposes. Users must register an account with IPUMS, request access to data from particular countries, and describe their intended use for the data. Users who have been approved for access to certain countries may submit justification to expand their access to other countries. 
 

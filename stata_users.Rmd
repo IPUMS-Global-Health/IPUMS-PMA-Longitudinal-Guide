@@ -37,7 +37,7 @@ Matt Gunther, Mia Yu, Dale Rhoda, and Devon Kristiansen. *IPUMS PMA Longitudinal
 
 #### Source Code {.unnumbered}
 
-This manual is open source. It was constructed from [R Markdown](https://rmarkdown.rstudio.com/) files with the `r funlink(pagedown)` package for R.^[`r funlink(pagedown)` © Xie, Yihui et al. (MIT)] These files are available on our [GitHub repository](), where you will also find `.r` and `.do` files containing the code shown in this manual. 
+The code provided in this manual is open source ([© MPL 2.0](https://www.mozilla.org/en-US/MPL/2.0/)). This manual was constructed from [R Markdown](https://rmarkdown.rstudio.com/) files with the `r funlink(pagedown)` package for R.^[`r funlink(pagedown)` © Xie, Yihui et al. (MIT)] These files are available on our [GitHub repository](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide), where you will also find `.r` and `.do` files containing the code shown in this manual. 
 
 The IPUMS PMA data files referenced in this manual are also available at no cost, but you must register and adhere to terms of use at [pma.ipums.org/register](https://pma.ipums.org/pma/register.shtml). Dataset access is granted only for non-commercial purposes. Users must register an account with IPUMS, request access to data from particular countries, and describe their intended use for the data. Users who have been approved for access to certain countries may submit justification to expand their access to other countries. 
 
@@ -90,7 +90,7 @@ PMA has also published a guide to **cross-sectional** analysis in both [English]
 
 The purpose of this manual is to provide guidance on the analysis of **harmonized longitudinal data** for a panel of women age 15-49 surveyed by PMA and published in partnership with [IPUMS PMA](https://pma.ipums.org/pma/). IPUMS provides census and survey products from around the world in an integrated format, making it easy to compare data from multiple countries. IPUMS PMA data are available free of charge, subject to terms and conditions: please [register here](https://pma.ipums.org/pma/register.shtml) to request access to the data featured in this guide.^[PMA data for individual countries is also available at no cost from [pmadata.org](https://www.pmadata.org/). Please note that the variable names, value labels, numeric codes, and other metadata featured in this guide have been altered by IPUMS PMA to facilitate comparison across countries.] 
 
-This manual provides reproducible coding examples in the statistical software program [Stata](https://www.stata.com/). You can download `.do` files containing all of the code needed to reproduce these examples on our [GitHub page](). 
+This manual provides reproducible coding examples in the statistical software program [Stata](https://www.stata.com/). You can download `.do` files containing all of the code needed to reproduce these examples on our [GitHub page](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide). 
 
 **R users:** a companion manual for IPUMS PMA longitudinal analysis is also available with coding examples written in R. Additionally, the [IPUMS PMA data analysis blog](https://tech.popdata.org/pma-data-hub/) includes an online version of each chapter and posts on a range of other topics updated every two weeks.  
 
@@ -204,7 +204,7 @@ To run successfully, you will create a folder for use as Stata's [working direct
   - `sankey_plot_with_legend.ado`
   - `sankey_plot_with_legend.sthlp`
 
-The main `.do` file has one [cd](https://www.stata.com/manuals/dcd.pdf) command in line 60. **You will need to change the path in that line of the program to match your own working directory.**
+The main `.do` file has one [cd](https://www.stata.com/manuals/dcd.pdf) command at the first line of executable code. **You will need to change the path in that line of the program to match your own working directory.**
 
 #### Featured Data Extracts {.unnumbered}
 
@@ -1628,6 +1628,9 @@ result of household questionnaire     |
   absent extended period              |
     eligible female respondent        |
       not interviewed                 |        296
+  .                                             |          
+    eligible female respondent                  |          
+      .                                         |     98,687      
 --------------------------------------+-----------  
 ```
 
