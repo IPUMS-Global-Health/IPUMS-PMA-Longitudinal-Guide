@@ -70,7 +70,7 @@ if(!suppressWarnings(suppressMessages(require(showtext)))){
   showtext::showtext_auto()
 }
 
-# varlink ----
+# r_link ----
 # Build hyperlink to a variable page on pma.ipums.org 
 # Optionally, select a metadata tab 
 r_link <- function(varname, tab = codes){
@@ -84,10 +84,10 @@ r_link <- function(varname, tab = codes){
   #     rlang::abort(c("x" = paste(url, "does not exist")))
   #   }
   # }
-  paste0("[", substitute(varname), "]", "(", url, ")")
+  paste0("[`", substitute(varname) %>% toupper, "`]", "(", url, ")")
 }
 
-# slink ----
+# stata_link ----
 # Build hyperlink to a variable seen in Stata (e.g. lowercase)
 # Strips any numeric suffix for Phase 
 # Optionally, select a metadata tab 

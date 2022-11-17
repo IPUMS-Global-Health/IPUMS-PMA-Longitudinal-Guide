@@ -27,7 +27,7 @@ source("utils/utilities.r")
 
 # Preface {.front-matter .unnumbered}
 
-This guide was commissioned and funded by the Family Planning Team at the Bill & Melinda Gates Foundation. The examples here are directly based on the companion [IPUMS PMA data analysis blog](https://tech.popdata.org/pma-data-hub/), with R examples developed by Matt Gunther and IPUMS PMA documentation by Devon Kristiansen under the management of Kathryn Grace, PhD and Elizabeth Heger Boyle, PhD at IPUMS PMA, University of Minnesota. The Stata version and statistical consulting were provided by Mia Yu and Dale Rhoda at [Biostat Global Consulting](http://www.biostatglobal.com/). These authors are grateful for helpful reviews & comments from Philip Anglewicz, PhD; Linnea Zimmerman, PhD, and Aisha Siewe at Johns Hopkins University. Thanks also to Caitlin Clary, PhD, Nina Brooks, PhD, and Finn Roberts for code contributions and review.
+This guide was commissioned and funded by the Family Planning Team at the Bill & Melinda Gates Foundation. The examples here are directly based on the companion [IPUMS PMA data analysis blog](https://tech.popdata.org/pma-data-hub/), with R examples developed by Matt Gunther and IPUMS PMA documentation by Devon Kristiansen under the direction of Kathryn Grace, PhD and Elizabeth Heger Boyle, PhD at IPUMS PMA, University of Minnesota. The Stata version and statistical consulting were provided by Mia Yu and Dale Rhoda at [Biostat Global Consulting](http://www.biostatglobal.com/). These authors are grateful for helpful reviews & comments from Philip Anglewicz, PhD; Linnea Zimmerman, PhD, and Aisha Siewe at Johns Hopkins University. Thanks also to Caitlin Clary, PhD, Nina Brooks, PhD, and Finn Roberts for code contributions and review.
 
 #### Suggested Citation {.unnumbered}
 
@@ -43,7 +43,7 @@ The IPUMS PMA data files referenced in this manual are also available at no cost
 
 #### Hyperlinks {.unnumbered}
 
-Hyperlinks to IPUMS PMA variable documentation, relevant R and Stata documentation, and various other resources are highlighted [in pink]() throughout this manual. If the reader prefers a printed version, they are recommended to compile the manual from source files on our GitHub repository, changing the `r funlink(pagedown)` option described [here](https://pagedown.rbind.io/#links). **Warning:** this will add additional footnotes to the document, and may impact pagination. 
+Hyperlinks to IPUMS PMA variable documentation, relevant R and Stata documentation, and various other resources are highlighted [in pink](https://pma.ipums.org) throughout this manual. If the reader prefers a printed version, they are recommended to compile the manual from source files on our GitHub repository, changing the `r funlink(pagedown)` option described [here](https://pagedown.rbind.io/#links). **Warning:** this will add additional footnotes to the document, and may impact pagination. 
 
 \newpage 
 
@@ -164,11 +164,11 @@ Each data extract that you request from IPUMS PMA is named with a unique number.
   - `pma_00006.dat.gz` and `pma_00006.xml`
   - `pma_00007.dat.gz` and `pma_00007.xml`
   
-As you follow along with each chapter, save each data extract in folder called `data` within your `r funlink(base::setwd, "R working directory")`.
+As you follow along with each chapter, save each data extract in folder called "data" within your `r funlink(base::setwd, "R working directory")`.
 
 #### Working Directory {.unnumbered}
 
-R users can identify their current working directory with the function `r funlink(base::getwd)` and change it with `r funlink(base::setwd)`. Files within the working directory can be found by R using the **relative path** from this locations. For example, we'll load our first data extract into R *assuming* that you have placed it in a folder called `data` within your `r funlink(base::setwd, "R working directory")`. 
+R users can identify their current working directory with the function `r funlink(base::getwd)` and change it with `r funlink(base::setwd)`. Files within the working directory can be found by R using the **relative path** from this location. For example, we'll load our first data extract into R *assuming* that you have placed it in a folder called "data" within your `r funlink(base::setwd, "R working directory")`. 
 
 ```{r, eval=FALSE, echo = TRUE}
 dat <- read_ipums_micro(
@@ -331,7 +331,7 @@ Panel data in these reports is limited to the *de facto* population of women who
 We will demonstrate how to request and download an IPUMS PMA data extract in Chapter 2.
 </aside>
 
-For example, let's consider a **Wide** format data extract containing Phase 1 and Phase 2 respondents to the Female Questionnaire from Burkina Faso. We've downloaded such an extract and placed it in the `data` sub-folder of our R working directory. We'll load `r funlink(ipumsr)` and `r funlink(tidyverse)` together with our extract. 
+For example, let's consider a **Wide** format data extract containing Phase 1 and Phase 2 respondents to the Female Questionnaire from Burkina Faso. We've downloaded such an extract and placed it in the "data" sub-folder of our R working directory. We'll load `r funlink(ipumsr)` and `r funlink(tidyverse)` together with our extract. 
 
 ```{r, eval = FALSE}
 library(ipumsr)
@@ -384,7 +384,7 @@ knitr::include_graphics("images/cases1.png")
 
 \newpage 
 
-We'll further restrict our sample by selecting only cases where `r r_link(RESULTFQ_2)` shows that the woman also completed the Phase 2 questionnaire. Notice that, in addition to each of the value 1 through 10, there are several **non-response codes** numbered 90 through 99. You'll see similar values repeated across all IPUMS PMA variables, except that they will be left-padded to match the maximum width of a particular variable (e.g. `9999` is used for `r r_link(INTFQYEAR)`, which represents a 4-digit year for the Female Interview). 
+We'll further restrict our sample by selecting only cases where `r r_link(RESULTFQ_2)` shows that the woman also completed the Phase 2 questionnaire. Notice that, in addition to each of the values 1 through 10, there are several **non-response codes** numbered 90 through 99. You'll see similar values repeated across all IPUMS PMA variables, except that they will be left-padded to match the maximum width of a particular variable (e.g. `9999` is used for `r r_link(INTFQYEAR)`, which represents a 4-digit year for the Female Interview). 
 
 ```{r}
 dat %>% count(RESULTFQ_2)
@@ -455,7 +455,7 @@ hex("srvyr")
 ```
 </aside>
 
-Throughout this guide, we'll use tools from the `r funlink(srvyr)` package to incorporate survey design elements into our analyses.^[The `r funlink(srvyr)` package is a `r funlink(tidyverse)` implementation of the popular [survey](http://r-survey.r-forge.r-project.org/survey/) package for R, authored by Dr. Thomas Lumley. For thorough discussion of the types of weights available in both R and Stata, we recommend [this blog post](https://notstatschat.rbind.io/2020/08/04/weights-in-statistics/) by Dr. Lumley.] You can install or update `r funlink(srvyr)` like so: 
+Throughout this guide, we'll use tools from the `r funlink(srvyr)` package to incorporate survey design elements into our analyses.^[The `r funlink(srvyr)` package is a `r funlink(tidyverse)` implementation of the popular [survey](http://r-survey.r-forge.r-project.org/survey/) package for R, authored by Dr. Thomas Lumley. For thorough discussion of the types of weights available in both R and Stata, we recommend [this blog post](https://notstatschat.rbind.io/2020/08/04/weights-in-statistics/) by Dr. Lumley.] You can install or update `r funlink(srvyr)` from CRAN like so: 
 
 ```{r, eval = FALSE, echo = TRUE}
 install.packages("srvyr")
@@ -511,7 +511,7 @@ Using the survey design information for this sample, we estimate that about 18.8
 
 Importantly, the variable `r r_link(STRATA)` is *not available* for samples collected from DRC - Kinshasa or DRC - Kongo Central. If your extract includes any DRC sample, you'll need to amend this variable to include one unique numeric code for each of those regions.    
  
-For example, let's look at a different **Wide** extract, `dat2`, containing all of the samples included in this data release. Notice that `r r_link(STRATA_1)` lists the sample strata for every `r r_link(COUNTRY)` *except* for DRC, where you see the value `NA`. 
+For example, let's look at a different **Wide** extract, `dat2`, containing all of the samples included in this data release. 
 
 ```{r, echo=FALSE}
 options(tibble.print_min = 30)
@@ -529,16 +529,20 @@ dat2 <- dat2 %>%
     RESULTFQ_2 == 1,
     CP_1 < 90 & CP_2 < 90 
   ) 
+```
 
+Notice that `r r_link(STRATA_1)` lists the sample strata for every `r r_link(COUNTRY)` *except* for DRC, where you see the value `NA`. 
+
+```{r}
 dat2 %>% filter(is.na(STRATA_1)) %>% count(COUNTRY, STRATA_1)
 ```
 
 Now let's see what happens when we try to produce population-level estimates with `r r_link(STRATA_1)`: 
 
 ```{r, error=TRUE}
-dat2 %>% 
-  as_survey_design(weight = PANELWEIGHT, id = EAID_1, strata = STRATA_1) %>% 
-  group_by(COUNTRY, GEOCD, GEONG) %>% 
+dat2 %>%
+  as_survey_design(weight = PANELWEIGHT, id = EAID_1, strata = STRATA_1) %>%
+  group_by(COUNTRY, GEOCD, GEONG) %>%
   summarise(
     survey_mean(
       CP_1 * CP_2,
@@ -555,15 +559,21 @@ This fails because `r funlink(srvyr::as_survey_design)` encounters `NA` values i
 dat2 %>% count(GEOCD)
 ```
 
-If `r r_link(GEOCD)` is not `NA`, we'll use its numeric code in place of `r r_link(STRATA_1)`. Otherwise, we'd like to leave `r r_link(STRATA_1)` unchanged. However, because both variables include *value labels*, we'll first need remove them with `r funlink(base::as.numeric)`. To avoid confusion with the original variable `r r_link(STRATA_1)`, we'll call our new variable `STRATARC` (for "strata recoded").
+If `r r_link(GEOCD)` is not `NA`, we'll use its numeric code in place of `r r_link(STRATA_1)`. Otherwise, we'd like to leave `r r_link(STRATA_1)` unchanged. However, because both variables include *value labels*, we'll first need remove them with `r funlink(ipumsr::zap_labels)`. To avoid confusion with the original variable `r r_link(STRATA_1)`, we'll call our new variable `STRATARC` (for "strata recoded").
+
+  * `STRATARC` - Numeric codes for PMA sample strata (recoded for DRC samples)
+
+<aside>
+Use `r funlink(ipumsr::zap_labels)` to remove all labels from an IPUMS variable.
+</aside>
  
 ```{r}
 dat2 <- dat2 %>% 
   mutate(
     STRATARC = if_else(
       is.na(GEOCD), 
-      as.numeric(STRATA_1), 
-      as.numeric(GEOCD)
+      zap_labels(STRATA_1), 
+      zap_labels(GEOCD)
     )
   ) 
 ```
@@ -594,6 +604,8 @@ dat2 %>%
   )
 ```
 
+Now that we've identified variables that describe an IPUMS PMA analytic sample, let's proceed by downloading these and other variables of interest in a data extract from IPUMS PMA. In Chapter 2, we'll see that longitudinal data extracts can be requested in either **Long** or **Wide** format, depending on your needs. 
+
 # Longitudinal Data Extracts
 
 ```{r, echo=FALSE, results='hide'}
@@ -604,17 +616,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-This chapter provides a guided tour of the [IPUMS PMA data extract system](https://pma.ipums.org/pma/). While you may also access the original data directly from our partners at [PMA](https://www.pmadata.org/), harmonized data from IPUMS have a few additional features. For instance, you can request an extract that: 
+Chapter 2 provides a guided tour of the [IPUMS PMA data extract system](https://pma.ipums.org/pma/), which you may use to combine survey data collected from multiple countries and multiple phases of the longitudinal study. 
 
-<aside>
-[Register here](https://pma.ipums.org/pma/register.shtml) to access IPUMS PMA data **at no cost.** See our [user guide](https://pma.ipums.org/pma/userguide.shtml) for details.
-</aside>
-
-  - includes samples from multiple countries  
-  - includes samples from multiple rounds of data collection 
-  - are formatted in either **Long** or **Wide** format 
-
-IPUMS PMA also makes it easy to switch between multiple [units of analysis](https://pma.ipums.org/pma-action/variables/group) covered in PMA surveys. In addition to the data featured in this guide, you'll find surveys representing: 
+IPUMS PMA also makes it easy to switch between multiple [units of analysis](https://pma.ipums.org/pma-action/variables/group) covered in PMA surveys. In addition to the longitudinal data featured in this guide, you'll find surveys representing: 
 
 <aside>
 A video tour of the longitudinal extract system is available [here](https://www.youtube.com/embed/VwjYHDvpHk0) on the IPUMS PMA Youtube channel. 
@@ -638,7 +642,7 @@ Once you've selected the **Family Planning** option, you'll next need to choose 
 knitr::include_graphics("images/cross-sectional.png")
 ```
 
-Longitudinal samples are only available from 2019 onward, and they include all of the available phases for each sampled country (sub-nationally representative samples for DRC and Nigeria are listed separately). You'll only find longitudinal samples for countries where Phase 2 data has been made available; Phase 1 data for Cote d'Ivoire, India, and Uganda can currently be found under the Cross-sectional sample menu (Phase 2 data will be released soon!). 
+Longitudinal samples are only available from 2019 onward, and they include all of the available phases for each sampled country (sub-nationally representative samples for DRC and Nigeria are listed separately). You'll only find longitudinal samples for countries where Phase 2 data has been made available; as of this writing, Phase 1 data for Cote d'Ivoire, India, and Uganda can only be found under the Cross-sectional sample menu.
 
 \newpage 
 
@@ -934,7 +938,7 @@ wide %>%
   select(RESULTFQ_1, AGE_1, RESULTFQ_2, AGE_2)
 ```
 
-In a **Long** extract, rows for the missing phase are dropped. In this example, the woman was "not at home" for the Phase 2 Female Questionnaire. When we select a **Long** extract containing only Female Respondents, her Phase 2 row is excluded automatically (it will be included if you request an extract containing Female Respondents and Female Non-respondents). 
+In a **Long** extract, rows for the missing phase are dropped. In this example, the woman was "not at home" for the Phase 2 Female Questionnaire. When we select a **Long** extract containing only Female Respondents, her Phase 2 row is excluded automatically (it will be included if you request an extract containing **Female Respondents and Female Non-respondents**). 
 
 ```{r, results='hide', echo = FALSE}
 long <- read_ipums_micro(
@@ -958,6 +962,8 @@ wide <- wide %>%
     RESULTFQ_2 == 1
   )  
 ```
+
+\newpage 
 
 Following these steps, each analytic sample contains the same number of cases shown in the final **Long** format extract above. 
 
@@ -1079,27 +1085,19 @@ We also mentioned in Chapter 1 that IPUMS PMA combines sub-nationally representa
 We'll combine the `r r_link(COUNTRY)` name for each sample together with the DRC and Nigeria regions labelled in `r r_link(GEOCD)` and `r r_link(GEONG)`, respectively. 
 
 ```{r}
-# Abbreviate "DRC" and combine `COUNTRY` with `GEOCD` and `GEONG`
 dat <- dat %>% 
-  mutate(
-    across(
-      c(COUNTRY, GEOCD, GEONG),
-      ~as_factor(.x) %>% as.character()
-    ),
-    COUNTRY = if_else(str_detect(COUNTRY, "Congo"), "DRC", COUNTRY),
-    POP = case_when(
-      !is.na(GEOCD) ~ paste(COUNTRY, "-", GEOCD),
-      !is.na(GEONG) ~ paste(COUNTRY, "-", GEONG),
-      TRUE ~ COUNTRY
-    )
-  )
+  mutate(POP = case_when(
+    !is.na(GEOCD) ~ paste("DRC -", as_factor(GEOCD)),
+    !is.na(GEONG) ~ paste("Nigeria -", as_factor(GEONG)),
+    TRUE ~ as_factor(COUNTRY) %>% as.character()
+  ))
 
 dat %>% count(POP)
 ```
 
 ## Phase 1 
 
-Phase 1 marks the beginning of the PMA panel study (baseline). As we've mentioned, it consists of two separate questionnaires administered in stages: first, resident enumerators visited 35 household dwellings selected at random within each sample cluster, or **enumeration area**. If a qualifying respondent was available, they were invited to complete a [Household Questionnaire](https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Household-Questionnaire-English-2019.10.09.pdf)^[Questionnaires administered in each country may vary from this **Core Household Questionnaire** - [click here](https://pma.ipums.org/pma/enum_materials.shtml) for details.] including a census of all household members and visitors who stayed there during the night before the interview. If this census included any women aged 15-49, the enumerator would later return to the household and invite each eligible woman to complete a  [Female Questionnaire](https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Female-Questionnaire-English-2019.10.09.pdf)^[Questionnaires administered in each country may vary from this **Core Female Questionnaire** - [click here](https://pma.ipums.org/pma/enum_materials.shtml) for details.] and participate in the three-year panel study. 
+Phase 1 marks the beginning of the PMA panel study (baseline). As we've mentioned, it consists of two separate questionnaires administered in stages: first, resident enumerators visited 35 household dwellings selected at random within each sample cluster, or **enumeration area** (EA). If a qualifying respondent was available, they were invited to complete a [Household Questionnaire](https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Household-Questionnaire-English-2019.10.09.pdf)^[Questionnaires administered in each country may vary from this **Core Household Questionnaire** - [click here](https://pma.ipums.org/pma/enum_materials.shtml) for details.] including a census of all household members and visitors who stayed there during the night before the interview. If this census included any women aged 15-49, the enumerator would later return to the household and invite each eligible woman to complete a  [Female Questionnaire](https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Female-Questionnaire-English-2019.10.09.pdf)^[Questionnaires administered in each country may vary from this **Core Female Questionnaire** - [click here](https://pma.ipums.org/pma/enum_materials.shtml) for details.] and participate in the three-year panel study. 
 
 We'll take a look at the inclusion criteria and missing data codes for each questionnaire, in turn. 
 
@@ -1447,7 +1445,7 @@ Following the steps outlined in Chapter 2, you'll need to request a `.dat` (fixe
   * `r r_link(COUNTRY)` - PMA country (preselected)
   * `r r_link(EAID)` - Enumeration area (preselected)
 
-Download and save your extract in the `data` folder of your R working directory, and then load the following packages together with your extract. 
+Download and save your extract in the "data" sub-folder of your R working directory, and then load the following packages together with your extract. 
 
 ```{r, eval = FALSE}
 library(tidyverse)
@@ -1493,8 +1491,8 @@ dat <- dat %>%
   mutate(
     STRATARC = if_else(
       is.na(GEOCD), 
-      as.numeric(STRATA_1), 
-      as.numeric(GEOCD)
+      zap_labels(STRATA_1), 
+      zap_labels(GEOCD)
     )
   ) 
 ```
@@ -2229,7 +2227,7 @@ In every population, Phase 1 non-users who planned to adopt a method by Phase 2 
 
 ## Limitations 
 
-As we've seen, **grouped bar charts** give us a simple way to identify clear differences between Phase 2 outcomes for subgroups defined by baseline family planning conditions or key demographic features. Additionally, when we **facet** populations of interest on the same axis, we can easily compare differences between subgroups for many samples in a single figure. 
+As we've seen, **grouped bar charts** give us a simple way to identify clear differences between Phase 2 outcomes for subgroups defined by baseline family planning conditions or key demographic features. Additionally, when we facet populations of interest on the same axis, we can easily compare differences between subgroups for many samples in a single figure. 
 
 One drawback to using graphical confidence interval overlap as a substitute for hypothesis tests is that it's more conservative than formal statistical tests. We are not able to easily spot differences near the conventional 95% certainty threshold. However, we demonstrated how you can adapt our code to conduct formal hypothesis tests like the [Rao-Scott chi-square test](https://rdrr.io/cran/survey/man/svychisq.html) for proportions in a complex survey sample.
 
@@ -2261,6 +2259,13 @@ Chapter 5 digs into  some of the other data visualization tools that are commonl
 
 R users can build heatmaps with the same `r funlink(ggplot2)` package featured in Chapter 4, but alluvial plots are a bit more challenging. To make things easier, we'll build ours with `r funlink(ggalluvial)`, an extension package for `r funlink(ggplot2)` that includes tools designed specifically for alluvial plots.^[`r funlink(ggalluvial)` © Cory Brunson et al. (GPL-3)]  
 
+You can install or update `r funlink(ggalluvial)` from CRAN like so: 
+
+```{r, eval = FALSE}
+install.packages("ggalluvial")
+```
+
+
 ## Chapter Setup 
 
 In addition to `r funlink(ggalluvial)`, we'll also load three packages featured throughout this manual: `r funlink(tidyverse)`, `r funlink(ipumsr)`, and `r funlink(srvyr)`.
@@ -2287,19 +2292,16 @@ This chapter features the same data extract showcased in Chapter 4, which includ
 Recall that our analysis in Chapter 4 concerned only *de facto* panel members who completed all or part of the Female Questionnaire in both Phase 1 and Phase 2. We also excluded women who are marked "NIU (not in universe)" for a key question concerning current contraceptive use (`r r_link(CP)`). As a reminder, you can load the extract into R and select relevant cases like so:  
 
 ```{r, results='hide'}
-# import the data extract and metadata files
 dat <- read_ipums_micro(
   ddi = "data/pma_00006.xml",
   data = "data/pma_00006.dat.gz"
 ) 
 
-# inclusion criteria for analysis
 dat <- dat %>% 
   filter(
-    RESULTFQ_2 == 1,  # must have completed Phase 1 FQ
-    RESIDENT_1 %in% c(11, 22) & # must be de facto population (both phases)
-      RESIDENT_2 %in% c(11, 22),
-    CP_1 < 90 & CP_2 < 90 # must answer "current FP use" question (both phases)
+    RESULTFQ_2 == 1,  
+    RESIDENT_1 %in% c(11, 22) & RESIDENT_2 %in% c(11, 22),
+    CP_1 < 90 & CP_2 < 90
   ) 
 ```
 
@@ -2315,34 +2317,28 @@ Additionally, we will reference four variables created in Chapter 4:
 These variables were created like so: 
 
 ```{r}
-# custom variables: `POP` and `FPSTATUS`
 dat <- dat %>% 
   mutate(
-    # Population of interest (country + region, where applicable)
     POP = case_when(
       !is.na(GEOCD) ~ paste("DRC -", as_factor(GEOCD)),
       !is.na(GEONG) ~ paste("Nigeria -", as_factor(GEONG)),
       TRUE ~ as_factor(COUNTRY) %>% as.character()
     ),
-    # strata: includes placeholder values for DRC regions 
     STRATARC = if_else(
       is.na(GEOCD), 
-      as.numeric(STRATA_1), 
-      as.numeric(GEOCD)
+      zap_labels(STRATA_1), 
+      zap_labels(GEOCD)
     ),
-    # Family planning use-status at Phase 1 
     FPSTATUS_1 = case_when(
       PREGNANT_1 == 1 ~ "Pregnant",
       CP_1 == 1 ~ "Using FP",
       CP_1 == 0 ~ "Not Using FP"
     ), 
-    # Family planning use-status at Phase 2 
     FPSTATUS_2 = case_when(
       PREGNANT_2 == 1 ~ "Pregnant",
       CP_2 == 1 ~ "Using FP",
       CP_2 == 0 ~ "Not Using FP"
     ),
-    # Create factors to control order of display in graphics output 
     across(
       c(FPSTATUS_1, FPSTATUS_2),
       ~.x %>% fct_relevel("Pregnant", "Not Using FP", "Using FP")
@@ -2375,13 +2371,13 @@ status_tbl
 
 \newpage 
 
-The **grouped bar chart** made in Chapter 4 plots the estimated values in `coef` together with the confidence interval represented by `_low` and `_upp`. This chart is useful because it packs a lot of information into a single, reader-friendly graphic. However, we also mentioned at the end of Chapter 4 that it has some considerable drawbacks. Most importantly, we weren't able to include information from the **marginal distribution** in each phase. 
+As a second step, we created a **grouped bar chart**  plotting the estimated values in `coef` together with the confidence interval represented by `_low` and `_upp`. This chart is useful because it packs a lot of information into a single, reader-friendly graphic. However, we also mentioned at the end of Chapter 4 that it has some considerable drawbacks. 
 
 ```{r, echo = FALSE, out.width="100%"}
 knitr::include_graphics("images/bar2.png")
 ```
 
-A **marginal distribution** for `FPSTATUS_1` would indicate the likelihood that a woman began the survey period pregnant, using family planning, or not using family planning. Likewise the marginal distribution for `FPSTATUS_2` estimates the likelihood that a woman would hold any such status at Phase 2, *independently of* her status at Phase 1. We call these distributions "marginal" because they're usually included in the row or column margins of a crosstab. 
+Most importantly, this plot does not include information about the **marginal distribution** in each phase: a  marginal distribution for `FPSTATUS_1` would indicate the likelihood that a woman began the survey period pregnant, using family planning, or not using family planning. Likewise the marginal distribution for `FPSTATUS_2` estimates the likelihood that a woman would hold any such status at Phase 2, *independently of* her status at Phase 1. We call these distributions "marginal" because they're usually included in the row or column margins of a crosstab or **heatmap**. 
 
 ## Heatmaps
 
@@ -2764,7 +2760,7 @@ knitr::opts_chunk$set(
 
 As we've seen, PMA panel surveys represent annual interviews that will ultimately include three phases of data collection. Most questions will be repeated for a total of three observations each spaced one year apart. However, some data in PMA panel surveys are reported *monthly* up to three years prior to the interview in each phase. These data are provided as a comma-delimited character string known as the **Contraceptive Calendar**. 
 
-Chapter 6 includes code you can use to parse and analyze data from the **Contraceptive Calendar**. These data are particularly exciting because they offer researchers an opportunity to explore longitudinal analysis techniques like `r funlink(survival)` to model the duration of events like: 
+Chapter 6 includes code you can use to parse and analyze data from the **Contraceptive Calendar**. These data are particularly exciting because they offer researchers an opportunity to explore longitudinal analysis techniques like [survival analysis](https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html) to model the duration of events like: 
 
   - continuous use (or non-use) of a contraceptive method
   - birth spacing 
@@ -2784,7 +2780,7 @@ install.packages("survival")
 
 The term "survival analysis" refers to the probability that a person "survives" a particular condition for a given period of time, most commonly in clinical research settings. In the social sciences, this type of analysis is also known as "event history", "time-to-event", or "duration" analysis. We use the term "survival" in order to match the terminology used in the R package featured in this chapter. 
 
-There are many additional R packages available for plotting Time-to-Event curves showing the probability of survival over time.^[For example, see `r funlink(ggsurvfit)`.] Here, we will show how to construct these figures with the same `r funlink(ggplot2)` toolkit featured in previous chapters.  
+There are many additional R packages available for plotting Kaplan Meier / Time-to-Event curves showing the probability of survival over time.^[For example, see `r funlink(ggsurvfit)`.] Here, we will show how to construct these figures with the same `r funlink(ggplot2)` toolkit featured in previous chapters.  
 
 ## Chapter Setup
 
@@ -2818,7 +2814,7 @@ This calendar represents contraceptive use, pregnancy, pregnancy termination, an
   * `31` - Withdrawal
   * `39` - Other traditional methods
 
-For example, consider a woman sampled in Kenya who gave birth during the month of the interview following 8 prior months of pregnancy. If she had used the pill every month up until the month she became pregnant, her string in `r r_link(CALENDARKE)` would look like this:
+For example, consider a woman sampled in Kenya who gave birth during the month of the interview following 8 prior months of pregnancy. If she had used the pill every month until the month she became pregnant, her string in `r r_link(CALENDARKE)` would look like this:
 
 `B,P,P,P,P,P,P,P,P,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7`
 
@@ -2859,11 +2855,11 @@ hex("tidyr")
 ```
 </aside>
 
-However, calendars from *different samples may be different lengths*. In this chapter, we'll demonstrate how to work with a data extract containing multiple samples. We will use tools from the `r funlink(tidyr)` package to `r funlink(tidyr::separate)` the comma-delimited string into multiple columns, and then reshape the columns into rows with `r funlink(tidyr::pivot_longer)`. `r funlink(tidyr)` is included in the `r funlink(tidyverse)` toolkit for R. Following these steps, you'll be able to merge and analyze data from calendars collected in multiple countries covering a range of different dates. 
+However, calendars from *different samples may be different lengths*. In this chapter, we'll demonstrate how to work with a data extract containing multiple samples. We will use tools from the `r funlink(tidyr)` package to `r funlink(tidyr::separate)` the comma-delimited string into multiple columns, and then `r funlink(tidyr::pivot_longer, "pivot")` those columns into a long format. `r funlink(tidyr)` is loaded with the `r funlink(tidyverse)` toolkit for R. Following these steps, you'll be able to merge and analyze data from calendars collected in multiple countries covering a range of different dates. 
 
 \newpage 
 
-All six of the currently available longitudinal samples are included in the data extract featured in this chapter (**Female Respondents** only). We've selected a **wide** format extract, so that the variables from each phase appear together in the same row. For example, the Kenya contraceptive calendar from Phase 1 is named `r r_link(CALENDARKE_1)`, while the Kenya contraceptive calendar from Phase 2 is named `r r_link(CALENDARKE_2)`. 
+All six of the currently available longitudinal samples are included in the data extract featured in this chapter (**Female Respondents** only). We've selected a **Wide** format extract, so that the variables from each phase appear together in the same row. For example, the Kenya contraceptive calendar from Phase 1 is named `r r_link(CALENDARKE_1)`, while the Kenya contraceptive calendar from Phase 2 is named `r r_link(CALENDARKE_2)`. 
 
 We've selected all of the calendar variables listed above, plus these additional variables that we'll need for our analysis: 
 
@@ -2885,7 +2881,7 @@ We've selected all of the calendar variables listed above, plus these additional
   * `r r_link(PANELPREGENDMO)` & `r r_link(PANELPREGENDYR)` - Date of pregnancy termination during the panel study (miscarriage, abortion, or stillbirth)
   * `r r_link(FPBEGINUSEMO)` & `r r_link(FPBEGINUSEYR)` - Date of adoption for currently used family planning method
 
-We'll load the data extract into R together with each of the packages we'll feature in this post. Then, *Inclusion Criteria for Analysis** described in Chapter 1, we'll drop cases for women who did not complete the Female Questionnaire or were not members of the *de facto* population in both phases. 
+We'll load the data extract into R together with each of the packages we'll feature in this post. Then, following the **Inclusion Criteria for Analysis** described in Chapter 1, we'll drop cases for women who did not complete the Female Questionnaire or were not members of the *de facto* population in both phases. 
 
 ```{r, results='hide'}
 library(ipumsr)
@@ -2894,11 +2890,16 @@ library(survival)
 
 dat <- read_ipums_micro(
   ddi = "data/pma_00007.xml",
-  data = "data/pma_00007.dat.gz")  %>% 
-  filter(RESULTFQ_2 == 1, RESIDENT_1 %in% c(11, 22) & RESIDENT_2 %in% c(11, 22))
+  data = "data/pma_00007.dat.gz")  
+
+dat <- dat %>% 
+  filter(
+    RESULTFQ_2 == 1, 
+    RESIDENT_1 %in% c(11, 22) & RESIDENT_2 %in% c(11, 22)
+  )
 ```
 
-In order to make this chapter a bit easier to follow, we're going to omit survey design information - weights and identifiers for samples clusters and strata - featured in previous chapters. R users can find several functions adapted from the `r funlink(survival)` package in the `r funlink(survey)` package, but we recommend that beginners start with the basics before confronting complex survey design.^[The `survival` function `r funlink(survival::survfit)` used to fit a Kaplan-Meier curve in the Analysis section of this chapter is analogous to the `survey` function `r funlink(survey::svykm)`, except that the latter incorporates complex survey information. For simplicity, the confidence intervals shown in this chapter do not account for cluster sampling, and may be narrower as a result.] 
+In order to make this chapter a bit easier to follow, we're going to omit survey design information - weights and identifiers for samples clusters and strata - featured in previous chapters. R users can find several functions adapted from the `r funlink(survival)` package in the `r funlink(survey)` package, but we recommend that beginners start with the basics before confronting complex survey design.^[The `survival` function `r funlink(survival::survfit)` used to fit a Time-to-Event curve in the Analysis section of this chapter is analogous to the `survey` function `r funlink(survey::svykm)`, except that the latter incorporates complex survey information. For simplicity, the confidence intervals shown in this chapter do not account for cluster sampling, and may be narrower as a result.] 
 
 <aside>
 Use `r funlink(ipumsr::zap_labels)` to remove all labels from an IPUMS variable.
@@ -2916,7 +2917,11 @@ dat <- dat %>%
       as_factor %>% 
       fct_recode("DRC" = "Congo, Democratic Republic")
   )
+```
 
+\newpage 
+
+```{r}
 dat %>% count(CNTRY, COUNTRY)
 ```
 
@@ -3101,11 +3106,11 @@ Notice that the first few rows of our dataset represent women from Burkina Faso.
 cals %>% select(ID, CNTRY, CALENDARKE_1, CALENDARBF_1)
 ```
 
-Our goal is to reduce the number of variables in `cals` so that we only need to work with one calendar for *all* countries. We'll "pivot" `cals` in two steps. First, we'll merge data from each Phase one column per country. Second, we'll merge data from each country into a finally, unified column. 
+Our goal is to reduce the number of variables in `cals` so that we only need to work with one calendar for *all* countries. We'll "pivot" `cals` in two steps. First, we'll merge data from each Phase one column per country. Second, we'll merge data from each country into a final unified column. 
 
 ### Merge Phases 
 
-We'll use `r funlink(tidyr::pivot_longer)` to reorganize our **wide format** data into **long format**, with one row per Phase of the panel study. This procedure strips the numeric suffix from each calendar variable: we'll store this information in a new column called `PHASE`. Notice that the argument `cols` selects every column that `r funlink(dplyr::starts_with)` the prefix "CAL".
+We'll use `r funlink(tidyr::pivot_longer)` to reorganize our **Wide** data into long format, with one row per Phase of the panel study. This procedure strips the numeric suffix from each calendar variable: we'll store this information in a new column called `PHASE`. Notice that the argument `cols` selects every column that `r funlink(dplyr::starts_with)` the prefix "CAL".
 
 ```{r}
 cals <- cals %>% 
@@ -3130,7 +3135,7 @@ We've applied similar changes to variables for the **Discontinuation Calendar**.
 cals %>% select(ID, CNTRY, PHASE, CALENDARKEWHY, CALENDARBFWHY)
 ```
 
-And, because our `CALSTART` and `CALSTOP` variables were also named with the prefix "CAL", they been pivoted as well. 
+And, because our `CALSTART` and `CALSTOP` variables were also named with the prefix "CAL", they have been pivoted as well. 
 
 ```{r}
 cals %>% select(ID, CNTRY, PHASE, CALSTART, CALSTOP)
@@ -3385,6 +3390,9 @@ cals
 ```
 
 From `MONTH` and `CALSTART`, we'll derive `CALCMC` to mark the CMC for each `value`. 
+
+  * `CALCMC` - CMC for each month in the contraceptive / discontinuation calendar 
+
 ```{r}
 cals <- cals %>% mutate(CALCMC = CALSTART + as.integer(MONTH) - 1)
 ```
@@ -3449,6 +3457,8 @@ nonusers <- nonusers %>%
   ) 
 ```
 
+\newpage 
+
 Also in Chapter 4, we demonstrated how to create a `r funlink(ggplot2::theme)` for graphics built with `r funlink(ggplot2)`. We'll do so again here, creating `theme_pma`. 
 
 ```{r, echo = FALSE}
@@ -3502,6 +3512,8 @@ nonusers %>%
   theme(panel.grid = element_blank(), legend.position = "none")
 ```
 
+\newpage
+
 ```{r, echo = FALSE, out.width="75%"}
 # ggsave("images/ch6heat.png", width = 11, height = 8.5, units = "in", bg = "white")
 knitr::include_graphics("images/ch6heat.png")
@@ -3529,9 +3541,10 @@ A key concept in survival analysis is the idea of **right-censoring**, which ref
 
 First, we'll want to identify the earliest month in which each woman reported using a method, if she did so at all. To do this, we'll begin by identifying months of contraceptive `USE` as those where `FPSTATUS_2` contains any value other than `0`, `B`, `P`, or `T`. 
 
+  * `USE` - Indicates a month of contraceptive use 
+
 ```{r}
 nonusers <- nonusers %>% mutate(USE = !FPSTATUS_2 %in% c("0", "B", "P", "T"))
-
 nonusers
 ```
 
@@ -3540,6 +3553,9 @@ Above, we can see that 6 months pass before the woman with `ID == 1` adopts a a 
 Ultimately, we'll want to include only one row for each woman in our analysis. For those who adopted a method, we'll need to find the earliest month of `USE`. For right-censored cases, we'll include only the month of the Phase 2 interview. 
 
 We begin by numbering each month in a variable call `MO`, counting upward from `0` for the Phase 1 interview. We'll then create an exact copy of `MO` called `USEMO` that is `NA` for months of non-`USE`. 
+
+  * `MO` - Sequentially numbered month
+  * `USEMO` - Sequentially numbered month (labeled only for months of use)
 
 ```{r}
 nonusers <- nonusers %>% 
@@ -3552,23 +3568,24 @@ nonusers <- nonusers %>%
 nonusers 
 ```
 
-The minimum value in `USEMO` is the month of adoption, and we'll flag this month with a variable called `ADOPT`. However, if *no method was adopted* we'll need to flag the maximum value in `MO` with both `ADOPT` *and* an additional variable indicating that the case is right-censored. This final variable, which we'll call `RC`, helps functions in the `r funlink(survival)` package distinguish women who never adopted a method before Phase 2. 
+The minimum value in `USEMO` is the month of adoption, and we'll flag this month with a variable called `EVENT`. However, if *no method was adopted* we'll need to flag the maximum value in `MO` with both `EVENT` *and* an additional variable indicating that the event is right-censored. This final variable, which we'll call `RC`, helps functions in the `r funlink(survival)` package distinguish women who never adopted a method before Phase 2.
 
-Finally, we'll now drop every row except for those matching `ADOPT`. This leaves one row for each woman in `nonusers`. 
+  * `EVENT` - Date of method adoption or Phase 2 interview, whichever is first
+  * `RC` - Indicates whether the `EVENT` is right-censored
+
+\newpage
+
+Finally, we'll now drop every row except for those matching `EVENT`. This leaves one row for each woman in `nonusers`. 
 
 ```{r}
 nonusers <- nonusers %>% 
   group_by(ID) %>% 
   mutate(
-    ADOPT = ifelse(any(USE), min(USEMO, na.rm = T), max(MO)),
-    RC = case_when(ADOPT == MO ~ !USE)
+    EVENT = ifelse(any(USE), min(USEMO, na.rm = T), max(MO)),
+    RC = case_when(EVENT == MO ~ !USE)
   ) %>% 
-  filter(ADOPT == MO)
-```
+  filter(EVENT == MO)
 
-\newpage 
-
-```{r}
 nonusers 
 ```
 
@@ -3578,7 +3595,7 @@ Above, only the women with IDs 1, 2, 13, and 16 ultimately adopted a method befo
 
 We'll now fit three survival models predicting the duration of continuous non-use for the women in `nonusers`: one model for `r r_link(UNMETYN_1)`, one for `r r_link(FPPLANYR_1)`, and one for their interaction effect, which we'll call `INTERACT_1`. For each model, the function `r funlink(survival::survfit)` reports the likelihood that a baseline non-user would have adopted any family planning method at each month in the calendar period.
 
-We'll run each model separately for each country, and we'll use `r funlink(broom::tidy, "broom::tidy")` to create a tidy summary table for each model.^[`r funlink(broom)` is installed, but not loaded, with the `r funlink(tidyverse)`.] Notice the function `r funlink(survival::Surv, "Surv(MO, !RC)")`: this indicates that the event of interest occurs in month `MO`, but only if the case is not right-censored `!RC`. 
+We'll run each model separately for each country, and we'll use `r funlink(broom::tidy, "broom::tidy")` to create a tidy summary table for each model.^[`r funlink(broom)` is installed, but not loaded, with the `r funlink(tidyverse)`.] Notice the function `r funlink(survival::Surv, "Surv(EVENT, !RC)")`: this indicates that the `EVENT` occurs, but only if the case is not right-censored `!RC`. 
 
 ```{r}
 adopt_models <- nonusers %>% 
@@ -3592,9 +3609,9 @@ adopt_models <- nonusers %>%
   # Separate survival models for each country 
   group_by(COUNTRY) %>% 
   summarise(
-    unmet = survfit(Surv(MO, !RC) ~ UNMETYN_1, data = cur_group()) %>% list, 
-    plan = survfit(Surv(MO, !RC) ~ FPPLANYR_1, data = cur_group()) %>% list, 
-    interact = survfit(Surv(MO, !RC) ~ INTERACT_1, data = cur_group()) %>% list
+    unmet = survfit(Surv(EVENT, !RC) ~ UNMETYN_1, data = cur_group()) %>% list, 
+    plan = survfit(Surv(EVENT, !RC) ~ FPPLANYR_1, data = cur_group()) %>% list, 
+    interact = survfit(Surv(EVENT, !RC) ~ INTERACT_1, data = cur_group()) %>% list
   ) %>% 
   # Tidy the output and relabel `CNTRY` for the figure
   mutate(across(where(is.list), ~map(.x, broom::tidy)))
@@ -3630,7 +3647,7 @@ Here, we begin with 632 non-users who had unmet need at Phase 1. Among these, `n
 
 ### Data Visualization 
 
-We'll produce a Time-to-Event plot by inverting the probabilities reported in `event` and its accompanying confidence interval.^[The so-called "Time-to-Event" plot is an inverted case the **Kaplan Meier** curve, depicting increased risk over time rather than decreased survival. The same `r funlink(survival)` function can be used to produce either plot.] This plot uses `r funlink(ggplot2::geom_step)` to draw a step-wise function, and `r funlink(ggplot2::geom_rect)` to create a shaded confidence interval for each step. 
+We'll produce a Time-to-Event plot by inverting the probabilities reported in `estimate` and its accompanying confidence interval.^[The so-called "Time-to-Event" plot is an inverted case the **Kaplan Meier** curve, depicting increased risk over time rather than decreased survival. The same `r funlink(survival)` function can be used to produce either plot.] This plot uses `r funlink(ggplot2::geom_step)` to draw a step-wise function, and `r funlink(ggplot2::geom_rect)` to create a shaded confidence interval for each step. 
 
 In general, we see evidence that non-users with unmet need at Phase 1 were significantly quicker to adopt a method compared to women with no unmet need in each country. 
 
@@ -3659,7 +3676,7 @@ adopt_models %>%
   theme_pma 
 ```
 
-```{r, out.width="100%"}
+```{r, out.width="100%", echo=FALSE}
 # ggsave("images/km1.png", width = 11, height = 8.5, units = "in", bg = "white")
 knitr::include_graphics("images/km1.png")
 ```
@@ -3695,7 +3712,7 @@ adopt_models %>%
   theme_pma 
 ```
 
-```{r, out.width="100%"}
+```{r, out.width="100%", echo=FALSE}
 # ggsave("images/km2.png", width = 11, height = 8.5, units = "in", bg = "white")
 knitr::include_graphics("images/km2.png")
 ```
@@ -3737,7 +3754,7 @@ adopt_models %>%
   theme_pma 
 ```
 
-```{r, out.width="100%"}
+```{r, out.width="100%", echo=FALSE}
 # ggsave("images/km3.png", width = 11, height = 8.5, units = "in", bg = "white")
 knitr::include_graphics("images/km3.png")
 ```

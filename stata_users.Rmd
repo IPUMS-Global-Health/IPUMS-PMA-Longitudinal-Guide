@@ -29,7 +29,7 @@ source("utils/utilities.r")
 
 # Preface {.front-matter .unnumbered}
 
-This guide was commissioned and funded by the Family Planning Team at the Bill & Melinda Gates Foundation. The examples here are directly based on the companion [IPUMS PMA data analysis blog](https://tech.popdata.org/pma-data-hub/), with R examples developed by Matt Gunther and IPUMS PMA documentation by Devon Kristiansen under the management of Kathryn Grace, PhD and Elizabeth Heger Boyle, PhD at IPUMS PMA, University of Minnesota. The Stata version and statistical consulting were provided by Mia Yu and Dale Rhoda at [Biostat Global Consulting](http://www.biostatglobal.com/). These authors are grateful for helpful reviews & comments from Philip Anglewicz, PhD; Linnea Zimmerman, PhD, and Aisha Siewe at Johns Hopkins University. Thanks also to Caitlin Clary, PhD, Nina Brooks, PhD, and Finn Roberts for code contributions and review.
+This guide was commissioned and funded by the Family Planning Team at the Bill & Melinda Gates Foundation. The examples here are directly based on the companion [IPUMS PMA data analysis blog](https://tech.popdata.org/pma-data-hub/), with R examples developed by Matt Gunther and IPUMS PMA documentation by Devon Kristiansen under the direction of Kathryn Grace, PhD and Elizabeth Heger Boyle, PhD at IPUMS PMA, University of Minnesota. The Stata version and statistical consulting were provided by Mia Yu and Dale Rhoda at [Biostat Global Consulting](http://www.biostatglobal.com/). These authors are grateful for helpful reviews & comments from Philip Anglewicz, PhD; Linnea Zimmerman, PhD, and Aisha Siewe at Johns Hopkins University. Thanks also to Caitlin Clary, PhD, Nina Brooks, PhD, and Finn Roberts for code contributions and review.
 
 #### Suggested Citation {.unnumbered}
 
@@ -45,7 +45,7 @@ The IPUMS PMA data files referenced in this manual are also available at no cost
 
 #### Hyperlinks {.unnumbered}
 
-Hyperlinks to IPUMS PMA variable documentation, relevant R and Stata documentation, and various other resources are highlighted [in pink]() throughout this manual. If the reader prefers a printed version, they are recommended to compile the manual from source files on our GitHub repository, changing the `r funlink(pagedown)` option described [here](https://pagedown.rbind.io/#links). **Warning:** this will add additional footnotes to the document, and may impact pagination. 
+Hyperlinks to IPUMS PMA variable documentation, relevant R and Stata documentation, and various other resources are highlighted [in pink](https://pma.ipums.org) throughout this manual. If the reader prefers a printed version, they are recommended to compile the manual from source files on our GitHub repository, changing the `r funlink(pagedown)` option described [here](https://pagedown.rbind.io/#links). **Warning:** this will add additional footnotes to the document, and may impact pagination. 
 
 \newpage 
 
@@ -446,7 +446,7 @@ knitr::include_graphics("images/cases1.png")
 
 \newpage 
 
-We'll further restrict our sample by selecting only cases where `r stata_link(resultfq_2)` shows that the woman also completed the Phase 2 questionnaire. Notice that, in addition to each of the value 1 through 10, there are several **non-response codes** numbered 90 through 99. You'll see similar values repeated across all IPUMS PMA variables, except that they will be left-padded to match the maximum width of a particular variable (e.g. `9999` is used for `r stata_link(INTFQYEAR)`, which represents a 4-digit year for the Female Interview). 
+We'll further restrict our sample by selecting only cases where `r stata_link(resultfq_2)` shows that the woman also completed the Phase 2 questionnaire. Notice that, in addition to each of the values 1 through 10, there are several **non-response codes** numbered 90 through 99. You'll see similar values repeated across all IPUMS PMA variables, except that they will be left-padded to match the maximum width of a particular variable (e.g. `9999` is used for `r stata_link(INTFQYEAR)`, which represents a 4-digit year for the Female Interview). 
 
 ```{stata}
 use pma_00001, clear 
@@ -789,6 +789,8 @@ tab geocd, nolabel
 
 Because these codes are distinct from all other values in `r stata_link(strata_1)`, we can create a new variable `strata_recode` that copies `r stata_link(strata_1)` except where `r stata_link(geocd)` is non-missing. In that case, we'll use the numeric code from `r stata_link(geocd)`. 
 
+ * `strata_recode` - Numeric codes for PMA sample strata (recoded for DRC samples)
+
 ```{stata}
 clonevar strata_recode = strata_1 
 replace  strata_recode = geocd if country == 2
@@ -908,7 +910,7 @@ Yes DRC-Kongo Central  |   .2681881   .0287314      .2156321    .3281938
 ------------------------------------------------------------------------
 ```
 
-
+Now that we've identified variables that describe an IPUMS PMA analytic sample, let's proceed by downloading these and other variables of interest in a data extract from IPUMS PMA. In Chapter 2, we'll see that longitudinal data extracts can be requested in either **Long** or **Wide** format, depending on your needs. 
 
 # Longitudinal Data Extracts
 
@@ -916,17 +918,9 @@ Yes DRC-Kongo Central  |   .2681881   .0287314      .2156321    .3281938
 knitr::opts_chunk$set(out.width = "85%")
 ```
 
-This chapter provides a guided tour of the [IPUMS PMA data extract system](https://pma.ipums.org/pma/). While you may also access the original data directly from our partners at [PMA](https://www.pmadata.org/), harmonized data from IPUMS have a few additional features. For instance, you can request an extract that: 
+Chapter 2 provides a guided tour of the [IPUMS PMA data extract system](https://pma.ipums.org/pma/), which you may use to combine survey data collected from multiple countries and multiple phases of the longitudinal study. 
 
-<aside>
-[Register here](https://pma.ipums.org/pma/register.shtml) to access IPUMS PMA data **at no cost.** See our [user guide](https://pma.ipums.org/pma/userguide.shtml) for details.
-</aside>
-
-  - includes samples from multiple countries  
-  - includes samples from multiple rounds of data collection 
-  - are formatted in either **Long** or **Wide** format 
-
-IPUMS PMA also makes it easy to switch between multiple [units of analysis](https://pma.ipums.org/pma-action/variables/group) covered in PMA surveys. In addition to the data featured in this guide, you'll find surveys representing: 
+IPUMS PMA also makes it easy to switch between multiple [units of analysis](https://pma.ipums.org/pma-action/variables/group) covered in PMA surveys. In addition to the longitudinal data featured in this guide, you'll find surveys representing: 
 
 <aside>
 A video tour of the longitudinal extract system is available [here](https://www.youtube.com/embed/VwjYHDvpHk0) on the IPUMS PMA Youtube channel. 
@@ -950,7 +944,7 @@ Once you've selected the **Family Planning** option, you'll next need to choose 
 knitr::include_graphics("images/cross-sectional.png")
 ```
 
-Longitudinal samples are only available from 2019 onward, and they include all of the available phases for each sampled country (sub-nationally representative samples for DRC and Nigeria are listed separately). You'll only find longitudinal samples for countries where Phase 2 data has been made available; Phase 1 data for Cote d'Ivoire, India, and Uganda can currently be found under the Cross-sectional sample menu (Phase 2 data will be released soon!). 
+Longitudinal samples are only available from 2019 onward, and they include all of the available phases for each sampled country (sub-nationally representative samples for DRC and Nigeria are listed separately). You'll only find longitudinal samples for countries where Phase 2 data has been made available; as of this writing, Phase 1 data for Cote d'Ivoire, India, and Uganda can only be found under the Cross-sectional sample menu.
 
 \newpage 
 
@@ -1283,7 +1277,7 @@ list resultfq_1 age_1 resultfq_2 age_2 ///
   +---------------------------------------------------------------------------+
 ```
 
-In a **Long** extract, rows for the missing phase are dropped. In this example, the woman was "not at home" for the Phase 2 Female Questionnaire. When we select a **Long** extract containing only Female Respondents, her Phase 2 row is excluded automatically (it will be included if you request an extract containing Female Respondents and Female Non-respondents). 
+In a **Long** extract, rows for the missing phase are dropped. In this example, the woman was "not at home" for the Phase 2 Female Questionnaire. When we select a **Long** extract containing only Female Respondents, her Phase 2 row is excluded automatically (it will be included if you request an extract containing **Female Respondents and Female Non-respondents**). 
 
 ```{stata}
 use pma_00003, clear 
@@ -1307,6 +1301,7 @@ keep if inlist(resident_1,11,22) & inlist(resident_2,11,22) & resultfq_2  == 1
 ```
 
 \newpage 
+
 Following these steps, each analytic sample contains the same number of cases shown in the final **Long** format extract above. 
 
 ```{stata}
@@ -1465,7 +1460,7 @@ pop                 |
 
 ## Phase 1 
 
-Phase 1 marks the beginning of the PMA panel study (baseline). As we've mentioned, it consists of two separate questionnaires administered in stages: first, resident enumerators visited 35 household dwellings selected at random within each sample cluster, or **enumeration area**. If a qualifying respondent was available, they were invited to complete a [Household Questionnaire](https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Household-Questionnaire-English-2019.10.09.pdf)^[Questionnaires administered in each country may vary from this **Core Household Questionnaire** - [click here](https://pma.ipums.org/pma/enum_materials.shtml) for details.] including a census of all household members and visitors who stayed there during the night before the interview. If this census included any women aged 15-49, the enumerator would later return to the household and invite each eligible woman to complete a  [Female Questionnaire](https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Female-Questionnaire-English-2019.10.09.pdf)^[Questionnaires administered in each country may vary from this **Core Female Questionnaire** - [click here](https://pma.ipums.org/pma/enum_materials.shtml) for details.] and participate in the three-year panel study. 
+Phase 1 marks the beginning of the PMA panel study (baseline). As we've mentioned, it consists of two separate questionnaires administered in stages: first, resident enumerators visited 35 household dwellings selected at random within each sample cluster, or **enumeration area** (EA). If a qualifying respondent was available, they were invited to complete a [Household Questionnaire](https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Household-Questionnaire-English-2019.10.09.pdf)^[Questionnaires administered in each country may vary from this **Core Household Questionnaire** - [click here](https://pma.ipums.org/pma/enum_materials.shtml) for details.] including a census of all household members and visitors who stayed there during the night before the interview. If this census included any women aged 15-49, the enumerator would later return to the household and invite each eligible woman to complete a  [Female Questionnaire](https://pma.ipums.org/pma/resources/questionnaires/hhf/PMA-Female-Questionnaire-English-2019.10.09.pdf)^[Questionnaires administered in each country may vary from this **Core Female Questionnaire** - [click here](https://pma.ipums.org/pma/enum_materials.shtml) for details.] and participate in the three-year panel study. 
 
 We'll take a look at the inclusion criteria and missing data codes for each questionnaire, in turn. 
 
@@ -3771,7 +3766,7 @@ This calendar represents contraceptive use, pregnancy, pregnancy termination, an
   * `31` - Withdrawal
   * `39` - Other traditional methods
 
-For example, consider a woman sampled in Kenya who gave birth during the month of the interview following 8 prior months of pregnancy. If she had used the pill every month up until the month she became pregnant, her string in `r stata_link(CALENDARKE)` would look like this:
+For example, consider a woman sampled in Kenya who gave birth during the month of the interview following 8 prior months of pregnancy. If she had used the pill every month  until the month she became pregnant, her string in `r stata_link(CALENDARKE)` would look like this:
 
 `B,P,P,P,P,P,P,P,P,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7`
 
@@ -4020,7 +4015,7 @@ keep id country_cat cal*
 save post6_cal1, replace
 ```
 
-We'll reshape the data in two steps. First, we'll merge data from each Phase one column per country. Second, we'll merge data from each country into a finally, unified column. 
+We'll reshape the data in two steps. First, we'll merge data from each Phase one column per country. Second, we'll merge data from each country into a final unified column. 
 
 ### Merge Phases 
 
