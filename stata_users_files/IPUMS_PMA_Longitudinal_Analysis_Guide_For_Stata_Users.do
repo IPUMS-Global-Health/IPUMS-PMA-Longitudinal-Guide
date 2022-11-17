@@ -2346,21 +2346,21 @@ gen use = fpstatus_2 != "0" & fpstatus_2 != "B" & ///
 
 * gen usemo, stop and rc
 * changes made here:
-* change the variable stop to adopt; stop2 to adopt2 
+* change the variable stop to event; stop2 to event2 
 bysort id: gen usemo = mo if use == 1
 bysort id: egen use_sum = sum(use)
-bysort id: egen adopt = min(usemo) if use_sum >= 1
-bysort id: egen adopt2 = max(mo) if use_sum == 0
-replace adopt = adopt2 if missing(adopt)
-drop adopt2 use_sum
-bysort id: gen rc = 1 if adopt == mo & use == 0
-bysort id: replace rc = 0 if adopt == mo & use == 1
+bysort id: egen event = min(usemo) if use_sum >= 1
+bysort id: egen event2 = max(mo) if use_sum == 0
+replace event = event2 if missing(event)
+drop event2 use_sum
+bysort id: gen rc = 1 if event == mo & use == 0
+bysort id: replace rc = 0 if event == mo & use == 1
 
 ************************************************************
 
 * filter data to keep only the last month a woman is not using any method
-* change the variable stop to adopt 
-keep if adopt == mo
+* change the variable stop to event 
+keep if event == mo
 
 ************************************************************
 

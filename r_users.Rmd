@@ -2371,15 +2371,15 @@ status_tbl
 
 \newpage 
 
-As a second step, we created a **grouped bar chart**  plotting the estimated values in `coef` together with the confidence interval represented by `_low` and `_upp`. This chart is useful because it packs a lot of information into a single, reader-friendly graphic. However, we also mentioned at the end of Chapter 4 that it has some considerable drawbacks. 
+As a second step, we aligned each Phase 1 "condition" in separate columns of a **grouped bar chart**. This invites the reader to compare bars vertically, thereby emphasizing the **conditional distribution** of Phase 2 outcomes. 
 
 ```{r, echo = FALSE, out.width="100%"}
 knitr::include_graphics("images/bar2.png")
 ```
 
-Most importantly, this plot does not include information about the **marginal distribution** in each phase: a  marginal distribution for `FPSTATUS_1` would indicate the likelihood that a woman began the survey period pregnant, using family planning, or not using family planning. Likewise the marginal distribution for `FPSTATUS_2` estimates the likelihood that a woman would hold any such status at Phase 2, *independently of* her status at Phase 1. We call these distributions "marginal" because they're usually included in the row or column margins of a crosstab or **heatmap**. 
-
 ## Heatmaps
+
+While our bar chart is useful for showcasing a conditional distribution, a crosstab or **heatmap** is a better choice in circumstances where the **marginal distribution** is an important concern. For example, a marginal distribution for `fpstatus_1` would indicate the likelihood that a woman began the survey period pregnant, using family planning, or not using family planning. The term "marginal distribution" refers to the practice of reporting these probabilities in the margins of a crosstab. 
 
 Let's return to `status_tbl`, but this time we'll plot it as a **heatmap** with `color` and `alpha` (transparency) aesthetics. As in Chapter 4, we'll design a function that combines several `r funlink(ggplot2)` tools we'll recycle in each plot.^[This manual uses the proprietary font [cabrito sans](https://fonts.adobe.com/fonts/cabrito-sans), which is implemented in figures via the `r funlink(showtext)` package for R. You can purchase a license to use [cabrito sans](https://fonts.adobe.com/fonts/cabrito-sans), or substitute with a font of your choice.] 
 
@@ -2449,8 +2449,6 @@ knitr::include_graphics("images/heat1.png")
 
 The nice thing about this heatmap layout is that - compared with our bar chart - it's much easier to include data from the marginal distribution of `FPSTATUS_1` and `FPSTATUS_2`. To do so, we'll first need to add them to `status_tbl`. 
 
-\newpage 
-
 <aside>
 We use `r funlink(dplyr::full_join)`, but both `r funlink(dplyr::left_join)` and `r funlink(dplyr::right_join)` would work equally well in this case.
 </aside>
@@ -2483,13 +2481,13 @@ status_tbl <- dat %>%
   full_join(status_tbl, ., by = c("POP", "FPSTATUS_2"))
 ```
 
+\newpage 
+
 The column margins now appear in `cols`, while the row margins appear in `rows`.
 
 ```{r}
 status_tbl
 ```
-
-\newpage 
 
 Now, we can simply `r funlink(base::paste)` these values together with the original labels from `FPSTATUS_1` and `FPSTATUS_2`.
 
@@ -2517,11 +2515,11 @@ status_tbl %>%
 ggsave("images/heat2.png", width = 10.5, height = 8.5, units = "in", bg = "white")
 ```
 
+\newpage 
+
 ```{r, echo = FALSE, out.width="90%"}
 knitr::include_graphics("images/heat2.png")
 ```
-
-\newpage 
 
 The information contained in our heatmap is similar to what we saw in our bar chart, except for two things:
 
@@ -2539,8 +2537,6 @@ In contrast with the conditional distribution, this type of distribution describ
 status_tbl %>% mutate(joint = cols * coef)
 ```
 
-\newpage 
-
 In practice, you'll usually want to let `r funlink(srvyr)` calculate a confidence interval for each joint probability. To do so, we'll add an `r funlink(srvyr::interact)` function listing the variables in `r funlink(dplyr::group_by)` that we want to model jointly. 
 
 ```{r, R.options = list(width = 100)}
@@ -2553,7 +2549,11 @@ joint_tbl <- dat %>%
       group_by(interact(FPSTATUS_1, FPSTATUS_2)) %>% 
       summarise(joint = survey_mean(prop = TRUE, prop_method = "logit", vartype = "ci"))
   )
+```
 
+\newpage 
+
+```{r, R.options = list(width = 100)}
 joint_tbl
 ```
 
@@ -3009,7 +3009,7 @@ You may be wondering: why does IPUMS PMA publish a separate calendar variable fo
 
 This is because the width of each calendar variable differs according to the number of months women were asked to recall in a particular sample. This, in turn, depends on the range of dates in which women were interviewed for the Female Questionnaire in a particular phase. 
 
-You can find the precise range of dates included in each calendar on the [description tab](https://pma.ipums.org/pma-action/variables/CALENDARKE#universe_section) for each country's calendar variable. Here, for example, we see that the Kenya Phase 1 sample includes dates from January 2017 to the month of the interview, and that its Phase 2 sample includes dates from January 2018 to the month of the interview. Note: the two calendars overlap between January 2018 and the Phase 1 interview. 
+You can find the precise range of dates included in each calendar on the [DESCRIPTION](https://pma.ipums.org/pma-action/variables/CALENDARKE#universe_section) tab for each country's calendar variable. Here, for example, we see that the Kenya Phase 1 sample includes dates from January 2017 to the month of the interview, and that its Phase 2 sample includes dates from January 2018 to the month of the interview. Note: the two calendars overlap between January 2018 and the Phase 1 interview. 
 
 ```{r, echo = FALSE}
 knitr::include_graphics("images/startmo.png")
@@ -3112,6 +3112,8 @@ Our goal is to reduce the number of variables in `cals` so that we only need to 
 
 We'll use `r funlink(tidyr::pivot_longer)` to reorganize our **Wide** data into long format, with one row per Phase of the panel study. This procedure strips the numeric suffix from each calendar variable: we'll store this information in a new column called `PHASE`. Notice that the argument `cols` selects every column that `r funlink(dplyr::starts_with)` the prefix "CAL".
 
+  * `PHASE` - Data Collection Phase (1 or 2)
+
 ```{r}
 cals <- cals %>% 
   pivot_longer(
@@ -3194,7 +3196,7 @@ There are two reasons why a woman's calendar might be unavailable.
 The **universe tab** explains why some cases are "NIU (not in universe)".
 </aside>
 
-First, these women might be "NIU (not in universe)", as described on the IPUMS PMA [universe tab](https://pma.ipums.org/pma-action/variables/CALENDARKE#universe_section) for each country's contraceptive calendar. Generally, NIU cases are women who reported no qualifying event during the calendar period: a blank string could indicate that she was never pregnant and never adopted or discontinued a family planning method in any month during that period. 
+First, these women might be "NIU (not in universe)", as described on the IPUMS PMA [UNIVERSE](https://pma.ipums.org/pma-action/variables/CALENDARKE#universe_section) tab for each country's contraceptive calendar. Generally, NIU cases are women who reported no qualifying event during the calendar period: a blank string could indicate that she was never pregnant and never adopted or discontinued a family planning method in any month during that period. 
 
 ```{r, echo = FALSE}
 knitr::include_graphics("images/universe2.png")

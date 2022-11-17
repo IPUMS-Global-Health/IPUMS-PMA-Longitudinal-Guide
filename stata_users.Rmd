@@ -197,7 +197,7 @@ label var chg_fpcurr "Phase 1 to 2 Family Planning Change Status"
 
 #### Working Directory {.unnumbered}
 
-To run successfully, you will create a folder for use as Stata's [working directory](https://www.stata.com/manuals/dcd.pdf). Save the following files in that folder (all of which are available in our [Stata folder on GitHub](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide/tree/main/stata_users_files)):
+To run successfully, you must create a folder for use as Stata's [working directory](https://www.stata.com/manuals/dcd.pdf). Save the following files in that folder (all of which are available in our [Stata folder on GitHub](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide/tree/main/stata_users_files)):
 
   - The five `.do` files listed above
   - `pma_sankey_template4.dta dataset`
@@ -244,7 +244,7 @@ For help with a particular Stata command, simply type "help *command_name*" at t
 
 One excellent private resource is [The Stata Guide](https://medium.com/the-stata-guide) blog by [Asjad Naqvi](https://asjadnaqvi.github.io/).  He shares clear explanations and code to make a variety of very handsome maps and graphics.  The posts reside behind a paywall.  You may read three of them for free per month, or pay a subscription fee to [medium.com](http://www.medium.com) for unlimited access to his writing (and that of many other authors).
 
-Finally, for survey data analysis, we heartily recommend the text [Applied Survey Data Analysis (2ed)](https://www.routledge.com/Applied-Survey-Data-Analysis/Heeringa-West-Berglund/p/book/9780367736118) by Heeringa, West, and Berglund, ISBN: 978-0-36773-611-8.  It is a treasure trove of thoughtful insight and its [companion website](https://websites.umich.edu/~surveymethod/asda/) shares datasets, code examples, and other resources for conducting analyses using a variety of software packages.
+Finally, for survey data analysis, we heartily recommend the text [Applied Survey Data Analysis (2ed)](https://www.routledge.com/Applied-Survey-Data-Analysis/Heeringa-West-Berglund/p/book/9780367736118) by Heeringa, West, and Berglund, ISBN: 978-0-36773-611-8.  It is a treasure trove of thoughtful insight and its [companion website](https://websites.umich.edu/~surveymethod/asda/) shares datasets, code examples, and other resources for conducting analyses using a variety of software packages - including Stata and R.
   
 ## PMA Background
 
@@ -379,7 +379,6 @@ keep if sample_1 == 85409
 table ( resident_1 ) () (), nototals missing zerocounts
 ```
 ```
-
 -----------------------------------------------------------
                                                |  Frequency
 -----------------------------------------------+-----------
@@ -1205,6 +1204,8 @@ keep if keep_both == 3
 drop keep keep_both
 ```
 
+\newpage
+
 Following these steps, you can check the size of each analytic sample like so: 
 
 ```{stata}
@@ -1606,8 +1607,10 @@ result of household questionnaire     |
       .                               |     98,687      
 --------------------------------------+-----------  
 ```
-\newpage
+
 `r stata_link(RESULTLFQ_1)` shows the result of the Female Questionnaire for eligible women. The **non-response code** "NIU (not in universe)" is used for household members who were not eligible. 
+
+\newpage
 
 ```{stata}
 table (resultfq_1), nototals missing
@@ -3439,7 +3442,6 @@ label define status 1 "Pregnant" 3 "Using FP" 2 "Not Using FP"
 label values fpstatus_1 status
 label values fpstatus_2 status
 
-********************************************************************************
 capture drop fpstring_1 
 capture drop fpstring_2
 
@@ -3617,11 +3619,11 @@ And Fernando Rios-Avila was inspired by Asjad to write a command named [sankey_p
 
 We'll use color to map each alluvium with an originating stratum from `fpstatus_1`. This will help the reader visualize the conditional distribution of `fpstatus_2` responses given a starting point in `fpstatus_1`. 
 
-The code below makes six figures: one for each `pop`.  Each figure is based on a dataset that holds 21 rows.  The first nine rows specify the width of each alluvium using the joint probability and specify the marginal probability to be used in the left-most column of labels.  The second nine rows specify the values for the labels that show the joint probabilities, and specify which alluvia are destined for each of the three Phase 2 categories.  The final three rows hold the labels for the right-most marginal probabilities and specify the colors to use for the Phase 2 status bars.
-
 <aside>
 We will also use Mead Over's user-written command `grc1leg2` which allows us to `graph combine` several figures that have legends and only include a single legend in the resulting combined graph.
 </aside>
+
+The code below makes six figures: one for each `pop`.  Each figure is based on a dataset that holds 21 rows.  The first nine rows specify the width of each alluvium using the joint probability and specify the marginal probability to be used in the left-most column of labels.  The second nine rows specify the values for the labels that show the joint probabilities, and specify which alluvia are destined for each of the three Phase 2 categories.  The final three rows hold the labels for the right-most marginal probabilities and specify the colors to use for the Phase 2 status bars.
 
 Our code uses `post` to generate a dataset with six sets of 21 rows of joint probabilities and marginal probability labels.  Then the code loops over each `pop`, loads a template dataset, and used `merge` to bring in the variables that hold the relevant stream widths and labels.  Each of the six pop-specific plots is made using the `sankey_plot_with_legend` command and the six plots are combined with the user-written `grc1leg2.ado` command.
 
@@ -3923,7 +3925,7 @@ You may be wondering: why does IPUMS PMA publish a separate calendar variable fo
 
 This is because the width of each calendar variable differs according to the number of months women were asked to recall in a particular sample. This, in turn, depends on the range of dates in which women were interviewed for the Female Questionnaire in a particular phase. 
 
-You can find the precise range of dates included in each calendar on the [description tab](https://pma.ipums.org/pma-action/variables/CALENDARKE#universe_section) for each country's calendar variable. Here, for example, we see that the Kenya Phase 1 sample includes dates from January 2017 to the month of the interview, and that its Phase 2 sample includes dates from January 2018 to the month of the interview. Note: the two calendars overlap between January 2018 and the Phase 1 interview. 
+You can find the precise range of dates included in each calendar on the [DESCRIPTION](https://pma.ipums.org/pma-action/variables/CALENDARKE#universe_section) tab for each country's calendar variable. Here, for example, we see that the Kenya Phase 1 sample includes dates from January 2017 to the month of the interview, and that its Phase 2 sample includes dates from January 2018 to the month of the interview. Note: the two calendars overlap between January 2018 and the Phase 1 interview. 
 
 ```{r, echo=FALSE, eval=TRUE}
 knitr::include_graphics("images/startmo.png")
@@ -4020,6 +4022,8 @@ We'll reshape the data in two steps. First, we'll merge data from each Phase one
 ### Merge Phases 
 
 Here, we'll strip the numeric suffix from each calendar variable: we'll store this information in a new column called `phase`. All of the calendar variables from the same phase will then be stored in a separate row (resulting in two rows per woman). 
+
+  * `phase` - Data Collection Phase (1 or 2)
 
 ```{stata}
 reshape long calendarke_ calendarkewhy_ calendarng_ calendarngwhy_ ///
@@ -4349,7 +4353,7 @@ There are two reasons why a woman's calendar might be unavailable.
 The **universe tab** explains why some cases are "NIU (not in universe)".
 </aside>
 
-First, these women might be "NIU (not in universe)", as described on the IPUMS PMA [universe tab](https://pma.ipums.org/pma-action/variables/CALENDARKE#universe_section) for each country's contraceptive calendar. Generally, NIU cases are women who reported no qualifying event during the calendar period: a blank string could indicate that she was never pregnant and never adopted or discontinued a family planning method in any month during that period.
+First, these women might be "NIU (not in universe)", as described on the IPUMS PMA [UNIVERSE](https://pma.ipums.org/pma-action/variables/CALENDARKE#universe_section) tab for each country's contraceptive calendar. Generally, NIU cases are women who reported no qualifying event during the calendar period: a blank string could indicate that she was never pregnant and never adopted or discontinued a family planning method in any month during that period.
 
 ```{r, eval=TRUE, echo=FALSE}
 knitr::include_graphics("images/universe2.png")
@@ -5045,6 +5049,8 @@ A key concept in survival analysis is the idea of **right-censoring**, which ref
 
 First, we'll want to identify the earliest month in which each woman reported using a method, if she did so at all. To do this, we'll begin by identifying months of contraceptive `use` as those where `fpstatus_2` contains any value other than `0`, `B`, `P`, or `T`. 
 
+  * `use` - Indicates a month of contraceptive use 
+
 ```{stata}
 gen mo = calcmc - intfqcmc_1
 gen use = fpstatus_2 != "0" & fpstatus_2 != "B" & fpstatus_2 != "P" & fpstatus_2 != "T"
@@ -5056,23 +5062,29 @@ Ultimately, we'll want to include only one row for each woman in our analysis. F
 
 We begin by numbering each month in a variable call `mo`, counting upward from `0` for the Phase 1 interview. We'll then create an exact copy of `mo` called `usemo` that is missing (`.`) for months of non-`use`. 
 
-The minimum value in `usemo` is the month of adoption, and we'll flag this month with a variable called `adopt`. However, if *no method was adopted* we'll need to flag the maximum value in `mo` with both `adopt` *and* an additional variable indicating that the case is right-censored. This final variable, which we'll call `rc`, helps Stata distinguish women who never adopted a method before Phase 2. 
+  * `mo` - Sequentially numbered month
+  * `usemo` - Sequentially numbered month (labeled only for months of use)
+
+The minimum value in `usemo` is the month of adoption, and we'll flag this month with a variable called `event`. However, if *no method was adopted* we'll need to flag the maximum value in `mo` with both `event` *and* an additional variable indicating that the case is right-censored. This final variable, which we'll call `rc`, helps Stata distinguish women who never adopted a method before Phase 2. 
+
+  * `event` - Date of method adoption or Phase 2 interview, whichever is first
+  * `rc` - Indicates whether the `event` is right-censored
 
 ```{stata}
 bysort id: gen usemo = mo if use == 1
 bysort id: egen use_sum = sum(use)
-bysort id: egen adopt = min(usemo) if use_sum >= 1
-bysort id: egen adopt2 = max(mo) if use_sum == 0
-replace adopt = adopt2 if missing(adopt)
-drop adopt2 use_sum
-bysort id: gen rc = 1 if adopt == mo & use == 0
-bysort id: replace rc = 0 if adopt == mo & use == 1
+bysort id: egen event = min(usemo) if use_sum >= 1
+bysort id: egen event2 = max(mo) if use_sum == 0
+replace event = event2 if missing(event)
+drop event2 use_sum
+bysort id: gen rc = 1 if event == mo & use == 0
+bysort id: replace rc = 0 if event == mo & use == 1
 ```
 
-Finally, we'll now drop every row except for those matching `adopt`. This leaves one row for each woman. 
+Finally, we'll now drop every row except for those matching `event`. This leaves one row for each woman. 
 
 ```{stata}
-keep if adopt == mo
+keep if event == mo
 ```
 
 ### Survival Models 
