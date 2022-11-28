@@ -29,7 +29,7 @@ source("utils/utilities.r")
 
 # Preface {.front-matter .unnumbered}
 
-This guide was commissioned and funded by the Family Planning Team at the Bill & Melinda Gates Foundation. The examples here are directly based on the companion [IPUMS PMA data analysis blog](https://tech.popdata.org/pma-data-hub/), with R examples developed by Matt Gunther and IPUMS PMA documentation by Devon Kristiansen under the direction of Kathryn Grace, PhD and Elizabeth Heger Boyle, PhD at IPUMS PMA, University of Minnesota. The Stata version and statistical consulting were provided by Mia Yu and Dale Rhoda at [Biostat Global Consulting](http://www.biostatglobal.com/). These authors are grateful for helpful reviews & comments from Philip Anglewicz, PhD; Linnea Zimmerman, PhD, and Aisha Siewe at Johns Hopkins University. Thanks also to Caitlin Clary, PhD, Nina Brooks, PhD, and Finn Roberts for code contributions and review.
+This guide was commissioned and funded by the Family Planning Team at the Bill & Melinda Gates Foundation. The examples here are directly based on the companion [IPUMS PMA data analysis blog](https://tech.popdata.org/pma-data-hub/), with R examples developed by Matt Gunther and IPUMS PMA documentation by Devon Kristiansen under the direction of Kathryn Grace, PhD and Elizabeth Heger Boyle, PhD at IPUMS PMA, University of Minnesota. The Stata version and statistical consulting were provided by Mia Yu and Dale Rhoda at [Biostat Global Consulting](http://www.biostatglobal.com/). These authors are grateful for helpful reviews & comments from Philip Anglewicz, PhD; Linnea Zimmerman, PhD, and Aisha Siewe at Johns Hopkins University. Thanks also to Caitlin Clary, PhD, Mary Kay Trimner, Nina Brooks, PhD, and Finn Roberts for code contributions and review.
 
 #### Suggested Citation {.unnumbered}
 
@@ -43,11 +43,15 @@ The IPUMS PMA data files referenced in this manual are also available at no cost
 
 [La version française du formulaire d'inscription](https://pma.ipums.org/pma/formulaire_d_inscription.shtml)
 
+#### Revision History {.unnumbered}
+
+Revisions to this manual are listed by date and accompanied by comments [here](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide/commits/main). **Questions and suggested changes are welcome!** Please submit requests to our [Issues](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide/issues) forum on GitHub.
+
+\newpage 
+
 #### Hyperlinks {.unnumbered}
 
 Hyperlinks to IPUMS PMA variable documentation, relevant R and Stata documentation, and various other resources are highlighted [in pink](https://pma.ipums.org) throughout this manual. If the reader prefers a printed version, they are recommended to compile the manual from source files on our GitHub repository, changing the `r funlink(pagedown)` option described [here](https://pagedown.rbind.io/#links). **Warning:** this will add additional footnotes to the document, and may impact pagination. 
-
-\newpage 
 
 #### Acronyms {.unnumbered}
 
@@ -503,7 +507,7 @@ tab resultfq_1 resultfq_2,m
                 Total |     5,491 |     5,491 
 ```
 
-Generally, we will combine both filtering steps together in a single function like so:
+Generally, we will combine the filtering steps together in one or two `keep` commands like so:
 
 ```{stata}
 use pma_00001, clear 
@@ -3872,7 +3876,7 @@ $$CMC = Month + 12*(Year – 1900)$$
 
 Because all or part of a date may be **missing** (the month or year), and because certain dates may be "NIU (not in universe)" (e.g. "date of most recent childbirth" for women who have never given birth), we'll need to consider specific circumstances where we should use a missing value (`.`) in a CMC variable. 
 
-In the contraceptive calendar, we'll be measuring the time between events in *months*. Therefore, it would be insufficient to include cases where a woman only reported the *year* in which an event occurred. We'll create a function that generates missing values (`.`) if the numeric code representing a month is `90` or higher (all valid months are coded 1 through 12), and if a year is `9000` or higher (all valid years are in the 1900s or 2000s). Otherwise, we'll use the CMC formula to calculate the appropriate CMC value for each date. 
+In the contraceptive calendar, we'll be measuring the time between events in *months*. Therefore, it would be insufficient to include cases where a woman only reported the *year* in which an event occurred. We’ll use an `if` clause that generates missing values (`.`) if the numeric code representing a month is `90` or higher (all valid months are coded 1 through 12), and if a year is `9000` or higher (all valid years are in the 1900s or 2000s). Otherwise, we'll use the CMC formula to calculate the appropriate CMC value for each date. 
 
 We'll create one `cmc` for each date in our data extract: 
 

@@ -27,7 +27,7 @@ source("utils/utilities.r")
 
 # Preface {.front-matter .unnumbered}
 
-This guide was commissioned and funded by the Family Planning Team at the Bill & Melinda Gates Foundation. The examples here are directly based on the companion [IPUMS PMA data analysis blog](https://tech.popdata.org/pma-data-hub/), with R examples developed by Matt Gunther and IPUMS PMA documentation by Devon Kristiansen under the direction of Kathryn Grace, PhD and Elizabeth Heger Boyle, PhD at IPUMS PMA, University of Minnesota. The Stata version and statistical consulting were provided by Mia Yu and Dale Rhoda at [Biostat Global Consulting](http://www.biostatglobal.com/). These authors are grateful for helpful reviews & comments from Philip Anglewicz, PhD; Linnea Zimmerman, PhD, and Aisha Siewe at Johns Hopkins University. Thanks also to Caitlin Clary, PhD, Nina Brooks, PhD, and Finn Roberts for code contributions and review.
+This guide was commissioned and funded by the Family Planning Team at the Bill & Melinda Gates Foundation. The examples here are directly based on the companion [IPUMS PMA data analysis blog](https://tech.popdata.org/pma-data-hub/), with R examples developed by Matt Gunther and IPUMS PMA documentation by Devon Kristiansen under the direction of Kathryn Grace, PhD and Elizabeth Heger Boyle, PhD at IPUMS PMA, University of Minnesota. The Stata version and statistical consulting were provided by Mia Yu and Dale Rhoda at [Biostat Global Consulting](http://www.biostatglobal.com/). These authors are grateful for helpful reviews & comments from Philip Anglewicz, PhD; Linnea Zimmerman, PhD, and Aisha Siewe at Johns Hopkins University. Thanks also to Caitlin Clary, PhD, Mary Kay Trimner, Nina Brooks, PhD, and Finn Roberts for code contributions and review.
 
 #### Suggested Citation {.unnumbered}
 
@@ -41,11 +41,15 @@ The IPUMS PMA data files referenced in this manual are also available at no cost
 
 [La version française du formulaire d'inscription](https://pma.ipums.org/pma/formulaire_d_inscription.shtml)
 
+#### Revision History  {.unnumbered}
+
+Revisions to this manual are listed by date and accompanied by comments [here](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide/commits/main). **Questions and suggested changes are welcome!** Please submit requests to our [Issues](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide/issues) forum on GitHub.
+
+\newpage 
+
 #### Hyperlinks {.unnumbered}
 
 Hyperlinks to IPUMS PMA variable documentation, relevant R and Stata documentation, and various other resources are highlighted [in pink](https://pma.ipums.org) throughout this manual. If the reader prefers a printed version, they are recommended to compile the manual from source files on our GitHub repository, changing the `r funlink(pagedown)` option described [here](https://pagedown.rbind.io/#links). **Warning:** this will add additional footnotes to the document, and may impact pagination. 
-
-\newpage 
 
 #### Acronyms {.unnumbered}
 
