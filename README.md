@@ -4,5 +4,5 @@ This repository includes code featered in the **IPUMS PMA Longitudinal Analysis 
 
 You can download PDF versions of each guide below: 
 
-  - [R version](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide/blob/main/r_users.pdf)
-  - [Stata version](https://github.com/IPUMS-Global-Health/IPUMS-PMA-Longitudinal-Guide/blob/main/stata_users.pdf)
+  - [R version](https://ipums-global-health.github.io/IPUMS-PMA-Longitudinal-Guide/r_users.pdf)
+  - [Stata version](https://ipums-global-health.github.io/IPUMS-PMA-Longitudinal-Guide/stata_users.pdf)
